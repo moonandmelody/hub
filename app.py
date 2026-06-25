@@ -162,7 +162,7 @@ with col_form:
             current_time = local_timestamp.strftime("%H:%M:%S")
 
             # 🎯 ACTION REQUIRED: Update these exact form fields with your matching variables from your form code
-            FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdcmaKrZ3tUFcAk01nOG6GUUTUhepChtsA2jCKSQ1JWAy8eZQ/viewform"
+            FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdcmaKrZ3tUFcAk01nOG6GUUTUhepChtsA2jCKSQ1JWAy8eZQ/formResponse"
 
             form_data = {
                 "entry.647981491": next_order_id,  # Paste Order ID Entry Number
