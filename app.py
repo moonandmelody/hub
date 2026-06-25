@@ -1,31 +1,18 @@
-import ssl
-import urllib.request
 import pandas as pd
 import streamlit as st
 
 st.set_page_config(layout="wide")
 
-# Automatically bypass local machine security validation blocks
-try:
-    ssl._create_default_https_context = ssl._create_unverified_context
-except AttributeError:
-    pass
-
 
 def load_data():
-    """Reads live private sales data directly from the secure Google engine stream."""
+    """Reads live private sales data via a secure data link export engine."""
     try:
-        # Secure structural link components to fetch fresh sheet data
-        base = "https://google.com/1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI/export?format=csv&gid=0"
+        # Cleanest, direct CSV data export path for restricted linking
+        url = "https://google.com/1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI/export?format=csv&gid=0"
 
-        url = base
 
-        # Stream raw text data securely via standard request header
-        req = urllib.request.Request(
-            url, headers={"User-Agent": "Mozilla/5.0"}
-        )
-        with urllib.request.urlopen(req) as response:
-            df = pd.read_csv(response)
+        # Stream the rows instantly, ignoring old laptop cache memory
+        df = pd.read_csv(url)
 
         # Strip out any hidden white spaces from your spreadsheet header titles
         df.columns = df.columns.str.strip()
@@ -156,8 +143,7 @@ if not df.empty and "Status" in df.columns:
                         )
                         st.markdown(f"**Items:**\n{row.get('Items', 'N/A')}")
                         st.markdown(f"**Amount:** {row.get('Cost', 0.0)}")
-                        
-                        # Generate unique button instance layouts
+
                         btn_key = f"complete_{row.get('Order ID', idx)}_{idx}"
                         st.button("✅ Complete Order", key=btn_key)
 else:
