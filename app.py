@@ -16,7 +16,7 @@ def load_data():
     """Reads live private sales data directly from the secure Google engine stream."""
     try:
         # Secure structural link components to fetch fresh sheet data
-        base = "https://google.com1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI/export?format=csv&gid=0"
+        base = "https://google.com/1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI/export?format=csv&gid=0"
 
         url = base
 
