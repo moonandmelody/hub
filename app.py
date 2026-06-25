@@ -18,7 +18,7 @@ def load_data():
         # Secure structural link components to fetch fresh sheet data
         base = "https://google.com1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI/export?format=csv&gid=0"
 
-        url = base + sheet_id + engine
+        url = base
 
         # Stream raw text data securely via standard request header
         req = urllib.request.Request(
