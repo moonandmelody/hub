@@ -5,19 +5,12 @@ st.set_page_config(layout="wide")
 
 
 def load_data():
-    """Reads live private sales data via a secure data link export engine."""
+    """Reads live private sales data directly from the universal CSV export stream."""
     try:
-        # Cleanest, direct CSV data export path for restricted linking
         url = "https://docs.google.com/spreadsheets/d/1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI/export?format=csv&gid=0"
-
-
-        # Stream the rows instantly, ignoring old laptop cache memory
         df = pd.read_csv(url)
-
-        # Strip out any hidden white spaces from your spreadsheet header titles
         df.columns = df.columns.str.strip()
 
-        # Dynamic header mapping to link whatever you typed to the app layout
         mapping = {}
         for col in df.columns:
             cleaned = str(col).lower().replace(" ", "")
@@ -36,14 +29,12 @@ def load_data():
 
         df = df.rename(columns=mapping)
 
-        # Drop rows where Customer Name is completely empty to clear out padding cells
         if "Customer Name" in df.columns:
             df = df.dropna(subset=["Customer Name"])
             df = df[df["Customer Name"].astype(str).str.strip() != ""]
         else:
             return pd.DataFrame()
 
-        # Standardise core data formats safely
         if "Order ID" in df.columns:
             df["Order ID"] = df["Order ID"].fillna("Unknown").astype(str)
         else:
@@ -74,28 +65,82 @@ def load_data():
 # Load fresh data from the cloud
 df = load_data()
 
+# 🎯 DYNAMIC COUNTER LOGIC: Check the sheet data to determine the next sequential ID number
+if not df.empty and "Order ID" in df.columns:
+    try:
+        # Pull the absolute maximum number found in your sheet column layout
+        highest_id = pd.to_numeric(df["Order ID"], errors="coerce").max()
+        if pd.isna(highest_id):
+            next_order_id = 1001  # Start at 1001 if your current entries are text letters
+        else:
+            next_order_id = int(highest_id) + 1  # Add 1 to the highest ID found
+    except Exception:
+        next_order_id = (
+            len(df) + 1001
+        )  # Fallback: Count total rows if math engine errors out
+else:
+    next_order_id = 1001  # Fresh start number if your database is entirely empty
+
 st.title("🏡 Moon & Melody Business Hub")
 st.subheader("Secure Cloud-Synced Dashboard")
 st.markdown("---")
 
 col_form, col_graph = st.columns(2)
 
-# --- 1. DATA ENTRY FORM ---
+# --- 1. REFINED DATA ENTRY FORM WITH AUTOMATIC ORDER COUNTER ---
 with col_form:
     st.header("📝 Log New Order")
     my_form = st.form(key="order_entry_form", clear_on_submit=True)
+
+    # 🎯 DISPLAY AUTOMATED ORDER NUMBER: Shows you your new ID before clicking submit
+    my_form.markdown(f"### 🎫 Next Order Number: **#{next_order_id}**")
+    my_form.markdown("---")
+
     customer = my_form.text_input("Customer Name")
     contact = my_form.text_input("Customer Contact (Phone)")
-    items_ordered = my_form.text_area("Items Ordered")
+
+    st.markdown("##### 📦 Select Item Quantities")
+    candles_count = my_form.number_input(
+        "Scented Candles", min_value=0, max_value=50, value=0, step=1
+    )
+    soaps_count = my_form.number_input(
+        "Handmade Soaps", min_value=0, max_value=50, value=0, step=1
+    )
+    scarves_count = my_form.number_input(
+        "Knit Scarves", min_value=0, max_value=50, value=0, step=1
+    )
+
     cost = my_form.number_input("Total Cost (₹/$)", min_value=0.0, step=1.0)
     submitted = my_form.form_submit_button("Submit Order")
 
     if submitted:
-        if customer.strip() == "" or items_ordered.strip() == "":
-            st.error("Please fill out the Customer Name and Items fields.")
+        items_list = []
+        if candles_count > 0:
+            items_list.append(f"{candles_count}x Scented Candles")
+        if soaps_count > 0:
+            items_list.append(f"{soaps_count}x Handmade Soaps")
+        if scarves_count > 0:
+            items_list.append(f"{scarves_count}x Knit Scarves")
+
+        if customer.strip() == "":
+            st.error("Please fill out the Customer Name field.")
+        elif not items_list:
+            st.error(
+                "Please use the + buttons to add at least 1 item to the order."
+            )
         else:
+            compiled_items_string = ", ".join(items_list)
+
+            st.success("Form Input Validated Successfully!")
+            st.markdown(
+                f"**Row Data Ready for Sheet:** \n"
+                f"* **Order ID:** `{next_order_id}`\n"
+                f"* **Customer Name:** {customer}\n"
+                f"* **Items String:** `{compiled_items_string}`\n"
+                f"* **Cost:** {cost}"
+            )
             st.info(
-                "Form validated! Add rows directly to your Google Sheet browser tab to update your screen instantly."
+                "Type this row entry directly into your Google Sheet browser tab. Your post-it queue below will refresh instantly!"
             )
 
 # --- 2. REVENUE ANALYTICS GRAPH ---
@@ -133,7 +178,7 @@ if not df.empty and "Status" in df.columns:
                 with cols[idx]:
                     with st.container(border=True):
                         st.markdown(
-                            f"### 📦 Order ID: {row.get('Order ID', 'N/A')}"
+                            f"### 📦 Order ID: #{row.get('Order ID', 'N/A')}"
                         )
                         st.markdown(
                             f"**Customer:** {row.get('Customer Name', 'N/A')}"
