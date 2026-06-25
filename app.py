@@ -12,6 +12,8 @@ try:
 except AttributeError:
     pass
 
+SHEET_ID = "1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI"
+
 def load_data():
     """Reads live private sales data directly from the universal CSV export stream."""
     try:
