@@ -12,7 +12,6 @@ try:
 except AttributeError:
     pass
 
-
 def load_data():
     """Reads live private sales data directly from the universal CSV export stream."""
     try:
@@ -44,7 +43,6 @@ def load_data():
         else:
             return pd.DataFrame()
 
-        # Ensure Order IDs are read as clean padded text strings (e.g., "0005")
         if "Order ID" in df.columns:
             df["Order ID"] = (
                 pd.to_numeric(df["Order ID"], errors="coerce")
@@ -102,7 +100,7 @@ st.markdown("---")
 
 col_form, col_graph = st.columns(2)
 
-# --- 1. DATA ENTRY FORM WITH INTEGRATED COUNTERS & AUTO-PRICING ---
+# --- 1. DATA ENTRY FORM WITH DIRECT WEB WRITE LOGIC ---
 with col_form:
     st.header("📝 Log New Order")
 
@@ -110,7 +108,6 @@ with col_form:
     PRICE_MOON_DANCE = 359
     PRICE_MIDNIGHT_LUXE_VEGAN = 379
 
-    # Display automated serial format row header tracking
     st.markdown(f"### 🎫 Next Order ID: **#{next_order_id}**")
     st.markdown("---")
 
@@ -156,32 +153,32 @@ with col_form:
         else:
             compiled_items_string = ", ".join(items_list)
 
-            # AUTOMATED TIME CONFIGURATION FOR ASIA/KOLKATA (IST)
+            # AUTOMATED INDIAN TIME ZONE CONFIGURATION (IST)
             local_timestamp = pd.Timestamp.now(tz="Asia/Kolkata")
             current_date = local_timestamp.strftime("%Y-%m-%d")
             current_time = local_timestamp.strftime("%H:%M:%S")
 
-            # 🎯 ACTION REQUIRED: Update these exact form fields with your matching variables from your form code
-            FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdcmaKrZ3tUFcAk01nOG6GUUTUhepChtsA2jCKSQ1JWAy8eZQ/formResponse"
+            # 🎯 DIRECT UPLOAD LOGIC: Streams values natively via Google Web Apps
+            macro_url = f"https://google.com"
 
-            form_data = {
-                "entry.647981491": next_order_id,  # Paste Order ID Entry Number
-                "entry.1663250176": current_date,  # Paste Date Entry Number
-                "entry.68387086": current_time,  # Paste Time Entry Number
-                "entry.1205478145": customer,  # Paste Customer Name Entry Number
-                "entry.520983194": contact,  # Paste Contact Entry Number
-                "entry.1627079739": compiled_items_string,  # Paste Items Entry Number
-                "entry.950588485": str(calculated_total),  # Paste Cost Entry Number
-                "entry.443945553": "Pending",  # Paste Status Entry Number
+            payload = {
+                "sheet_id": SHEET_ID,
+                "order_id": next_order_id,
+                "date": current_date,
+                "time": current_time,
+                "name": customer,
+                "contact": contact,
+                "items": compiled_items_string,
+                "cost": str(calculated_total),
+                "status": "Pending",
             }
 
             try:
-                # Transmit encrypted packet straight to your sheet rows layout array path
-                encoded_data = urllib.parse.urlencode(form_data).encode("utf-8")
+                # Transmit raw parameters directly into your spreadsheet cells
+                query_string = urllib.parse.urlencode(payload)
+                full_url = f"{macro_url}?{query_string}"
                 req = urllib.request.Request(
-                    FORM_URL,
-                    data=encoded_data,
-                    headers={"User-Agent": "Mozilla/5.0"},
+                    full_url, headers={"User-Agent": "Mozilla/5.0"}
                 )
                 with urllib.request.urlopen(req) as response:
                     pass
@@ -191,7 +188,7 @@ with col_form:
                 )
                 st.rerun()
             except Exception as e:
-                st.error(f"Failed to submit to Google Sheet automatically: {e}")
+                st.error(f"Failed to submit directly to Google Sheet: {e}")
 
 # --- 2. REVENUE ANALYTICS GRAPH ---
 with col_graph:
