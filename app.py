@@ -8,7 +8,7 @@ def load_data():
     """Reads live private sales data via a secure data link export engine."""
     try:
         # Cleanest, direct CSV data export path for restricted linking
-        url = "https://google.com/1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI/export?format=csv&gid=0"
+        url = "https://docs.google.com/spreadsheets/d/1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI/export?format=csv&gid=0"
 
 
         # Stream the rows instantly, ignoring old laptop cache memory
