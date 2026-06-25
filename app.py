@@ -65,21 +65,18 @@ def load_data():
 # Load fresh data from the cloud
 df = load_data()
 
-# 🎯 DYNAMIC COUNTER LOGIC: Check the sheet data to determine the next sequential ID number
+# DYNAMIC COUNTER LOGIC: Check the sheet data to determine the next sequential ID number
 if not df.empty and "Order ID" in df.columns:
     try:
-        # Pull the absolute maximum number found in your sheet column layout
         highest_id = pd.to_numeric(df["Order ID"], errors="coerce").max()
         if pd.isna(highest_id):
-            next_order_id = 1001  # Start at 1001 if your current entries are text letters
+            next_order_id = 1001
         else:
-            next_order_id = int(highest_id) + 1  # Add 1 to the highest ID found
+            next_order_id = int(highest_id) + 1
     except Exception:
-        next_order_id = (
-            len(df) + 1001
-        )  # Fallback: Count total rows if math engine errors out
+        next_order_id = len(df) + 1001
 else:
-    next_order_id = 1001  # Fresh start number if your database is entirely empty
+    next_order_id = 1001
 
 st.title("🏡 Moon & Melody Business Hub")
 st.subheader("Secure Cloud-Synced Dashboard")
@@ -87,47 +84,55 @@ st.markdown("---")
 
 col_form, col_graph = st.columns(2)
 
-# --- 1. REFINED DATA ENTRY FORM WITH AUTOMATIC ORDER COUNTER ---
+# --- 1. REFINED DATA ENTRY FORM WITH AUTO-PRICING ---
 with col_form:
     st.header("📝 Log New Order")
-    my_form = st.form(key="order_entry_form", clear_on_submit=True)
+    
+    # 🎯 PRICE CONFIGURATION: Change these numbers to match your actual business prices!
+    PRICE_MIDNIGHT_LUXE = 329
+    PRICE_MOON_DANCE = 359
+    PRICE_MIDNIGHT_LUXE_VEGAN = 379
 
-    # 🎯 DISPLAY AUTOMATED ORDER NUMBER: Shows you your new ID before clicking submit
-    my_form.markdown(f"### 🎫 Next Order Number: **#{next_order_id}**")
-    my_form.markdown("---")
-
-    customer = my_form.text_input("Customer Name")
-    contact = my_form.text_input("Customer Contact (Phone)")
+    # Use a normal form but manage the item inputs outside it so they calculate live
+    customer = st.text_input("Customer Name")
+    contact = st.text_input("Customer Contact (Phone)")
 
     st.markdown("##### 📦 Select Item Quantities")
-    candles_count = my_form.number_input(
-        "Scented Candles", min_value=0, max_value=50, value=0, step=1
+    
+    # We display the price next to the item name for easy reference
+    midnight_luxe_count = st.number_input(
+        f"Midnight Luxe (₹/{PRICE_MIDNIGHT_LUXE:.0f} each)", min_value=0, max_value=50, value=0, step=1
     )
-    soaps_count = my_form.number_input(
-        "Handmade Soaps", min_value=0, max_value=50, value=0, step=1
+    moon_dance_count = st.number_input(
+        f"Moon Dance (₹/{PRICE_MOON_DANCE:.0f} each)", min_value=0, max_value=50, value=0, step=1
     )
-    scarves_count = my_form.number_input(
-        "Knit Scarves", min_value=0, max_value=50, value=0, step=1
+    midnight_luxe_vegan_count = st.number_input(
+        f"Midnight Luxe Vegan (₹/{PRICE_MIDNIGHT_LUXE_VEGAN:.0f} each)", min_value=0, max_value=50, value=0, step=1
     )
 
-    cost = my_form.number_input("Total Cost (₹/$)", min_value=0.0, step=1.0)
-    submitted = my_form.form_submit_button("Submit Order")
+    # 🎯 AUTO-CALCULATION ENGINE: Multiplies quantities by their fixed prices instantly
+    calculated_total = (midnight_luxe_count * PRICE_MIDNIGHT_LUXE) + (moon_dance_count * PRICE_MOON_DANCE) + (midnight_luxe_vegan_count * PRICE_MIDNIGHT_LUXE_VEGAN)
+
+    # Display the calculated total directly on the screen in big text
+    st.markdown(f"### 💰 Calculated Total Cost: **₹/{calculated_total:.2f}**")
+    
+    # Simple form wrapper for just the final submit action to push values cleanly
+    with st.form(key="submit_action_form"):
+        submitted = st.form_submit_button("Submit")
 
     if submitted:
         items_list = []
-        if candles_count > 0:
-            items_list.append(f"{candles_count}x Scented Candles")
-        if soaps_count > 0:
-            items_list.append(f"{soaps_count}x Handmade Soaps")
-        if scarves_count > 0:
-            items_list.append(f"{scarves_count}x Knit Scarves")
+        if midnight_luxe_count > 0:
+            items_list.append(f"{midnight_luxe_count}x Midnight Luxe")
+        if moon_dance_count > 0:
+            items_list.append(f"{moon_dance_count}x Moon Dance")
+        if midnight_luxe_vegan_count > 0:
+            items_list.append(f"{midnight_luxe_vegan_count}x Midnight Luxe Vegan")
 
         if customer.strip() == "":
             st.error("Please fill out the Customer Name field.")
         elif not items_list:
-            st.error(
-                "Please use the + buttons to add at least 1 item to the order."
-            )
+            st.error("Please use the + buttons to add at least 1 item to the order.")
         else:
             compiled_items_string = ", ".join(items_list)
 
@@ -137,7 +142,7 @@ with col_form:
                 f"* **Order ID:** `{next_order_id}`\n"
                 f"* **Customer Name:** {customer}\n"
                 f"* **Items String:** `{compiled_items_string}`\n"
-                f"* **Cost:** {cost}"
+                f"* **Cost:** `{calculated_total}`"
             )
             st.info(
                 "Type this row entry directly into your Google Sheet browser tab. Your post-it queue below will refresh instantly!"
@@ -149,9 +154,7 @@ with col_graph:
     if not df.empty and "Status" in df.columns:
         completed_sales = df[df["Status"] == "completed"]
         if completed_sales.empty:
-            st.info(
-                "The graph will automatically plot data once orders are marked 'Completed'."
-            )
+            st.info("The graph will automatically plot data once orders are marked 'Completed'.")
         else:
             chart_data = (
                 completed_sales.groupby("Date")["Cost"].sum().reset_index()
@@ -177,15 +180,9 @@ if not df.empty and "Status" in df.columns:
             for idx, (_, row) in enumerate(chunk.iterrows()):
                 with cols[idx]:
                     with st.container(border=True):
-                        st.markdown(
-                            f"### 📦 Order ID: #{row.get('Order ID', 'N/A')}"
-                        )
-                        st.markdown(
-                            f"**Customer:** {row.get('Customer Name', 'N/A')}"
-                        )
-                        st.markdown(
-                            f"**Contact:** {row.get('Customer Contact', 'N/A')}"
-                        )
+                        st.markdown(f"### 📦 Order ID: #{row.get('Order ID', 'N/A')}")
+                        st.markdown(f"**Customer:** {row.get('Customer Name', 'N/A')}")
+                        st.markdown(f"**Contact:** {row.get('Customer Contact', 'N/A')}")
                         st.markdown(f"**Items:**\n{row.get('Items', 'N/A')}")
                         st.markdown(f"**Amount:** {row.get('Cost', 0.0)}")
 
