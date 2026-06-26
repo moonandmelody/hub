@@ -25,6 +25,7 @@ def apply_custom_css():
             html, body, [class*="css"] {{
                 font-family: 'Cinzel', serif;
                 color: {TEXT_COLOR};
+                background-color: {PRIMARY_COLOR}
             }}
 
             /* 2. SIDEBAR STYLING */
@@ -54,7 +55,7 @@ def apply_custom_css():
                 background-color: {BACKGROUND_COLOR};
                 padding: 15px;
                 border-radius: 10px;
-                box-shadow: 0px 4px 10px rgba(0,0,0,0.05);
+                box-shadow: 0px 4px 10px rgba(0,0,0,1);
                 text-align: center;
                 border: 1px solid {BACKGROUND_COLOR};
             }}
