@@ -181,8 +181,7 @@ def show_confirmation_dialog(cart_items, total_cost):
 # --- 4. SIDEBAR LAYOUT ---
 with st.sidebar:
     # 🎨 BRAND LOGO FROM STYLES.PY
-    st.image(styles.LOGO_URL, width=60)
-    st.title("Log New Order")
+    #st.image(styles.LOGO_URL, width=60)
     
     if "error_msg" in st.session_state and st.session_state.error_msg:
         st.error(st.session_state.error_msg)
@@ -190,7 +189,6 @@ with st.sidebar:
         st.toast(st.session_state.success_msg, icon="🎉")
         st.session_state.success_msg = ""
 
-    st.markdown(f"Next ID: **#{next_order_id}**")
     st.divider()
 
     if "form_customer" not in st.session_state: st.session_state["form_customer"] = ""
