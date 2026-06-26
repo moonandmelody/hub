@@ -63,7 +63,7 @@ def apply_custom_css():
                 color: white;
                 font-size: 14px;
             }}
-            [data-testid="stMetricLabel"] div{{
+            [data-testid="stMarkdownContainer"]{{
                 font-family: 'Cinzel', serif;
                 font-size: 16px;
             }}
