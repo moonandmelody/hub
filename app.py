@@ -21,6 +21,8 @@ except AttributeError:
     pass
 
 
+# --- 1. CORE FUNCTIONS ---
+
 def load_data():
     """Reads live private sales data directly from the universal CSV export stream."""
     try:
@@ -52,6 +54,7 @@ def load_data():
         else:
             return pd.DataFrame()
 
+        # Format Columns
         if "Order ID" in df.columns:
             df["Order ID"] = pd.to_numeric(df["Order ID"], errors="coerce").fillna(0).astype(int).astype(str).str.zfill(4)
         else:
@@ -73,93 +76,44 @@ def load_data():
         return pd.DataFrame()
 
 
-# Load data
-df = load_data()
-
-# Calculate Next Order ID
-if not df.empty and "Order ID" in df.columns:
-    try:
-        highest_id = pd.to_numeric(df["Order ID"], errors="coerce").max()
-        if pd.isna(highest_id):
-            next_num = 0
-        else:
-            next_num = int(highest_id) + 1
-    except Exception:
-        next_num = len(df)
-else:
-    next_num = 0
-next_order_id = str(next_num).zfill(4)
-
-
-# --- 🎨 SIDEBAR: LIVE CALCULATOR FORM ---
-with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/3222/3222642.png", width=50)
-    st.title("Log New Order")
-    st.markdown(f"Next ID: **#{next_order_id}**")
+# --- 2. CONFIRMATION POP-UP LOGIC ---
+@st.dialog("⚠️ Confirm Order Details")
+def show_confirmation_dialog(order_id, customer, contact, cart_items, total_cost):
+    st.write(f"**Order ID:** #{order_id}")
+    st.write(f"**Customer:** {customer}")
+    st.write(f"**Contact:** {contact}")
     st.divider()
-
-    # 1. Initialize Session State for input clearing
-    # This ensures fields are blank when the app loads, but we can wipe them later
-    if "form_customer" not in st.session_state: st.session_state["form_customer"] = ""
-    if "form_contact" not in st.session_state: st.session_state["form_contact"] = ""
+    st.write("**Items in Basket:**")
+    for item, qty in cart_items.items():
+        st.write(f"- {qty}x {item}")
     
-    # 2. User Details
-    customer = st.text_input("👤 Customer Name", key="form_customer")
-    contact = st.text_input("📞 Contact (Phone)", key="form_contact")
-
-    st.markdown("### 🛍️ Basket")
+    st.divider()
+    st.markdown(f"### Total: ₹{total_cost:,.2f}")
     
-    # 3. Dynamic Product Loop with LIVE STATE
-    cart_items = {}
-    running_total = 0.0
+    st.warning("Are you sure you want to save this to Google Sheets?")
     
-    for item_name, price in products.CATALOG.items():
-        # Create a unique key for every item so Streamlit remembers the count
-        widget_key = f"qty_{item_name}"
-        
-        # Ensure key exists in memory
-        if widget_key not in st.session_state:
-            st.session_state[widget_key] = 0
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("❌ Cancel", use_container_width=True):
+            st.rerun() # Closes the modal without doing anything
             
-        # Renders the button. Because we removed 'st.form', this updates INSTANTLY on click!
-        qty = st.number_input(
-            f"{item_name} (₹{price:.0f})", 
-            min_value=0, 
-            max_value=50, 
-            step=1, 
-            key=widget_key
-        )
-        
-        if qty > 0:
-            cart_items[item_name] = qty
-            running_total += (qty * price)
-
-    st.divider()
-    
-    # 4. Live Total Display
-    st.markdown(f"### Total: ₹{running_total:,.2f}")
-    
-    # 5. Submit Button (Standard button, not form_submit)
-    if st.button("🚀 Submit Order", use_container_width=True):
-        if customer.strip() == "":
-            st.error("Missing Name!")
-        elif not cart_items:
-            st.error("Basket empty! Add at least one item.")
-        else:
+    with col2:
+        if st.button("✅ Yes, Write Data", type="primary", use_container_width=True):
+            # --- EXECUTE SAVE LOGIC ---
             items_str_list = [f"{qty}x {name}" for name, qty in cart_items.items()]
             compiled_items = ", ".join(items_str_list)
-            
             local_ts = pd.Timestamp.now(tz="Asia/Kolkata")
             
             payload = {
                 "sheet_id": config.SHEET_ID,
-                "order_id": next_order_id,
+                "order_id": order_id,
                 "date": local_ts.strftime("%Y-%m-%d"),
                 "time": local_ts.strftime("%H:%M:%S"),
                 "name": customer,
                 "contact": contact,
                 "items": compiled_items,
-                "cost": str(running_total),
+                "cost": str(total_cost),
                 "status": "Pending",
             }
             
@@ -169,21 +123,84 @@ with st.sidebar:
                 with urllib.request.urlopen(req) as response:
                     pass
                 
-                # 🎯 RESET FORM LOGIC
-                # Manually wipe the session state values to clear the form visually
-                st.session_state["form_customer"] = ""
-                st.session_state["form_contact"] = ""
+                # CLEAR FORM
+                st.session_state.form_customer = ""
+                st.session_state.form_contact = ""
                 for p in products.CATALOG:
                     st.session_state[f"qty_{p}"] = 0
                 
-                st.toast(f"✅ Order #{next_order_id} Created!", icon="🎉")
+                st.session_state.success_msg = f"Order #{order_id} Saved Successfully!"
                 st.rerun()
                 
             except Exception as e:
                 st.error(f"Sync Failed: {e}")
 
 
-# --- 🎨 MAIN DASHBOARD ---
+# --- 3. MAIN APP LOGIC ---
+
+df = load_data()
+
+# Calc Next ID
+if not df.empty and "Order ID" in df.columns:
+    try:
+        highest_id = pd.to_numeric(df["Order ID"], errors="coerce").max()
+        if pd.isna(highest_id): next_num = 0
+        else: next_num = int(highest_id) + 1
+    except: next_num = len(df)
+else:
+    next_num = 0
+next_order_id = str(next_num).zfill(4)
+
+
+# --- SIDEBAR UI ---
+with st.sidebar:
+    st.image("https://cdn-icons-png.flaticon.com/512/3222/3222642.png", width=50)
+    st.title("Log New Order")
+    
+    # Success Message Handler
+    if "success_msg" in st.session_state and st.session_state.success_msg:
+        st.success(st.session_state.success_msg)
+        st.session_state.success_msg = "" # Clear after showing
+
+    st.markdown(f"Next ID: **#{next_order_id}**")
+    st.divider()
+
+    # Inputs
+    if "form_customer" not in st.session_state: st.session_state["form_customer"] = ""
+    if "form_contact" not in st.session_state: st.session_state["form_contact"] = ""
+
+    customer = st.text_input("👤 Customer Name", key="form_customer")
+    contact = st.text_input("📞 Contact (Phone)", key="form_contact")
+
+    st.markdown("### 🛍️ Basket")
+    
+    cart_items = {}
+    running_total = 0.0
+    
+    for item_name, price in products.CATALOG.items():
+        widget_key = f"qty_{item_name}"
+        if widget_key not in st.session_state: st.session_state[widget_key] = 0
+        
+        qty = st.number_input(f"{item_name} (₹{price:.0f})", min_value=0, max_value=50, step=1, key=widget_key)
+        if qty > 0:
+            cart_items[item_name] = qty
+            running_total += (qty * price)
+
+    st.divider()
+    st.markdown(f"**Total: ₹{running_total:,.2f}**")
+    
+    # REVIEW BUTTON (Triggers the Dialog)
+    if st.button("🚀 Review & Submit", use_container_width=True):
+        if customer.strip() == "":
+            st.error("⚠️ Customer Name is required!")
+        elif not cart_items:
+            st.error("⚠️ Basket is empty!")
+        else:
+            # Open the confirmation pop-up
+            show_confirmation_dialog(next_order_id, customer, contact, cart_items, running_total)
+
+
+# --- MAIN DASHBOARD ---
 st.title("🌙 Moon & Melody Hub")
 
 if not df.empty:
@@ -261,3 +278,4 @@ with tab_charts:
             )
         else:
             st.info("Complete some orders to see your analytics!")
+
