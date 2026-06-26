@@ -86,7 +86,7 @@ if not df.empty and "Order ID" in df.columns:
     try:
         highest_id = pd.to_numeric(df["Order ID"], errors="coerce").max()
         if pd.isna(highest_id):
-            next_num = 0
+            next_num = 0001
         else:
             next_num = int(highest_id) + 1
     except Exception:
