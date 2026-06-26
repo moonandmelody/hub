@@ -190,7 +190,7 @@ with st.sidebar:
                     widget_key = f"qty_{item_name}"
                     if widget_key not in st.session_state: st.session_state[widget_key] = 0
                     
-                    # Condensed Label: "Lavender (250)"
+                    # Condensed Label: "Midnight Luxe(250)"
                     qty = st.number_input(
                         f"{item_name}\n(₹{price:.0f})", 
                         min_value=0, 
@@ -242,7 +242,6 @@ with tab_queue:
         
         if pending_orders.empty:
             st.success("✨ No pending orders! You are all caught up.")
-            st.balloons()
         else:
             cols = st.columns(3)
             for idx, (_, row) in enumerate(pending_orders.iterrows()):
