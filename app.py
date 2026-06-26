@@ -233,6 +233,29 @@ if not df.empty and "Status" in df.columns:
                         st.markdown(f"**Amount:** {row.get('Cost', 0.0)}")
 
                         btn_key = f"complete_{row.get('Order ID', idx)}_{idx}"
-                        st.button("✅ Complete Order", key=btn_key)
+                        if st.button("✅ Complete Order", key=btn_key):
+                            update_payload = {
+                                "action": "update_status",
+                                "sheet_id": SHEET_ID,
+                                "order_id": row.get("Order ID"),
+                            }
+                            try:
+                                update_query = urllib.parse.urlencode(
+                                    update_payload
+                                )
+                                update_url = f"{macro_url}?{update_query}"
+                                req = urllib.request.Request(
+                                    update_url,
+                                    headers={"User-Agent": "Mozilla/5.0"},
+                                )
+                                with urllib.request.urlopen(req) as response:
+                                    pass
+
+                                st.success(
+                                    f"Order #{row.get('Order ID')} updated to Completed!"
+                                )
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"Failed to update sheet: {e}")
 else:
     st.warning("No active entries found in the spreadsheet yet.")
