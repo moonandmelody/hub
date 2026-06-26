@@ -35,6 +35,10 @@ def apply_custom_css():
                 width:450px !important;
             }}
 
+            [id=":r9:"] {{
+              height:40px;  
+            }}
+
             /* 3. BUTTON STYLING */
             .stButton > button {{
                 background-color: {BACKGROUND_COLOR};
