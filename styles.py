@@ -97,7 +97,8 @@ def apply_custom_css():
             }}
             .stTabs [aria-selected="true"] {{
                 background-color: {PRIMARY_COLOR} !important;
-                color: white !important;
+                color: {BACKGROUND_COLOR} !important;
+                width: 50%;
             }}
 
         </style>
