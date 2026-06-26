@@ -212,7 +212,7 @@ with col_graph:
 
 st.markdown("---")
 
-# --- 3. LIVE POST-IT NOTE QUEUE ---
+# --- 3. LIVE INTERACTIVE POST-IT NOTE QUEUE ---
 st.header("📌 Orders to Process (Pending Queue)")
 
 if not df.empty and "Status" in df.columns:
@@ -233,28 +233,25 @@ if not df.empty and "Status" in df.columns:
                         st.markdown(f"**Items:**\n{row.get('Items', 'N/A')}")
                         st.markdown(f"**Amount:** {row.get('Cost', 0.0)}")
 
+                        # 🎯 INTERACTIVE COMPLETION BUTTON
                         btn_key = f"complete_{row.get('Order ID', idx)}_{idx}"
                         if st.button("✅ Complete Order", key=btn_key):
                             update_payload = {
                                 "action": "update_status",
                                 "sheet_id": SHEET_ID,
-                                "order_id": row.get("Order ID"),
+                                "order_id": row.get("Order ID")
                             }
                             try:
-                                update_query = urllib.parse.urlencode(
-                                    update_payload
-                                )
+                                update_query = urllib.parse.urlencode(update_payload)
                                 update_url = f"{macro_url}?{update_query}"
                                 req = urllib.request.Request(
-                                    update_url,
-                                    headers={"User-Agent": "Mozilla/5.0"},
+                                    update_url, 
+                                    headers={"User-Agent": "Mozilla/5.0"}
                                 )
                                 with urllib.request.urlopen(req) as response:
                                     pass
 
-                                st.success(
-                                    f"Order #{row.get('Order ID')} updated to Completed!"
-                                )
+                                st.success(f"Order #{row.get('Order ID')} updated to Completed!")
                                 st.rerun()
                             except Exception as e:
                                 st.error(f"Failed to update sheet: {e}")
