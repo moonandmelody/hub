@@ -265,7 +265,7 @@ with tab_queue:
                         raw_items = str(row.get('Items', ''))
                         # If it has newlines, format as bullets. If commas, replace them.
                         if "\n" in raw_items:
-                            items_text = raw_items.replace("\n", "\n- ")
+                            items_text = raw_items.replace(",\n", "\n- ")
                         else:
                             items_text = raw_items.replace(",", "\n- ")
                             
