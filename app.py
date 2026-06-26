@@ -262,7 +262,13 @@ with tab_queue:
                         st.caption(f"📞 {row.get('Customer Contact', '-')}")
                         st.markdown("---")
                         
-                        items_text = row.get('Items', '').replace(",", "\n- ")
+                        raw_items = str(row.get('Items', ''))
+                        # If it has newlines, format as bullets. If commas, replace them.
+                        if "\n" in raw_items:
+                            items_text = raw_items.replace("\n", "\n- ")
+                        else:
+                            items_text = raw_items.replace(",", "\n- ")
+                            
                         st.markdown(f"**Items:**\n- {items_text}")
                         st.markdown(f"### ₹{row.get('Cost', 0.0):,.0f}")
                         
