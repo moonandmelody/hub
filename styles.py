@@ -51,20 +51,20 @@ def apply_custom_css():
 
             /* 4. METRIC CARDS (Top Numbers) */
             [data-testid="stMetric"] {{
-                background-color: white;
+                background-color: {BACKGROUND_COLOR};
                 padding: 15px;
                 border-radius: 10px;
                 box-shadow: 0px 4px 10px rgba(0,0,0,0.05);
                 text-align: center;
-                border: 1px solid {PRIMARY_COLOR};
+                border: 1px solid {BACKGROUND_COLOR};
             }}
             [data-testid="stMetricLabel"] {{
-                color: #888;
+                color: white;
                 font-size: 14px;
             }}
             [data-testid="stMetricValue"] {{
-                color: {PRIMARY_COLOR};
-                font-size: 28px;
+                color: {SECONDARY_COLOR};
+                font-size: 30px;
                 font-weight: 700;
             }}
 
