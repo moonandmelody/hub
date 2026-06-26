@@ -144,11 +144,11 @@ df = load_data()
 if not df.empty and "Order ID" in df.columns:
     try:
         highest_id = pd.to_numeric(df["Order ID"], errors="coerce").max()
-        if pd.isna(highest_id): next_num = 0
+        if pd.isna(highest_id): next_num = 1
         else: next_num = int(highest_id) + 1
     except: next_num = len(df)
 else:
-    next_num = 0
+    next_num = 1
 next_order_id = str(next_num).zfill(4)
 
 
