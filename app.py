@@ -92,7 +92,7 @@ if not df.empty and "Order ID" in df.columns:
     except Exception:
         next_num = len(df)
 else:
-    next_num = 0
+    next_num = 1
 
 next_order_id = str(next_num).zfill(4)
 
