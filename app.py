@@ -41,6 +41,8 @@ def load_data():
                 mapping[col] = "Customer Contact"
             elif "items" in cleaned:
                 mapping[col] = "Items"
+            elif "specialnotes/instructions" in cleaned:
+                mapping[col] = "Special Notes/Instructions"
             elif "cost" in cleaned or "revenue" in cleaned:
                 mapping[col] = "Cost"
             elif "status" in cleaned:
@@ -77,7 +79,7 @@ def load_data():
 
 # --- 2. CONFIRMATION POP-UP ---
 @st.dialog("⚠️ Confirm Order Details")
-def show_confirmation_dialog(order_id, customer, contact, cart_items, total_cost):
+def show_confirmation_dialog(order_id, customer, contact, cart_items, notes, total_cost):
     st.write(f"**Order ID:** #{order_id}")
     st.write(f"**Customer:** {customer}")
     st.write(f"**Contact:** {contact}")
@@ -85,7 +87,7 @@ def show_confirmation_dialog(order_id, customer, contact, cart_items, total_cost
     st.write("**Items in Basket:**")
     for item, qty in cart_items.items():
         st.write(f"- {qty}x {item}")
-    
+    st.write(f"**Special Notes/Instructions:** {notes}")
     st.divider()
     st.markdown(f"### Total: ₹{total_cost:,.2f}")
     
@@ -107,6 +109,7 @@ def show_confirmation_dialog(order_id, customer, contact, cart_items, total_cost
                 "name": customer,
                 "contact": contact,
                 "items": compiled_items,
+                "notes": notes,
                 "cost": str(total_cost),
                 "status": "Pending",
             }
@@ -204,7 +207,8 @@ with st.sidebar:
                         running_total += (qty * price)
         
         st.divider() # Line between categories
-
+        
+    notes = st.text_input("Special Notes/Instructions", key="form_contact")
     st.markdown(f"### Total: ₹{running_total:,.2f}")
     
     if st.button("🚀 Review & Submit", use_container_width=True):
@@ -213,7 +217,7 @@ with st.sidebar:
         elif not cart_items:
             st.error("⚠️ Basket is empty!")
         else:
-            show_confirmation_dialog(next_order_id, customer, contact, cart_items, running_total)
+            show_confirmation_dialog(next_order_id, customer, contact, cart_items, notes, running_total)
 
 
 # --- MAIN DASHBOARD ---
