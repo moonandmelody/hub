@@ -287,7 +287,7 @@ with tab_queue:
                         st.markdown(f"### ₹{row.get('Cost', 0.0):,.0f}")
                         
                         btn_key = f"done_{row.get('Order ID')}_{idx}"
-                        if st.button("Completed", key=btn_key, use_container_width=True):
+                        if st.button("Done", key=btn_key, use_container_width=True):
                             upd_load = {
                                 "action": "update_status",
                                 "sheet_id": config.SHEET_ID,
