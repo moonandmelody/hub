@@ -2,7 +2,7 @@ import streamlit as st
 
 # --- 🎨 BRAND ASSETS ---
 # Replace this link with your actual logo if you have one hosted online
-#LOGO_URL = "https://cdn-icons-png.flaticon.com/512/3222/3222642.png"
+LOGO_URL = "https://cdn-icons-png.flaticon.com/512/3222/3222642.png"
 
 # --- 🎨 COLOR PALETTE ---
 # You can change these hex codes to match your brand!
