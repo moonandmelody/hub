@@ -123,6 +123,7 @@ def show_confirmation_dialog(order_id, customer, contact, cart_items, notes, tot
                 # 🎯 RESET FORM LOGIC (Updated for Categories)
                 st.session_state.form_customer = ""
                 st.session_state.form_contact = ""
+                st.session_state.form_notes = ""
                 
                 # Loop through categories to clear every item
                 for category, items in products.CATALOG.items():
@@ -166,6 +167,7 @@ with st.sidebar:
     # Inputs
     if "form_customer" not in st.session_state: st.session_state["form_customer"] = ""
     if "form_contact" not in st.session_state: st.session_state["form_contact"] = ""
+    if "form_notes" not in st.session_state: st.session_state["form_notes"] = ""
 
     customer = st.text_input("👤 Customer Name", key="form_customer")
     contact = st.text_input("📞 Contact (Phone)", key="form_contact")
@@ -208,7 +210,7 @@ with st.sidebar:
         
         st.divider() # Line between categories
         
-    notes = st.text_input("Special Notes/Instructions", key="form_contact")
+    notes = st.text_input("Special Notes/Instructions", key="form_notes")
     st.markdown(f"### Total: ₹{running_total:,.2f}")
     
     if st.button("🚀 Review & Submit", use_container_width=True):
