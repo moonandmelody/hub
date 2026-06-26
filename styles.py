@@ -63,6 +63,10 @@ def apply_custom_css():
                 color: white;
                 font-size: 14px;
             }}
+            [data-testid="stMetricLabel"] div{{
+                font-family: 'Cinzel', serif;
+                font-size: 16px;
+            }}
             [data-testid="stMetricValue"] {{
                 color: {SECONDARY_COLOR};
                 font-size: 40px;
