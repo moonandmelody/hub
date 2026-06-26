@@ -5,4 +5,4 @@
 SHEET_ID = "1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI"
 
 # 🎯 DIRECT UPLOAD LOGIC: Streams values natively via Google Web Apps
-macro_url = f"https://script.google.com/macros/s/AKfycbzpc160FY_e73uGE_2FRGiPmtB-WeFlMfZBGePOXOmS3wGpWH8_O1Kx5S3u1x-e4nuE/exec"
+MACRO_URL = f"https://script.google.com/macros/s/AKfycbzpc160FY_e73uGE_2FRGiPmtB-WeFlMfZBGePOXOmS3wGpWH8_O1Kx5S3u1x-e4nuE/exec"
