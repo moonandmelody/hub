@@ -65,7 +65,7 @@ def apply_custom_css():
             }}
             [data-testid="stMetricValue"] {{
                 color: {SECONDARY_COLOR};
-                font-size: 30px;
+                font-size: 40px;
                 font-weight: 700;
             }}
 
