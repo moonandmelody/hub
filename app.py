@@ -3,8 +3,8 @@ import urllib.parse
 import urllib.request
 import pandas as pd
 import streamlit as st
-import products  # Imports your product list
-import config    # <--- Imports your new URL configuration!
+import products
+import config
 
 # 🎨 PAGE CONFIGURATION
 st.set_page_config(
@@ -24,9 +24,7 @@ except AttributeError:
 def load_data():
     """Reads live private sales data directly from the universal CSV export stream."""
     try:
-        # 🎯 DYNAMIC LINK: Uses the ID from your config.py file automatically
         url = f"https://docs.google.com/spreadsheets/d/{config.SHEET_ID}/export?format=csv&gid=0"
-        
         df = pd.read_csv(url)
         df.columns = df.columns.str.strip()
 
@@ -54,19 +52,16 @@ def load_data():
         else:
             return pd.DataFrame()
 
-        # Format Order ID
         if "Order ID" in df.columns:
             df["Order ID"] = pd.to_numeric(df["Order ID"], errors="coerce").fillna(0).astype(int).astype(str).str.zfill(4)
         else:
             df["Order ID"] = df.index.astype(str).str.zfill(4)
 
-        # Format Cost
         if "Cost" in df.columns:
             df["Cost"] = pd.to_numeric(df["Cost"], errors="coerce").fillna(0.0)
         else:
             df["Cost"] = 0.0
 
-        # Format Status
         if "Status" in df.columns:
             df["Status"] = df["Status"].fillna("pending").astype(str).str.strip().str.lower()
         else:
@@ -96,35 +91,56 @@ else:
 next_order_id = str(next_num).zfill(4)
 
 
-# --- 🎨 SIDEBAR: DYNAMIC DATA ENTRY ---
+# --- 🎨 SIDEBAR: LIVE CALCULATOR FORM ---
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/3222/3222642.png", width=50)
     st.title("Log New Order")
     st.markdown(f"Next ID: **#{next_order_id}**")
     st.divider()
 
-    with st.form(key="order_entry_form", clear_on_submit=True):
-        customer = st.text_input("👤 Customer Name")
-        contact = st.text_input("📞 Contact (Phone)")
+    # 1. Initialize Session State for input clearing
+    # This ensures fields are blank when the app loads, but we can wipe them later
+    if "form_customer" not in st.session_state: st.session_state["form_customer"] = ""
+    if "form_contact" not in st.session_state: st.session_state["form_contact"] = ""
+    
+    # 2. User Details
+    customer = st.text_input("👤 Customer Name", key="form_customer")
+    contact = st.text_input("📞 Contact (Phone)", key="form_contact")
 
-        st.markdown("### 🛍️ Basket")
+    st.markdown("### 🛍️ Basket")
+    
+    # 3. Dynamic Product Loop with LIVE STATE
+    cart_items = {}
+    running_total = 0.0
+    
+    for item_name, price in products.CATALOG.items():
+        # Create a unique key for every item so Streamlit remembers the count
+        widget_key = f"qty_{item_name}"
         
-        # 🎯 DYNAMIC LOOP: Reads from products.py
-        cart_items = {}
-        running_total = 0.0
+        # Ensure key exists in memory
+        if widget_key not in st.session_state:
+            st.session_state[widget_key] = 0
+            
+        # Renders the button. Because we removed 'st.form', this updates INSTANTLY on click!
+        qty = st.number_input(
+            f"{item_name} (₹{price:.0f})", 
+            min_value=0, 
+            max_value=50, 
+            step=1, 
+            key=widget_key
+        )
         
-        for item_name, price in products.CATALOG.items():
-            qty = st.number_input(f"{item_name} (₹{price:.0f})", min_value=0, max_value=50, value=0, step=1)
-            if qty > 0:
-                cart_items[item_name] = qty
-                running_total += (qty * price)
+        if qty > 0:
+            cart_items[item_name] = qty
+            running_total += (qty * price)
 
-        st.divider()
-        st.markdown(f"**Total: ₹{running_total:,.2f}**")
-        
-        submitted = st.form_submit_button("🚀 Submit Order", use_container_width=True)
-
-    if submitted:
+    st.divider()
+    
+    # 4. Live Total Display
+    st.markdown(f"### Total: ₹{running_total:,.2f}")
+    
+    # 5. Submit Button (Standard button, not form_submit)
+    if st.button("🚀 Submit Order", use_container_width=True):
         if customer.strip() == "":
             st.error("Missing Name!")
         elif not cart_items:
@@ -136,7 +152,7 @@ with st.sidebar:
             local_ts = pd.Timestamp.now(tz="Asia/Kolkata")
             
             payload = {
-                "sheet_id": config.SHEET_ID, # <--- Reads from config.py
+                "sheet_id": config.SHEET_ID,
                 "order_id": next_order_id,
                 "date": local_ts.strftime("%Y-%m-%d"),
                 "time": local_ts.strftime("%H:%M:%S"),
@@ -148,13 +164,21 @@ with st.sidebar:
             }
             
             try:
-                # 🎯 DYNAMIC UPLOAD: Uses MACRO_URL from config.py
                 qs = urllib.parse.urlencode(payload)
                 req = urllib.request.Request(f"{config.MACRO_URL}?{qs}", headers={"User-Agent": "Mozilla/5.0"})
                 with urllib.request.urlopen(req) as response:
                     pass
+                
+                # 🎯 RESET FORM LOGIC
+                # Manually wipe the session state values to clear the form visually
+                st.session_state["form_customer"] = ""
+                st.session_state["form_contact"] = ""
+                for p in products.CATALOG:
+                    st.session_state[f"qty_{p}"] = 0
+                
                 st.toast(f"✅ Order #{next_order_id} Created!", icon="🎉")
                 st.rerun()
+                
             except Exception as e:
                 st.error(f"Sync Failed: {e}")
 
@@ -162,7 +186,6 @@ with st.sidebar:
 # --- 🎨 MAIN DASHBOARD ---
 st.title("🌙 Moon & Melody Hub")
 
-# Metrics Row
 if not df.empty:
     pending_count = len(df[df["Status"] == "pending"])
     completed_df = df[df["Status"] == "completed"]
@@ -178,7 +201,6 @@ m3.metric("Completed Orders", f"{len(df[df['Status']=='completed'])}")
 
 st.divider()
 
-# Tabs
 tab_queue, tab_charts = st.tabs(["📌 Work Queue", "📊 Analytics & History"])
 
 with tab_queue:
@@ -210,7 +232,7 @@ with tab_queue:
                         if st.button("✅ Mark Done", key=btn_key, use_container_width=True):
                             upd_load = {
                                 "action": "update_status",
-                                "sheet_id": config.SHEET_ID, # <--- Reads from config.py
+                                "sheet_id": config.SHEET_ID,
                                 "order_id": row.get("Order ID")
                             }
                             try:
