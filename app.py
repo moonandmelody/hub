@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Bypass local machine security validation blocks
+# Bypass security blocks
 try:
     ssl._create_default_https_context = ssl._create_unverified_context
 except AttributeError:
@@ -54,7 +54,6 @@ def load_data():
         else:
             return pd.DataFrame()
 
-        # Format Columns
         if "Order ID" in df.columns:
             df["Order ID"] = pd.to_numeric(df["Order ID"], errors="coerce").fillna(0).astype(int).astype(str).str.zfill(4)
         else:
@@ -76,7 +75,7 @@ def load_data():
         return pd.DataFrame()
 
 
-# --- 2. CONFIRMATION POP-UP LOGIC ---
+# --- 2. CONFIRMATION POP-UP ---
 @st.dialog("⚠️ Confirm Order Details")
 def show_confirmation_dialog(order_id, customer, contact, cart_items, total_cost):
     st.write(f"**Order ID:** #{order_id}")
@@ -90,17 +89,12 @@ def show_confirmation_dialog(order_id, customer, contact, cart_items, total_cost
     st.divider()
     st.markdown(f"### Total: ₹{total_cost:,.2f}")
     
-    st.warning("Are you sure you want to save this to Google Sheets?")
-    
     col1, col2 = st.columns(2)
-    
     with col1:
         if st.button("❌ Cancel", use_container_width=True):
-            st.rerun() # Closes the modal without doing anything
-            
+            st.rerun()
     with col2:
-        if st.button("✅ Yes, Write Data", type="primary", use_container_width=True):
-            # --- EXECUTE SAVE LOGIC ---
+        if st.button("✅ Confirm & Save", type="primary", use_container_width=True):
             items_str_list = [f"{qty}x {name}" for name, qty in cart_items.items()]
             compiled_items = ", ".join(items_str_list)
             local_ts = pd.Timestamp.now(tz="Asia/Kolkata")
@@ -123,11 +117,14 @@ def show_confirmation_dialog(order_id, customer, contact, cart_items, total_cost
                 with urllib.request.urlopen(req) as response:
                     pass
                 
-                # CLEAR FORM
+                # 🎯 RESET FORM LOGIC (Updated for Categories)
                 st.session_state.form_customer = ""
                 st.session_state.form_contact = ""
-                for p in products.CATALOG:
-                    st.session_state[f"qty_{p}"] = 0
+                
+                # Loop through categories to clear every item
+                for category, items in products.CATALOG.items():
+                    for item_name in items:
+                        st.session_state[f"qty_{item_name}"] = 0
                 
                 st.session_state.success_msg = f"Order #{order_id} Saved Successfully!"
                 st.rerun()
@@ -144,23 +141,21 @@ df = load_data()
 if not df.empty and "Order ID" in df.columns:
     try:
         highest_id = pd.to_numeric(df["Order ID"], errors="coerce").max()
-        if pd.isna(highest_id): next_num = 1
+        if pd.isna(highest_id): next_num = 0
         else: next_num = int(highest_id) + 1
     except: next_num = len(df)
 else:
-    next_num = 1
+    next_num = 0
 next_order_id = str(next_num).zfill(4)
 
 
 # --- SIDEBAR UI ---
 with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/3222/3222642.png", width=50)
     st.title("Log New Order")
     
-    # Success Message Handler
     if "success_msg" in st.session_state and st.session_state.success_msg:
         st.success(st.session_state.success_msg)
-        st.session_state.success_msg = "" # Clear after showing
+        st.session_state.success_msg = "" 
 
     st.markdown(f"Next ID: **#{next_order_id}**")
     st.divider()
@@ -172,31 +167,52 @@ with st.sidebar:
     customer = st.text_input("👤 Customer Name", key="form_customer")
     contact = st.text_input("📞 Contact (Phone)", key="form_contact")
 
-    st.markdown("### 🛍️ Basket")
-    
+    # 🎯 CATEGORIZED PRODUCT GRID
     cart_items = {}
     running_total = 0.0
     
-    for item_name, price in products.CATALOG.items():
-        widget_key = f"qty_{item_name}"
-        if widget_key not in st.session_state: st.session_state[widget_key] = 0
+    # Iterate through Categories
+    for category, items_dict in products.CATALOG.items():
+        st.markdown(f"##### {category}") # Category Header
         
-        qty = st.number_input(f"{item_name} (₹{price:.0f})", min_value=0, max_value=50, step=1, key=widget_key)
-        if qty > 0:
-            cart_items[item_name] = qty
-            running_total += (qty * price)
+        # Convert dict to list for easier chunking
+        item_list = list(items_dict.items())
+        
+        # Create rows of 2 items each
+        for i in range(0, len(item_list), 2):
+            cols = st.columns(2) # Create 2 columns for this row
+            
+            # Get the next 2 items (or 1 if it's the last one)
+            batch = item_list[i:i+2]
+            
+            for j, (item_name, price) in enumerate(batch):
+                with cols[j]:
+                    widget_key = f"qty_{item_name}"
+                    if widget_key not in st.session_state: st.session_state[widget_key] = 0
+                    
+                    # Condensed Label: "Lavender (250)"
+                    qty = st.number_input(
+                        f"{item_name}\n(₹{price:.0f})", 
+                        min_value=0, 
+                        max_value=50, 
+                        step=1, 
+                        key=widget_key
+                    )
+                    
+                    if qty > 0:
+                        cart_items[item_name] = qty
+                        running_total += (qty * price)
+        
+        st.divider() # Line between categories
 
-    st.divider()
-    st.markdown(f"**Total: ₹{running_total:,.2f}**")
+    st.markdown(f"### Total: ₹{running_total:,.2f}")
     
-    # REVIEW BUTTON (Triggers the Dialog)
     if st.button("🚀 Review & Submit", use_container_width=True):
         if customer.strip() == "":
             st.error("⚠️ Customer Name is required!")
         elif not cart_items:
             st.error("⚠️ Basket is empty!")
         else:
-            # Open the confirmation pop-up
             show_confirmation_dialog(next_order_id, customer, contact, cart_items, running_total)
 
 
@@ -278,4 +294,3 @@ with tab_charts:
             )
         else:
             st.info("Complete some orders to see your analytics!")
-
