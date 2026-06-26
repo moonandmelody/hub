@@ -14,6 +14,10 @@ except AttributeError:
 
 SHEET_ID = "1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI"
 
+# 🎯 DIRECT UPLOAD LOGIC: Streams values natively via Google Web Apps
+macro_url = f"https://script.google.com/macros/s/AKfycbzpc160FY_e73uGE_2FRGiPmtB-WeFlMfZBGePOXOmS3wGpWH8_O1Kx5S3u1x-e4nuE/exec"
+
+
 def load_data():
     """Reads live private sales data directly from the universal CSV export stream."""
     try:
@@ -159,10 +163,7 @@ with col_form:
             local_timestamp = pd.Timestamp.now(tz="Asia/Kolkata")
             current_date = local_timestamp.strftime("%Y-%m-%d")
             current_time = local_timestamp.strftime("%H:%M:%S")
-
-            # 🎯 DIRECT UPLOAD LOGIC: Streams values natively via Google Web Apps
-            macro_url = f"https://script.google.com/macros/s/AKfycbzpc160FY_e73uGE_2FRGiPmtB-WeFlMfZBGePOXOmS3wGpWH8_O1Kx5S3u1x-e4nuE/exec"
-
+            
             payload = {
                 "sheet_id": SHEET_ID,
                 "order_id": next_order_id,
