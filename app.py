@@ -182,7 +182,7 @@ def show_confirmation_dialog(cart_items, total_cost):
 with st.sidebar:
     # 🎨 BRAND LOGO FROM STYLES.PY
     st.image(styles.LOGO_URL, width=60)
-    st.title("New Order")
+    st.title("Collect New Order")
     
     if "error_msg" in st.session_state and st.session_state.error_msg:
         st.error(st.session_state.error_msg)
