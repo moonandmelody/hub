@@ -92,8 +92,9 @@ def apply_custom_css():
                 white-space: pre-wrap;
                 background-color: white;
                 border-radius: 5px;
-                color: #555;
+                color: {BACKGROUND_COLOR};
                 font-weight: 600;
+                width: 50%;
             }}
             .stTabs [aria-selected="true"] {{
                 background-color: {PRIMARY_COLOR} !important;
