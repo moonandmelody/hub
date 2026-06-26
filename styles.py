@@ -32,6 +32,7 @@ def apply_custom_css():
             [data-testid="stSidebar"] {{
                 background-color: {SIDEBAR_COLOR};
                 border-right: 1px solid {SIDEBAR_COLOR};
+                width:450px !important;
             }}
 
             /* 3. BUTTON STYLING */
