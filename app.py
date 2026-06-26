@@ -3,25 +3,30 @@ import urllib.parse
 import urllib.request
 import pandas as pd
 import streamlit as st
+import products  # Imports your product list
+import config    # <--- Imports your new URL configuration!
 
-st.set_page_config(layout="wide")
+# 🎨 PAGE CONFIGURATION
+st.set_page_config(
+    page_title="Moon & Melody Hub",
+    page_icon="🌙",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# Automatically bypass local machine security validation blocks
+# Bypass local machine security validation blocks
 try:
     ssl._create_default_https_context = ssl._create_unverified_context
 except AttributeError:
     pass
 
-SHEET_ID = "1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI"
-
-# 🎯 DIRECT UPLOAD LOGIC: Streams values natively via Google Web Apps
-macro_url = f"https://script.google.com/macros/s/AKfycbzpc160FY_e73uGE_2FRGiPmtB-WeFlMfZBGePOXOmS3wGpWH8_O1Kx5S3u1x-e4nuE/exec"
-
 
 def load_data():
     """Reads live private sales data directly from the universal CSV export stream."""
     try:
-        url = "https://docs.google.com/spreadsheets/d/1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI/export?format=csv&gid=0"
+        # 🎯 DYNAMIC LINK: Uses the ID from your config.py file automatically
+        url = f"https://docs.google.com/spreadsheets/d/{config.SHEET_ID}/export?format=csv&gid=0"
+        
         df = pd.read_csv(url)
         df.columns = df.columns.str.strip()
 
@@ -49,30 +54,21 @@ def load_data():
         else:
             return pd.DataFrame()
 
+        # Format Order ID
         if "Order ID" in df.columns:
-            df["Order ID"] = (
-                pd.to_numeric(df["Order ID"], errors="coerce")
-                .fillna(0)
-                .astype(int)
-                .astype(str)
-                .str.zfill(4)
-            )
+            df["Order ID"] = pd.to_numeric(df["Order ID"], errors="coerce").fillna(0).astype(int).astype(str).str.zfill(4)
         else:
             df["Order ID"] = df.index.astype(str).str.zfill(4)
 
+        # Format Cost
         if "Cost" in df.columns:
             df["Cost"] = pd.to_numeric(df["Cost"], errors="coerce").fillna(0.0)
         else:
             df["Cost"] = 0.0
 
+        # Format Status
         if "Status" in df.columns:
-            df["Status"] = (
-                df["Status"]
-                .fillna("pending")
-                .astype(str)
-                .str.strip()
-                .str.lower()
-            )
+            df["Status"] = df["Status"].fillna("pending").astype(str).str.strip().str.lower()
         else:
             df["Status"] = "pending"
 
@@ -82,178 +78,164 @@ def load_data():
         return pd.DataFrame()
 
 
-# Load fresh data from the cloud
+# Load data
 df = load_data()
 
-# AUTOMATED FOUR-DIGIT SERIAL COUNTER LOGIC
+# Calculate Next Order ID
 if not df.empty and "Order ID" in df.columns:
     try:
         highest_id = pd.to_numeric(df["Order ID"], errors="coerce").max()
         if pd.isna(highest_id):
-            next_num = 1
+            next_num = 0
         else:
             next_num = int(highest_id) + 1
     except Exception:
         next_num = len(df)
 else:
-    next_num = 1
-
+    next_num = 0
 next_order_id = str(next_num).zfill(4)
 
-st.title("🏡 Moon & Melody Business Hub")
-st.subheader("Secure Cloud-Synced Dashboard")
-st.markdown("---")
 
-col_form, col_graph = st.columns(2)
+# --- 🎨 SIDEBAR: DYNAMIC DATA ENTRY ---
+with st.sidebar:
+    st.image("https://cdn-icons-png.flaticon.com/512/3222/3222642.png", width=50)
+    st.title("Log New Order")
+    st.markdown(f"Next ID: **#{next_order_id}**")
+    st.divider()
 
-# --- 1. DATA ENTRY FORM WITH DIRECT WEB WRITE LOGIC ---
-with col_form:
-    st.header("📝 Log New Order")
+    with st.form(key="order_entry_form", clear_on_submit=True):
+        customer = st.text_input("👤 Customer Name")
+        contact = st.text_input("📞 Contact (Phone)")
 
-    PRICE_MIDNIGHT_LUXE = 329
-    PRICE_MOON_DANCE = 359
-    PRICE_MIDNIGHT_LUXE_VEGAN = 379
+        st.markdown("### 🛍️ Basket")
+        
+        # 🎯 DYNAMIC LOOP: Reads from products.py
+        cart_items = {}
+        running_total = 0.0
+        
+        for item_name, price in products.CATALOG.items():
+            qty = st.number_input(f"{item_name} (₹{price:.0f})", min_value=0, max_value=50, value=0, step=1)
+            if qty > 0:
+                cart_items[item_name] = qty
+                running_total += (qty * price)
 
-    st.markdown(f"### 🎫 Next Order ID: **#{next_order_id}**")
-    st.markdown("---")
-
-    customer = st.text_input("Customer Name")
-    contact = st.text_input("Customer Contact (Phone)")
-
-    st.markdown("##### 📦 Select Item Quantities")
-    midnight_luxe_count = st.number_input(
-        f"Midnight Luxe (₹/{PRICE_MIDNIGHT_LUXE:.0f} each)", min_value=0, max_value=50, value=0, step=1
-    )
-    moon_dance_count = st.number_input(
-        f"Moon Dance (₹/{PRICE_MOON_DANCE:.0f} each)", min_value=0, max_value=50, value=0, step=1
-    )
-    midnight_luxe_vegan_count = st.number_input(
-        f"Midnight Luxe Vegan (₹/{PRICE_MIDNIGHT_LUXE_VEGAN:.0f} each)", min_value=0, max_value=50, value=0, step=1
-    )
-
-    # 🎯 AUTO-CALCULATION ENGINE: Multiplies quantities by their fixed prices instantly
-    calculated_total = (midnight_luxe_count * PRICE_MIDNIGHT_LUXE) + (moon_dance_count * PRICE_MOON_DANCE) + (midnight_luxe_vegan_count * PRICE_MIDNIGHT_LUXE_VEGAN)
-
-    st.markdown(f"### 💰 Calculated Total Cost: **₹/{calculated_total:.2f}**")
-
-    with st.form(key="submit_action_form"):
-        submitted = st.form_submit_button(
-            "🚀 Submit & Save directly to Google Sheet"
-        )
+        st.divider()
+        st.markdown(f"**Total: ₹{running_total:,.2f}**")
+        
+        submitted = st.form_submit_button("🚀 Submit Order", use_container_width=True)
 
     if submitted:
-        items_list = []
-        if midnight_luxe_count > 0:
-            items_list.append(f"{midnight_luxe_count}x Midnight Luxe")
-        if moon_dance_count > 0:
-            items_list.append(f"{moon_dance_count}x Moon Dance")
-        if midnight_luxe_vegan_count > 0:
-            items_list.append(f"{midnight_luxe_vegan_count}x Midnight Luxe Vegan")
-
         if customer.strip() == "":
-            st.error("Please fill out the Customer Name field.")
-        elif not items_list:
-            st.error(
-                "Please use the + buttons to add at least 1 item to the order."
-            )
+            st.error("Missing Name!")
+        elif not cart_items:
+            st.error("Basket empty! Add at least one item.")
         else:
-            compiled_items_string = ", ".join(items_list)
-
-            # AUTOMATED INDIAN TIME ZONE CONFIGURATION (IST)
-            local_timestamp = pd.Timestamp.now(tz="Asia/Kolkata")
-            current_date = local_timestamp.strftime("%Y-%m-%d")
-            current_time = local_timestamp.strftime("%H:%M:%S")
+            items_str_list = [f"{qty}x {name}" for name, qty in cart_items.items()]
+            compiled_items = ", ".join(items_str_list)
+            
+            local_ts = pd.Timestamp.now(tz="Asia/Kolkata")
             
             payload = {
-                "sheet_id": SHEET_ID,
+                "sheet_id": config.SHEET_ID, # <--- Reads from config.py
                 "order_id": next_order_id,
-                "date": current_date,
-                "time": current_time,
+                "date": local_ts.strftime("%Y-%m-%d"),
+                "time": local_ts.strftime("%H:%M:%S"),
                 "name": customer,
                 "contact": contact,
-                "items": compiled_items_string,
-                "cost": str(calculated_total),
+                "items": compiled_items,
+                "cost": str(running_total),
                 "status": "Pending",
             }
-
+            
             try:
-                # Transmit raw parameters directly into your spreadsheet cells
-                query_string = urllib.parse.urlencode(payload)
-                full_url = f"{macro_url}?{query_string}"
-                req = urllib.request.Request(
-                    full_url, headers={"User-Agent": "Mozilla/5.0"}
-                )
+                # 🎯 DYNAMIC UPLOAD: Uses MACRO_URL from config.py
+                qs = urllib.parse.urlencode(payload)
+                req = urllib.request.Request(f"{config.MACRO_URL}?{qs}", headers={"User-Agent": "Mozilla/5.0"})
                 with urllib.request.urlopen(req) as response:
                     pass
-
-                st.success(
-                    f"🎉 Order #{next_order_id} recorded live to Google Sheets! Refreshing..."
-                )
+                st.toast(f"✅ Order #{next_order_id} Created!", icon="🎉")
                 st.rerun()
             except Exception as e:
-                st.error(f"Failed to submit directly to Google Sheet: {e}")
+                st.error(f"Sync Failed: {e}")
 
-# --- 2. REVENUE ANALYTICS GRAPH ---
-with col_graph:
-    st.header("📊 Revenue Analytics")
+
+# --- 🎨 MAIN DASHBOARD ---
+st.title("🌙 Moon & Melody Hub")
+
+# Metrics Row
+if not df.empty:
+    pending_count = len(df[df["Status"] == "pending"])
+    completed_df = df[df["Status"] == "completed"]
+    total_rev = completed_df["Cost"].sum() if not completed_df.empty else 0.0
+else:
+    pending_count = 0
+    total_rev = 0.0
+
+m1, m2, m3 = st.columns(3)
+m1.metric("Pending Orders", f"{pending_count}", delta_color="inverse")
+m2.metric("Total Revenue", f"₹{total_rev:,.0f}")
+m3.metric("Completed Orders", f"{len(df[df['Status']=='completed'])}")
+
+st.divider()
+
+# Tabs
+tab_queue, tab_charts = st.tabs(["📌 Work Queue", "📊 Analytics & History"])
+
+with tab_queue:
     if not df.empty and "Status" in df.columns:
-        completed_sales = df[df["Status"] == "completed"]
-        if completed_sales.empty:
-            st.info(
-                "The graph will automatically plot data once orders are marked 'Completed'."
-            )
+        pending_orders = df[df["Status"] == "pending"]
+        
+        if pending_orders.empty:
+            st.success("✨ No pending orders! You are all caught up.")
+            st.balloons()
         else:
-            chart_data = (
-                completed_sales.groupby("Date")["Cost"].sum().reset_index()
-            )
-            st.line_chart(data=chart_data, x="Date", y="Cost")
-    else:
-        st.info("Waiting for cloud sales data to populate graph...")
-
-st.markdown("---")
-
-# --- 3. LIVE INTERACTIVE POST-IT NOTE QUEUE ---
-st.header("📌 Orders to Process (Pending Queue)")
-
-if not df.empty and "Status" in df.columns:
-    pending_orders = df[df["Status"] == "pending"]
-    if pending_orders.empty:
-        st.success("🎉 All caught up! No pending orders to process.")
-    else:
-        columns_per_row = 3
-        for i in range(0, len(pending_orders), columns_per_row):
-            chunk = pending_orders.iloc[i : i + columns_per_row]
-            cols = st.columns(columns_per_row)
-            for idx, (_, row) in enumerate(chunk.iterrows()):
-                with cols[idx]:
+            cols = st.columns(3)
+            for idx, (_, row) in enumerate(pending_orders.iterrows()):
+                col_idx = idx % 3
+                with cols[col_idx]:
                     with st.container(border=True):
-                        st.markdown(f"### 📦 Order ID: #{row.get('Order ID', 'N/A')}")
-                        st.markdown(f"**Customer:** {row.get('Customer Name', 'N/A')}")
-                        st.markdown(f"**Contact:** {row.get('Customer Contact', 'N/A')}")
-                        st.markdown(f"**Items:**\n{row.get('Items', 'N/A')}")
-                        st.markdown(f"**Amount:** {row.get('Cost', 0.0)}")
-
-                        # 🎯 INTERACTIVE COMPLETION BUTTON
-                        btn_key = f"complete_{row.get('Order ID', idx)}_{idx}"
-                        if st.button("✅ Complete Order", key=btn_key):
-                            update_payload = {
+                        c1, c2 = st.columns([3, 1])
+                        c1.markdown(f"**#{row.get('Order ID')}**")
+                        c2.markdown("🟠")
+                        
+                        st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
+                        st.caption(f"📞 {row.get('Customer Contact', '-')}")
+                        st.markdown("---")
+                        
+                        items_text = row.get('Items', '').replace(",", "\n- ")
+                        st.markdown(f"**Items:**\n- {items_text}")
+                        st.markdown(f"### ₹{row.get('Cost', 0.0):,.0f}")
+                        
+                        btn_key = f"done_{row.get('Order ID')}_{idx}"
+                        if st.button("✅ Mark Done", key=btn_key, use_container_width=True):
+                            upd_load = {
                                 "action": "update_status",
-                                "sheet_id": SHEET_ID,
+                                "sheet_id": config.SHEET_ID, # <--- Reads from config.py
                                 "order_id": row.get("Order ID")
                             }
                             try:
-                                update_query = urllib.parse.urlencode(update_payload)
-                                update_url = f"{macro_url}?{update_query}"
-                                req = urllib.request.Request(
-                                    update_url, 
-                                    headers={"User-Agent": "Mozilla/5.0"}
-                                )
-                                with urllib.request.urlopen(req) as response:
+                                u_qs = urllib.parse.urlencode(upd_load)
+                                u_req = urllib.request.Request(f"{config.MACRO_URL}?{u_qs}", headers={"User-Agent": "Mozilla/5.0"})
+                                with urllib.request.urlopen(u_req):
                                     pass
-
-                                st.success(f"Order #{row.get('Order ID')} updated to Completed!")
+                                st.toast(f"Order #{row.get('Order ID')} Completed!", icon="✅")
                                 st.rerun()
                             except Exception as e:
-                                st.error(f"Failed to update sheet: {e}")
-else:
-    st.warning("No active entries found in the spreadsheet yet.")
+                                st.error("Update failed")
+
+with tab_charts:
+    if not df.empty and "Status" in df.columns:
+        completed = df[df["Status"] == "completed"]
+        if not completed.empty:
+            st.subheader("Daily Revenue Trend")
+            daily = completed.groupby("Date")["Cost"].sum().reset_index()
+            st.bar_chart(daily, x="Date", y="Cost", color="#90EE90")
+            
+            st.subheader("Order History")
+            st.dataframe(
+                completed[["Date", "Order ID", "Customer Name", "Items", "Cost"]],
+                use_container_width=True,
+                hide_index=True
+            )
+        else:
+            st.info("Complete some orders to see your analytics!")
