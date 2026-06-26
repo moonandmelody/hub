@@ -10,7 +10,6 @@ import styles  # <--- NEW: Imports your beautiful design file
 # 🎨 PAGE CONFIGURATION
 st.set_page_config(
     page_title="Moon & Melody Hub",
-    page_icon="🌙",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -112,11 +111,11 @@ def submit_order():
                     running_total += (qty * price)
 
     if customer_val.strip() == "":
-        st.session_state.error_msg = "⚠️ Missing Customer Name!"
+        st.session_state.error_msg = "Missing Customer Name!"
         return 
     
     if not cart_items:
-        st.session_state.error_msg = "⚠️ Basket is empty!"
+        st.session_state.error_msg = "Basket is empty!"
         return 
 
     items_str_list = [f"{qty}x {name}" for name, qty in cart_items.items()]
@@ -160,7 +159,7 @@ def submit_order():
 
 
 # --- 3. CONFIRMATION DIALOG ---
-@st.dialog("⚠️ Confirm Order Details")
+@st.dialog("Confirm Order Details")
 def show_confirmation_dialog(cart_items, total_cost):
     st.write("**Items in Basket:**")
     for item, qty in cart_items.items():
@@ -171,10 +170,10 @@ def show_confirmation_dialog(cart_items, total_cost):
     
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("❌ Cancel", use_container_width=True):
+        if st.button("Cancel", use_container_width=True):
             st.rerun()
     with col2:
-        if st.button("✅ Confirm & Save", type="primary", use_container_width=True):
+        if st.button("Save", type="primary", use_container_width=True):
             submit_order()
             st.rerun()
 
@@ -230,17 +229,17 @@ with st.sidebar:
     st.text_input("Special Notes/Instructions", key="form_notes")
     st.markdown(f"### Total: ₹{running_total:,.2f}")
     
-    if st.button("🚀 Review & Submit", use_container_width=True):
+    if st.button("Submit", use_container_width=True):
         if st.session_state.form_customer.strip() == "":
-            st.error("⚠️ Customer Name is required!")
+            st.error("Customer Name is required!")
         elif not current_cart:
-            st.error("⚠️ Basket is empty!")
+            st.error("Basket is empty!")
         else:
             show_confirmation_dialog(current_cart, running_total)
 
 
 # --- 5. MAIN DASHBOARD ---
-st.title("🌙 Moon & Melody Hub")
+st.title("Moon & Melody Dashboard")
 
 if not df.empty:
     pending_count = len(df[df["Status"] == "pending"])
@@ -264,7 +263,7 @@ with tab_queue:
         pending_orders = df[df["Status"] == "pending"]
         
         if pending_orders.empty:
-            st.success("✨ No pending orders! You are all caught up.")
+            st.success("No pending orders! You are all caught up.")
             st.balloons()
         else:
             cols = st.columns(3)
@@ -290,7 +289,7 @@ with tab_queue:
                         st.markdown(f"### ₹{row.get('Cost', 0.0):,.0f}")
                         
                         btn_key = f"done_{row.get('Order ID')}_{idx}"
-                        if st.button("✅ Mark Done", key=btn_key, use_container_width=True):
+                        if st.button("Completed", key=btn_key, use_container_width=True):
                             upd_load = {
                                 "action": "update_status",
                                 "sheet_id": config.SHEET_ID,
