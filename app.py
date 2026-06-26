@@ -98,7 +98,7 @@ def show_confirmation_dialog(order_id, customer, contact, cart_items, notes, tot
     with col2:
         if st.button("✅ Confirm & Save", type="primary", use_container_width=True):
             items_str_list = [f"{qty}x {name}" for name, qty in cart_items.items()]
-            compiled_items = ", ".join(items_str_list)
+            compiled_items = ",\n".join(items_str_list)
             local_ts = pd.Timestamp.now(tz="Asia/Kolkata")
             
             payload = {
