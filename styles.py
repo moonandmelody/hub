@@ -6,9 +6,9 @@ LOGO_URL = "https://cdn-icons-png.flaticon.com/512/3222/3222642.png"
 
 # --- 🎨 COLOR PALETTE ---
 # You can change these hex codes to match your brand!
-PRIMARY_COLOR = "#F6F0EA"       # (Navy) 
+PRIMARY_COLOR = "#F6F0EA"       # (Ivory) 
 SECONDARY_COLOR = "#AC7E44"     # (Gold) 
-BACKGROUND_COLOR = "#061627"    # (Ivory)
+BACKGROUND_COLOR = "#061627"    # (Navy)
 SIDEBAR_COLOR = "#AC7E44"       # (Gold) 
 TEXT_COLOR = "#F6F0EA"          # (Navy)
 #SIDEBAR_COLOR = "#C9A3A3"       # (Rose) 
@@ -35,7 +35,7 @@ def apply_custom_css():
 
             /* 3. BUTTON STYLING */
             .stButton > button {{
-                background-color: {PRIMARY_COLOR};
+                background-color: {BACKGROUND_COLOR};
                 color: white;
                 border-radius: 8px;
                 border: none;
@@ -44,7 +44,7 @@ def apply_custom_css():
                 transition: all 0.3s ease;
             }}
             .stButton > button:hover {{
-                background-color: {PRIMARY_COLOR};
+                background-color: {BACKGROUND_COLOR};
                 transform: scale(1.02);
                 color: white;
             }}
