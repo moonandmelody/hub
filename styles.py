@@ -18,7 +18,7 @@ TEXT_COLOR = "#F6F0EA"          # (Navy)
 def apply_custom_css():
     st.markdown(f"""
         <style>
-            /* 1. IMPORT GOOGLE FONT (Poppins) */
+            /* 1. IMPORT GOOGLE FONT (Cinzel) */
             @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@100;200;300;400;600&display=swap');
             @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;600&display=swap');
 
@@ -44,7 +44,7 @@ def apply_custom_css():
                 transition: all 0.3s ease;
             }}
             .stButton > button:hover {{
-                /*background-color: {SECONDARY_COLOR};*/
+                background-color: {PRIMARY_COLOR};
                 transform: scale(1.02);
                 color: white;
             }}
