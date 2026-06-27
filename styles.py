@@ -27,6 +27,11 @@ def apply_custom_css():
                 color: {TEXT_COLOR};
                 background-color: {PRIMARY_COLOR};
             }}
+            h1 [id="moon-and-melody-dashboard"] {{
+                display: flex;
+                justify-content: center;
+                font-family: 'Cinzel', serif;
+            }}
 
             /* 2. SIDEBAR STYLING */
             [data-testid="stSidebar"] {{
