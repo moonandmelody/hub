@@ -89,6 +89,9 @@ def apply_custom_css():
                 display: flex;
                 justify-content: center;
             }}
+            div [class="st-emotion-cache-1ml8qm"] {{
+                font-size: 17px;
+            }}
 
             /* 5. POST-IT NOTE CARDS (Containers) */
             [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] {{
