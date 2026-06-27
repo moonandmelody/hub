@@ -153,6 +153,7 @@ def cancel_edit_mode():
     st.session_state.editing_id = None
     st.session_state.form_customer = ""
     st.session_state.form_contact = ""
+    st.session_state.form_notes = ""
     for category, items_dict in products.CATALOG.items():
         if isinstance(items_dict, dict):
             for item_name in items_dict:
