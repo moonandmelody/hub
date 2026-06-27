@@ -146,7 +146,9 @@ def trigger_edit_mode(row):
                 # If the item exists in our products.py catalog, this will update the counter
                 if f"qty_{name}" in st.session_state:
                     st.session_state[f"qty_{name}"] = qty
+                    print("in session.state",flush=True)
                 elif f"qty_{name}" not in st.session_state:
+                    print("note in session.state",flush=True)
                     # Initialize it just in case logic runs before widget creation
                     st.session_state[f"qty_{name}"] = qty
             except:
