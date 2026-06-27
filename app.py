@@ -225,8 +225,10 @@ with st.sidebar:
                         if qty > 0:
                             current_cart[item_name] = qty
                             running_total += (qty * price)
+        st.divider()
         
     st.text_input("Special Notes/Instructions", key="form_notes")
+    st.divider()
     st.markdown(f"### Total: ₹{running_total:,.2f}")
     
     if st.button("Submit", use_container_width=True):
