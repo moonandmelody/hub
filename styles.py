@@ -44,6 +44,10 @@ def apply_custom_css():
             [data-testid="stNumberInputField"] {{
                 height: 40px;
             }}
+
+            h3 {{
+                font-size: 35px !important;
+            }}
             
             h5 {{
                 font-size: 30px !important;
