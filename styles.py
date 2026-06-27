@@ -145,7 +145,7 @@ def celebrate():
     
     for i in range(36): # Create 36 balloons
         left_pos = random.randint(5, 95)
-        duration = random.uniform(3, 6)
+        duration = random.uniform(3, 4)
         delay = random.uniform(0, 1)
         color = random.choice(colors)
         
