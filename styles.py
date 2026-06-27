@@ -68,6 +68,7 @@ def apply_custom_css():
             [data-testid="stMetricLabel"] {{
                 color: white;
                 font-size: 14px;
+                width:100%;
                 display: flex;
                 justify-content: center;
             }}
