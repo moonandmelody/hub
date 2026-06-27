@@ -44,6 +44,15 @@ def apply_custom_css():
             [data-testid="stNumberInputField"] {{
                 height: 40px;
             }}
+            
+            h5 {{
+                font-size: 
+            }}
+
+            .st-emotion-cache-1bf0olv > p {{
+                font-family: 'Montserrat',serif;
+                color: white;
+            }}
 
             /* 3. BUTTON STYLING */
             .stButton > button {{
