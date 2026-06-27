@@ -41,6 +41,10 @@ def apply_custom_css():
                 width:500px !important;
             }}
 
+            [data-testid="stNumberInputField"] {{
+                height: 40px;
+            }}
+
             /* 3. BUTTON STYLING */
             .stButton > button {{
                 background-color: {BACKGROUND_COLOR};
