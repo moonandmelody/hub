@@ -27,7 +27,7 @@ def apply_custom_css():
                 color: {TEXT_COLOR};
                 background-color: {PRIMARY_COLOR};
             }}
-            h1 [id="moon-and-melody-dashboard"] {{
+            #moon-and-melody-hub {{
                 display: flex;
                 justify-content: center;
                 font-family: 'Cinzel', serif;
