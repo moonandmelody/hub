@@ -102,7 +102,7 @@ def trigger_edit_mode(row):
     # 1. Fill Text Inputs
     st.session_state.form_customer = row['Customer Name']
     st.session_state.form_contact = row.get('Customer Contact', '')
-    st.session_state.form_notes = row.get('Special Notes/Instructions, '')
+    st.session_state.form_notes = row.get('Special Notes/Instructions', '')
     
     # 2. Reset All Counters First
     for category, items_dict in products.CATALOG.items():
