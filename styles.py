@@ -38,7 +38,7 @@ def apply_custom_css():
             [data-testid="stSidebar"] {{
                 background-color: {SIDEBAR_COLOR};
                 border-right: 1px solid {SIDEBAR_COLOR};
-                width:500px !important;
+                width:460px !important;
             }}
 
             [data-testid="stNumberInputField"] {{
