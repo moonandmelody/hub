@@ -1,4 +1,5 @@
 import streamlit as st
+import random
 
 # --- 🎨 BRAND ASSETS ---
 # Replace this link with your actual logo if you have one hosted online
@@ -122,5 +123,55 @@ def apply_custom_css():
                 width: 50%;
             }}
 
+            /* 8. BALLOON ANIMATION KEYFRAMES */
+            @keyframes floatUp {{
+                0% {{ transform: translateY(100vh) rotate(0deg); opacity: 1; }}
+                100% {{ transform: translateY(-100vh) rotate(20deg); opacity: 0; }}
+            }}
+
         </style>
     """, unsafe_allow_html=True)
+
+# --- 🎈 CUSTOM CELEBRATION FUNCTION ---
+def celebrate():
+    """Generates custom balloons in Brand Colors"""
+    
+    # HTML for a single balloon
+    # We use a randomized left position and animation duration for natural movement
+    balloon_html = ""
+    colors = [PRIMARY_COLOR, SECONDARY_COLOR, BACKGROUND_COLOR] 
+    
+    for i in range(25): # Create 25 balloons
+        left_pos = random.randint(5, 95)
+        duration = random.uniform(3, 6)
+        delay = random.uniform(0, 1)
+        color = random.choice(colors)
+        
+        balloon_html += f"""
+        <div style="
+            position: fixed;
+            bottom: -100px;
+            left: {left_pos}%;
+            width: 50px;
+            height: 70px;
+            background-color: {color};
+            border-radius: 50%;
+            opacity: 0.9;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1);
+            animation: floatUp {duration}s ease-in forwards;
+            animation-delay: {delay}s;
+            z-index: 9999;
+        ">
+            <div style="
+                position: absolute;
+                bottom: -10px;
+                left: 24px;
+                width: 2px;
+                height: 30px;
+                background-color: rgba(0,0,0,0.2);
+            "></div>
+        </div>
+        """
+    
+    # Inject the HTML into the app
+    st.markdown(balloon_html, unsafe_allow_html=True)
