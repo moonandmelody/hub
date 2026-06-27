@@ -61,6 +61,10 @@ def apply_custom_css():
                 box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.7);
             }}
 
+            [data-testid="stNumberInputContainer"] {{
+                width: 200px;
+            }}
+
             [data-testid="stTextInputRootElement"] {{
                 box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.7);
             }}
