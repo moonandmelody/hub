@@ -333,14 +333,7 @@ with st.sidebar:
 
     st.title("Customer Details")
     st.text_input("Name", key="form_customer")
-    
-    raw_contact = row.get('Customer Contact', '')
-    if pd.isna(raw_contact) or raw_contact == "nan":
-        st.session_state.form_contact = ""
-    else:
-        # Convert to string and remove ".0" if Google made it a float
-        st.session_state.form_contact = str(raw_contact).replace(".0", "")
-    
+    st.text_input("Mobile", key="form_contact")
     st.divider()
 
     current_cart = {}
