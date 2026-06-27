@@ -326,11 +326,24 @@ with st.sidebar:
 
     st.title("Customer Details")
     st.text_input("Name", key="form_customer")
-    st.text_input("Mobile", key="form_contact")
+    
+    raw_contact = row.get('Customer Contact', '')
+    if pd.isna(raw_contact) or raw_contact == "nan":
+        st.session_state.form_contact = ""
+    else:
+        # Convert to string and remove ".0" if Google made it a float
+        st.session_state.form_contact = str(raw_contact).replace(".0", "")
+    
     st.divider()
 
     current_cart = {}
     running_total = 0.0
+
+    # Reset All Counters First
+    for category, items_dict in products.CATALOG.items():
+        if isinstance(items_dict, dict):
+            for item_name in items_dict:
+                st.session_state[f"qty_{item_name}"] = 0
     
     for category, items_dict in products.CATALOG.items():
         st.markdown(f"##### {category}")
