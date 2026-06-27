@@ -46,7 +46,7 @@ def apply_custom_css():
             }}
             
             h5 {{
-                font-size: 
+                font-size: 30px;
             }}
 
             .st-emotion-cache-1bf0olv > p {{
