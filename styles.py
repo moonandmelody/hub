@@ -71,12 +71,14 @@ def apply_custom_css():
             }}
             [data-testid="stMarkdownContainer"]{{
                 font-family: 'Cinzel', serif;
-                font-size: 16px;
             }}
             [data-testid="stMetricValue"] {{
                 color: {SECONDARY_COLOR};
-                font-size: 40px;
+                font-size: 25px !important;
                 font-weight: 700;
+                padding: 40px 10px 40px 10px;
+                display: flex;
+                justify-content: center;
             }}
 
             /* 5. POST-IT NOTE CARDS (Containers) */
