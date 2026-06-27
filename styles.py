@@ -126,7 +126,7 @@ def apply_custom_css():
             /* 8. BALLOON ANIMATION KEYFRAMES */
             @keyframes floatUp {{
                 0% {{ transform: translateY(100vh) rotate(0deg); opacity: 1; }}
-                100% {{ transform: translateY(-100vh) rotate(0deg); opacity: 1; }}
+                100% {{ transform: translateY(-100vh) rotate(0deg); opacity: 0; }}
             }}
 
         </style>
