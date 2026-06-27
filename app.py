@@ -303,8 +303,8 @@ def show_delete_dialog(order_id):
             update_order_status(order_id, "Deleted")
 
 @st.dialog("Edit Order?")
-def show_edit_dialog(order_id):
-    st.warning(f"Edit Order #{order_id}?")
+def show_edit_dialog(order_id, order_number):
+    st.warning(f"Edit Order #{order_number}?")
     col1, col2 = st.columns(2)
     with col1:
         if st.button("Cancel", use_container_width=True): st.rerun()
@@ -443,11 +443,11 @@ with tab_queue:
                         with c2:
                             # ✏️ EDIT BUTTON - Triggers Sidebar Population
                             if st.button("Edit", key=f"edit_{row['Order ID']}", help="Edit in Sidebar", use_container_width=True):
-                                show_edit_dialog(row);
+                                show_edit_dialog(row,row['Order ID']);
                                 
                         with c3:
                             if st.button("Delete", key=f"del_{row['Order ID']}", help="Delete Order", use_container_width=True):
-                                show_delete_dialog(row['Order ID'])
+                                show_delete_dialog(row,row['Order ID'])
                         
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
                         st.caption(f"📞 {row.get('Customer Contact', '-')}")
