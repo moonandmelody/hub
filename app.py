@@ -115,7 +115,7 @@ def trigger_edit_mode(row):
     for category, items_dict in products.CATALOG.items():
         if isinstance(items_dict, dict):
             for item_name in items_dict:
-                st.session_state[f"qty_{item_name}"] = 0
+                st.session_state[f"qty_{item_name}"] = 2
     
     # 3. Parse Items String (e.g. "2x Moon Dance\n1x Potato Pops")
     raw_items = str(row.get('Items', ''))
