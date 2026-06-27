@@ -123,10 +123,11 @@ def trigger_edit_mode(row):
     if raw_items:
         # Split by newline first
         lines = raw_items.split('\n')
-        st.toast(f"line #{line}")
+        st.toast(f"line #{lines}")
         for line in lines:
             # line looks like "2x Moon Dance"
             # We split by "x " to separate quantity from name
+            st.toast(f"line #{line}")
             parts = line.split('x ')
             if len(parts) >= 2:
                 try:
