@@ -57,6 +57,10 @@ def apply_custom_css():
                 box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.7);
             }}
 
+            [data-testid="stTextInputRootElement"] {{
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.7);
+            }}
+
             /* 3. BUTTON STYLING */
             .stButton > button {{
                 background-color: {BACKGROUND_COLOR};
