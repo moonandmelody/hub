@@ -128,7 +128,7 @@ def apply_custom_css():
                 0% {{ transform: translateY(100vh) rotate(0deg); opacity: 1; }}
                 50% {{ transform: translateY(100vh) rotate(20deg); opacity: 1; }}
                 40% {{ transform: translateY(80vh) rotate(-40deg); opacity: 1; }}
-                100% {{ transform: translateY(-100vh) rotate(0deg); opacity: 0; }}
+                100% {{ transform: translateY(-120vh) rotate(0deg); opacity: 1; }}
             }}
 
         </style>
@@ -145,7 +145,7 @@ def celebrate():
     
     for i in range(36): # Create 36 balloons
         left_pos = random.randint(5, 95)
-        duration = random.uniform(6, 9)
+        duration = random.uniform(4, 8)
         delay = random.uniform(0, 1)
         color = random.choice(colors)
         
