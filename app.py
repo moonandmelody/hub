@@ -293,10 +293,10 @@ def show_confirmation_dialog(cart_items, total_cost, mode):
     
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("Cancel", use_container_width=True): st.rerun()
+        if st.button("Cancel", width='stretch'): st.rerun()
     with col2:
         btn_txt = "Update Order" if mode == "edit" else "Create Order"
-        if st.button(btn_txt, type="primary", use_container_width=True):
+        if st.button(btn_txt, type="primary", width='stretch'):
             process_sidebar_submission(mode)
             st.rerun()
 
@@ -305,9 +305,9 @@ def show_delete_dialog(order_id):
     st.warning(f"Delete Order #{order_id}?")
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("Cancel", use_container_width=True): st.rerun()
+        if st.button("Cancel", width='stretch'): st.rerun()
     with col2:
-        if st.button("Delete", type="primary", use_container_width=True):
+        if st.button("Delete", type="primary", width='stretch'):
             update_order_status(order_id, "Deleted")
 
 @st.dialog("Edit Order?")
@@ -315,9 +315,9 @@ def show_edit_dialog(order_id, order_number):
     st.warning(f"Edit Order #{order_number}?")
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("Cancel", use_container_width=True): st.rerun()
+        if st.button("Cancel", width='stretch'): st.rerun()
     with col2:
-        if st.button("Edit", type="primary", use_container_width=True):
+        if st.button("Edit", type="primary", width='stretch'):
             trigger_edit_mode(order_id)
             st.rerun()
 
@@ -398,16 +398,16 @@ with st.sidebar:
         # EDIT MODE BUTTONS
         c1, c2 = st.columns(2)
         with c1:
-            if st.button("Cancel", use_container_width=True):
+            if st.button("Cancel", width='stretch'):
                 cancel_edit_mode()
         with c2:
-            if st.button("Save Changes", type="primary", use_container_width=True):
+            if st.button("Save Changes", type="primary", width='stretch'):
                 if st.session_state.form_customer.strip() == "": st.error("Name required!")
                 elif not current_cart: st.error("Basket empty!")
                 else: show_confirmation_dialog(current_cart, running_total, "edit")
     else:
         # CREATE MODE BUTTON
-        if st.button("Submit", use_container_width=True):
+        if st.button("Submit", width='stretch'):
             if st.session_state.form_customer.strip() == "": st.error("Name required!")
             elif not current_cart: st.error("Basket empty!")
             else: show_confirmation_dialog(current_cart, running_total, "create")
@@ -450,11 +450,11 @@ with tab_queue:
 
                         with c2:
                             # ✏️ EDIT BUTTON - Triggers Sidebar Population
-                            if st.button("Edit", key=f"edit_{row['Order ID']}", help="Edit in Sidebar", use_container_width=True):
+                            if st.button("Edit", key=f"edit_{row['Order ID']}", help="Edit in Sidebar", width='stretch'):
                                 show_edit_dialog(row,row['Order ID']);
                                 
                         with c3:
-                            if st.button("Delete", key=f"del_{row['Order ID']}", help="Delete Order", use_container_width=True):
+                            if st.button("Delete", key=f"del_{row['Order ID']}", help="Delete Order", width='stretch'):
                                 show_delete_dialog(row['Order ID'])
                         
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
@@ -471,7 +471,7 @@ with tab_queue:
                         st.markdown(f"### ₹{row.get('Cost', 0.0):,.0f}")
                         
                         btn_key = f"done_{row.get('Order ID')}_{idx}"
-                        if st.button("Done", key=btn_key, use_container_width=True):
+                        if st.button("Done", key=btn_key, width='stretch'):
                             update_order_status(row['Order ID'], "Completed")
 
 with tab_charts:
@@ -485,7 +485,7 @@ with tab_charts:
             st.subheader("Order History")
             st.dataframe(
                 completed[["Date", "Order ID", "Customer Name", "Items", "Cost"]],
-                use_container_width=True,
+                width='stretch',
                 hide_index=True
             )
         else:
