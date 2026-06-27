@@ -93,15 +93,105 @@ else:
 next_order_id = str(next_num).zfill(4)
 
 
-# --- 2. THE SUBMISSION HANDLER (CALLBACK) ---
-def submit_order():
+# --- 2. LOGIC: EDIT & DELETE ---
+def trigger_edit_mode(row):
+    """Parses the order data and fills the sidebar session state"""
+    st.session_state.editing_mode = True
+    st.session_state.editing_id = row['Order ID']
+    
+    # 1. Fill Text Inputs
+    st.session_state.form_customer = row['Customer Name']
+    st.session_state.form_contact = row.get('Customer Contact', '')
+    st.session_state.form_notes = row.get('Special Notes/Instructions, '')
+    
+    # 2. Reset All Counters First
+    for category, items_dict in products.CATALOG.items():
+        if isinstance(items_dict, dict):
+            for item_name in items_dict:
+                st.session_state[f"qty_{item_name}"] = 0
+    
+    # 3. Parse Items String (e.g. "2x Moon Dance\n1x Potato Pops")
+    raw_items = str(row.get('Items', ''))
+    if raw_items:
+        # Split by newline first
+        lines = raw_items.split('\n')
+        for line in lines:
+            # line looks like "2x Moon Dance"
+            # We split by "x " to separate quantity from name
+            parts = line.split('x ')
+            if len(parts) >= 2:
+                try:
+                    qty = int(parts[0].strip())
+                    name = parts[1].strip()
+                    # Update the specific counter
+                    st.session_state[f"qty_{name}"] = qty
+                except:
+                    pass # Skip lines that don't parse correctly
+
+def cancel_edit_mode():
+    """Resets sidebar to Create Mode"""
+    st.session_state.editing_mode = False
+    st.session_state.editing_id = None
+    st.session_state.form_customer = ""
+    st.session_state.form_contact = ""
+    for category, items_dict in products.CATALOG.items():
+        if isinstance(items_dict, dict):
+            for item_name in items_dict:
+                st.session_state[f"qty_{item_name}"] = 0
+    st.rerun()
+
+def update_order_status(order_id, new_status):
+    """Updates Status (Completed/Deleted)"""
+    payload = {
+        "action": "update_status",
+        "sheet_id": config.SHEET_ID,
+        "order_id": order_id,
+        "new_status": new_status
+    }
+    try:
+        qs = urllib.parse.urlencode(payload)
+        req = urllib.request.Request(f"{config.MACRO_URL}?{qs}", headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req): pass
+        st.toast(f"Order #{order_id} marked as {new_status}!", icon="✅")
+        st.rerun()
+    except Exception as e:
+        st.error(f"Update failed: {e}")
+
+def save_edited_order(order_id, new_name, new_contact, new_items, new_notes, new_cost):
+    """Sends edited details to Google Sheets"""
+    payload = {
+        "action": "edit_order",
+        "sheet_id": config.SHEET_ID,
+        "order_id": order_id,
+        "date": local_ts.strftime("%Y-%m-%d"),
+        "time": local_ts.strftime("%H:%M:%S"),
+        "name": new_name,
+        "contact": new_contact,
+        "items": new_items,
+        "notes": new_notes,
+        "cost": str(new_cost)
+    }
+    try:
+        qs = urllib.parse.urlencode(payload)
+        req = urllib.request.Request(f"{config.MACRO_URL}?{qs}", headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req): pass
+        
+        # Reset mode after save
+        cancel_edit_mode() 
+        st.toast(f"Order #{order_id} Updated Successfully!", icon="💾")
+    except Exception as e:
+        st.error(f"Edit failed: {e}")
+
+
+# --- 3. THE SUBMISSION HANDLER (CALLBACK) ---
+def process_sidebar_submission(mode="create"):
+    # A. Get Data
     customer_val = st.session_state.form_customer
     contact_val = st.session_state.form_contact
-    special_notes = st.session_state.form_notes
+    notes_val = st.session_state.form_notes
     
     cart_items = {}
     running_total = 0.0
-    
     for category, items_dict in products.CATALOG.items():
         if isinstance(items_dict, dict):
              for item_name, price in items_dict.items():
@@ -110,84 +200,123 @@ def submit_order():
                     cart_items[item_name] = qty
                     running_total += (qty * price)
 
+    # B. Validation
     if customer_val.strip() == "":
-        st.session_state.error_msg = "Missing Customer Name!"
+        st.session_state.error_msg = "Error: Missing Customer Name!"
         return 
-    
     if not cart_items:
-        st.session_state.error_msg = "Basket is empty!"
+        st.session_state.error_msg = "Error: Basket is empty!"
         return 
 
     items_str_list = [f"{qty}x {name}" for name, qty in cart_items.items()]
     compiled_items = ",\n".join(items_str_list)
     
-    local_ts = pd.Timestamp.now(tz="Asia/Kolkata")
-    
-    payload = {
-        "sheet_id": config.SHEET_ID,
-        "order_id": next_order_id,
-        "date": local_ts.strftime("%Y-%m-%d"),
-        "time": local_ts.strftime("%H:%M:%S"),
-        "name": customer_val,
-        "contact": contact_val,
-        "items": compiled_items,
-        "notes": special_notes,
-        "cost": str(running_total),
-        "status": "Pending",
-    }
-    
-    try:
-        qs = urllib.parse.urlencode(payload)
-        req = urllib.request.Request(f"{config.MACRO_URL}?{qs}", headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req) as response:
-            pass
-        
-        st.session_state.form_customer = ""
-        st.session_state.form_contact = ""
-        st.session_state.form_notes = ""
-        
-        for category, items_dict in products.CATALOG.items():
-            if isinstance(items_dict, dict):
-                for p in items_dict:
-                    st.session_state[f"qty_{p}"] = 0
+    # C. Execute based on Mode
+    if mode == "edit":
+        # UPDATE EXISTING
+        save_edited_order(
+            st.session_state.editing_id, 
+            customer_val, 
+            contact_val, 
+            compiled_items,
+            notes_val,
+            running_total
+        )
+    else:
+        # CREATE NEW
+        local_ts = pd.Timestamp.now(tz="Asia/Kolkata")
+        payload = {
+            "sheet_id": config.SHEET_ID,
+            "order_id": next_order_id,
+            "date": local_ts.strftime("%Y-%m-%d"),
+            "time": local_ts.strftime("%H:%M:%S"),
+            "name": customer_val,
+            "contact": contact_val,
+            "items": compiled_items,
+            "notes": notes_val,
+            "cost": str(running_total),
+            "status": "Pending",
+        }
+        try:
+            qs = urllib.parse.urlencode(payload)
+            req = urllib.request.Request(f"{config.MACRO_URL}?{qs}", headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req): pass
             
-        st.session_state.success_msg = f"Order #{next_order_id} Saved!"
-        st.session_state.error_msg = "" 
-        
-    except Exception as e:
-        st.session_state.error_msg = f"Sync Failed: {e}"
+            # Reset
+            st.session_state.form_customer = ""
+            st.session_state.form_contact = ""
+            st.session_state.form_notes = ""
+            for category, items_dict in products.CATALOG.items():
+                if isinstance(items_dict, dict):
+                    for p in items_dict: st.session_state[f"qty_{p}"] = 0
+                
+            st.session_state.success_msg = f"Order #{next_order_id} Saved!"
+            st.rerun()
+        except Exception as e:
+            st.session_state.error_msg = f"Sync Failed: {e}"
 
-
-# --- 3. CONFIRMATION DIALOG ---
-@st.dialog("Confirm Order Details")
-def show_confirmation_dialog(cart_items, total_cost):
+# --- 4. CONFIRMATION DIALOG ---
+@st.dialog("Confirm Order")
+def show_confirmation_dialog(cart_items, total_cost, mode):
     st.write("**Items in Basket:**")
     for item, qty in cart_items.items():
         st.write(f"- {qty}x {item}")
-    
     st.divider()
     st.markdown(f"### Total: ₹{total_cost:,.2f}")
     
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("Cancel", use_container_width=True):
-            st.rerun()
+        if st.button("Cancel", use_container_width=True): st.rerun()
     with col2:
-        if st.button("Save", type="primary", use_container_width=True):
-            submit_order()
+        btn_txt = "Update Order" if mode == "edit" else "Create Order"
+        if st.button(btn_txt, type="primary", use_container_width=True):
+            process_sidebar_submission(mode)
+            st.rerun()
+
+@st.dialog("Delete Order?")
+def show_delete_dialog(order_id):
+    st.warning(f"Delete Order #{order_id}?")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Cancel", use_container_width=True): st.rerun()
+    with col2:
+        if st.button("Delete", type="primary", use_container_width=True):
+            update_order_status(order_id, "Deleted")
+
+@st.dialog("Edit Order?")
+def show_edit_dialog(order_id):
+    st.warning(f"Edit Order #{order_id}?")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Cancel", use_container_width=True): st.rerun()
+    with col2:
+        if st.button("Edit", type="primary", use_container_width=True):
+            trigger_edit_mode(order_id)
             st.rerun()
 
 
-# --- 4. SIDEBAR LAYOUT ---
+# --- 5. SIDEBAR LAYOUT ---
+# Initialize Session State Variables
+if "editing_mode" not in st.session_state: st.session_state.editing_mode = False
+if "form_customer" not in st.session_state: st.session_state["form_customer"] = ""
+if "form_contact" not in st.session_state: st.session_state["form_contact"] = ""
+if "form_notes" not in st.session_state: st.session_state["form_notes"] = ""
+
 with st.sidebar:
     # 🎨 BRAND LOGO FROM STYLES.PY
     st.image(styles.LOGO_URL, width=60)
-    col_header, col_refresh = st.columns([3, 1])
-    with col_header:
-        st.title("Collect New Order")
-    with col_refresh:
-        # Clicking this simply re-runs the script, pulling fresh data
-        st.button("Refresh", help="Refresh Data")
+    
+    # 🔄 HEADER LOGIC
+    if st.session_state.editing_mode:
+        st.title(f"Editing #{st.session_state.editing_id}")
+        st.caption("Modify details below")
+    else:
+        col_header, col_refresh = st.columns([3, 1])
+        with col_header: st.title("Log Order")
+        with col_refresh: st.button("🔄", help="Refresh Data")
+        st.markdown(f"Next ID: **#{next_order_id}**")
+
+    st.divider()
     
     if "error_msg" in st.session_state and st.session_state.error_msg:
         st.error(st.session_state.error_msg)
@@ -195,11 +324,6 @@ with st.sidebar:
         st.toast(st.session_state.success_msg, icon="🎉")
         st.session_state.success_msg = ""
 
-    st.divider()
-
-    if "form_customer" not in st.session_state: st.session_state["form_customer"] = ""
-    if "form_contact" not in st.session_state: st.session_state["form_contact"] = ""
-    
     st.title("Customer Details")
     st.text_input("Name", key="form_customer")
     st.text_input("Mobile", key="form_contact")
@@ -235,17 +359,27 @@ with st.sidebar:
     st.text_input("Special Notes/Instructions", key="form_notes")
     st.divider()
     st.markdown(f"### Total: ₹{running_total:,.2f}")
-    
-    if st.button("Submit", use_container_width=True):
-        if st.session_state.form_customer.strip() == "":
-            st.error("Customer Name is required!")
-        elif not current_cart:
-            st.error("Basket is empty!")
-        else:
-            show_confirmation_dialog(current_cart, running_total)
 
+    # FOOTER BUTTONS
+    if st.session_state.editing_mode:
+        # EDIT MODE BUTTONS
+        c1, c2 = st.columns(2)
+        with c1:
+            if st.button("Cancel", use_container_width=True):
+                cancel_edit_mode()
+        with c2:
+            if st.button("Save Changes", type="primary", use_container_width=True):
+                if st.session_state.form_customer.strip() == "": st.error("Name required!")
+                elif not current_cart: st.error("Basket empty!")
+                else: show_confirmation_dialog(current_cart, running_total, "edit")
+    else:
+        # CREATE MODE BUTTON
+        if st.button("Submit", use_container_width=True):
+            if st.session_state.form_customer.strip() == "": st.error("Name required!")
+            elif not current_cart: st.error("Basket empty!")
+            else: show_confirmation_dialog(current_cart, running_total, "create")
 
-# --- 5. MAIN DASHBOARD ---
+# --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
 
 if not df.empty:
@@ -278,9 +412,17 @@ with tab_queue:
                 col_idx = idx % 3
                 with cols[col_idx]:
                     with st.container(border=True):
-                        c1, c2 = st.columns([3, 1])
+                        c1, c2, c3 = st.columns([3, 1, 1])
                         c1.markdown(f"**#{row.get('Order ID')}**")
-                        c2.markdown("🟠")
+
+                        with c2:
+                            # ✏️ EDIT BUTTON - Triggers Sidebar Population
+                            if st.button("Edit", key=f"edit_{row['Order ID']}", help="Edit in Sidebar", use_container_width=True):
+                                show_edit_dialog(row['Order ID']);
+                                
+                        with c3:
+                            if st.button("Delete", key=f"del_{row['Order ID']}", help="Delete Order", use_container_width=True):
+                                show_delete_dialog(row['Order ID'])
                         
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
                         st.caption(f"📞 {row.get('Customer Contact', '-')}")
@@ -297,20 +439,7 @@ with tab_queue:
                         
                         btn_key = f"done_{row.get('Order ID')}_{idx}"
                         if st.button("Done", key=btn_key, use_container_width=True):
-                            upd_load = {
-                                "action": "update_status",
-                                "sheet_id": config.SHEET_ID,
-                                "order_id": row.get("Order ID")
-                            }
-                            try:
-                                u_qs = urllib.parse.urlencode(upd_load)
-                                u_req = urllib.request.Request(f"{config.MACRO_URL}?{u_qs}", headers={"User-Agent": "Mozilla/5.0"})
-                                with urllib.request.urlopen(u_req):
-                                    pass
-                                st.toast(f"Order #{row.get('Order ID')} Completed!", icon="✅")
-                                st.rerun()
-                            except Exception as e:
-                                st.error("Update failed")
+                            update_order_status(row['Order ID'], "Completed")
 
 with tab_charts:
     if not df.empty and "Status" in df.columns:
