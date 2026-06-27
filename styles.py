@@ -159,7 +159,7 @@ def celebrate():
             background-color: {color};
             border-radius: 50%;
             opacity: 1;
-            box-shadow: inset -5px -5px 10px rgba(0,0,0,1);
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.8);
             animation: floatUp {duration}s ease-in forwards;
             animation-delay: {delay}s;
             z-index: 9999;
