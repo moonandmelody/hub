@@ -263,7 +263,7 @@ with tab_queue:
         
         if pending_orders.empty:
             st.success("No pending orders! You are all caught up.")
-            st.balloons()
+            styles.celebrate()
         else:
             cols = st.columns(3)
             for idx, (_, row) in enumerate(pending_orders.iterrows()):
