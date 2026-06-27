@@ -53,6 +53,9 @@ def apply_custom_css():
                 font-family: 'Montserrat',serif;
                 color: white;
             }}
+            .st-emotion-cache-6v4t1a {{
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.7);
+            }}
 
             /* 3. BUTTON STYLING */
             .stButton > button {{
