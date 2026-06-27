@@ -100,7 +100,7 @@ def trigger_edit_mode(row):
     st.session_state.editing_id = row
     
     # 1. Fill Text Inputs
-    st.session_state.form_customer = row['Customer Name']
+    st.session_state.form_customer = row.get('Customer Name','')
     st.session_state.form_contact = row.get('Customer Contact', '')
     st.session_state.form_notes = row.get('Special Notes/Instructions', '')
     
