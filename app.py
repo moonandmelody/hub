@@ -196,8 +196,8 @@ with st.sidebar:
     if "form_contact" not in st.session_state: st.session_state["form_contact"] = ""
     
     st.title("Customer Details")
-    st.text_input("Customer Name", key="form_customer")
-    st.text_input("Contact (Phone)", key="form_contact")
+    st.text_input("Name", key="form_customer")
+    st.text_input("Mobile", key="form_contact")
     st.divider()
 
     current_cart = {}
