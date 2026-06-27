@@ -182,7 +182,12 @@ def show_confirmation_dialog(cart_items, total_cost):
 with st.sidebar:
     # 🎨 BRAND LOGO FROM STYLES.PY
     st.image(styles.LOGO_URL, width=60)
-    st.title("Collect New Order")
+    col_header, col_refresh = st.columns([3, 1])
+    with col_header:
+        st.title("Collect New Order")
+    with col_refresh:
+        # Clicking this simply re-runs the script, pulling fresh data
+        st.button("🔄", help="Refresh Data", on_click=st.rerun)
     
     if "error_msg" in st.session_state and st.session_state.error_msg:
         st.error(st.session_state.error_msg)
