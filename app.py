@@ -418,7 +418,7 @@ with tab_queue:
                         with c2:
                             # ✏️ EDIT BUTTON - Triggers Sidebar Population
                             if st.button("Edit", key=f"edit_{row['Order ID']}", help="Edit in Sidebar", use_container_width=True):
-                                show_edit_dialog(row['Order ID']);
+                                show_edit_dialog(row);
                                 
                         with c3:
                             if st.button("Delete", key=f"del_{row['Order ID']}", help="Delete Order", use_container_width=True):
