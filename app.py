@@ -137,6 +137,9 @@ def trigger_edit_mode(row):
             try:
                 qty = int(parts[0].strip())
                 name = parts[1].strip()
+
+                print(f"qty is ---- {qty}",flush=True)
+                print(f"name is ---- {name}",flush=True)
                 
                 # IMPORTANT: Updates the widget key directly
                 # If the item exists in our products.py catalog, this will update the counter
