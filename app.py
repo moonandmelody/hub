@@ -119,11 +119,11 @@ def trigger_edit_mode(row):
     
     # 3. Parse Items String (e.g. "2x Moon Dance\n1x Potato Pops")
     raw_items = str(row.get('Items', ''))
-    st.toast(f"raw_items #{raw_items}")
+    print(f"raw_items #{raw_items}")
     if raw_items:
         # Split by newline first
         lines = raw_items.split('\n')
-        st.toast(f"line #{lines}")
+        print(f"line #{lines}")
         for line in lines:
             # line looks like "2x Moon Dance"
             # We split by "x " to separate quantity from name
