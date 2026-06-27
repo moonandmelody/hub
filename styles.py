@@ -66,7 +66,7 @@ def apply_custom_css():
             }}
 
             [data-testid="stTextInputRootElement"] {{
-                width: 400px;
+                width: 350px;
                 box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.7);
             }}
 
