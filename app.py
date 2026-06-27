@@ -101,7 +101,14 @@ def trigger_edit_mode(row):
     
     # 1. Fill Text Inputs
     st.session_state.form_customer = row.get('Customer Name','')
-    st.session_state.form_contact = row.get('Customer Contact', '')
+    
+    raw_contact = row.get('Customer Contact', '')
+    if pd.isna(raw_contact) or raw_contact == "nan":
+        st.session_state.form_contact = ""
+    else:
+        # Convert to string and remove ".0" if Google made it a float
+        st.session_state.form_contact = str(raw_contact).replace(".0", "")
+    
     st.session_state.form_notes = row.get('Special Notes/Instructions', '')
     
     # 2. Reset All Counters First
