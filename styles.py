@@ -52,6 +52,9 @@ def apply_custom_css():
             }}
 
             /* 4. METRIC CARDS (Top Numbers) */
+            div [class="st-emotion-cache-0"] {{
+                height:100%;
+            }}
             [data-testid="stMetric"] {{
                 background-color: {BACKGROUND_COLOR};
                 padding: 15px;
