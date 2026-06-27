@@ -97,7 +97,7 @@ next_order_id = str(next_num).zfill(4)
 def trigger_edit_mode(row):
     """Parses the order data and fills the sidebar session state"""
     st.session_state.editing_mode = True
-    st.session_state.editing_id = row
+    st.session_state.editing_id = row.get('Order ID', '')
     
     # 1. Fill Text Inputs
     st.session_state.form_customer = row.get('Customer Name','')
