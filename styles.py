@@ -89,7 +89,7 @@ def apply_custom_css():
                 display: flex;
                 justify-content: center;
             }}
-            div [class="st-emotion-cache-1ml8qm"] {{
+            .st-emotion-cache-1ml8qm {{
                 font-size: 17px;
             }}
 
