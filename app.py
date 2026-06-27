@@ -119,7 +119,7 @@ def trigger_edit_mode(row):
     
     # 3. Parse Items String (e.g. "2x Moon Dance\n1x Potato Pops")
     raw_items = str(row.get('Items', ''))
-    print(f"🔍 DEBUG - raw_items: {raw_items}")
+    print(f"🔍 DEBUG - raw_items: {raw_items}",flush=True)
     # Handle both newlines (new format) and commas (old format)
     if "\n" in raw_items:
         lines = raw_items.split('\n')
@@ -127,7 +127,7 @@ def trigger_edit_mode(row):
         lines = raw_items.split(',')
 
     for line in lines:
-        print(f"🔍 DEBUG - lines list: {lines}")
+        print(f"🔍 DEBUG - lines list: {lines}",flush=True)
         line = line.strip()
         if not line: continue
         
