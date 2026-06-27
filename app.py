@@ -255,7 +255,7 @@ m3.metric("Completed Orders", f"{len(df[df['Status']=='completed'])}")
 
 st.divider()
 
-tab_queue, tab_charts = st.tabs(["📌 Work Queue", "📊 Analytics & History"])
+tab_queue, tab_charts = st.tabs(["Work Queue", "Analytics & History"])
 
 with tab_queue:
     if not df.empty and "Status" in df.columns:
