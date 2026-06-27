@@ -115,29 +115,38 @@ def trigger_edit_mode(row):
     for category, items_dict in products.CATALOG.items():
         if isinstance(items_dict, dict):
             for item_name in items_dict:
-                st.session_state[f"qty_{item_name}"] = 2
+                st.session_state[f"qty_{item_name}"] = 0
     
     # 3. Parse Items String (e.g. "2x Moon Dance\n1x Potato Pops")
     raw_items = str(row.get('Items', ''))
-    print(f"raw_items #{raw_items}")
-    if raw_items:
-        # Split by newline first
+    
+    # Handle both newlines (new format) and commas (old format)
+    if "\n" in raw_items:
         lines = raw_items.split('\n')
-        print(f"line #{lines}")
-        for line in lines:
-            # line looks like "2x Moon Dance"
-            # We split by "x " to separate quantity from name
-            st.toast(f"line #{line}")
-            parts = line.split('x ')
-            if len(parts) >= 2:
-                try:
-                    qty = int(parts[0].strip())
-                    name = parts[1].strip()
-                    # Update the specific counter
-                    st.session_state[f"qty_{name}"] = qty
-                except:
-                    pass # Skip lines that don't parse correctly
+    else:
+        lines = raw_items.split(',')
 
+    for line in lines:
+        line = line.strip()
+        if not line: continue
+        
+        # Expecting format "2x Item Name"
+        parts = line.split('x ')
+        if len(parts) >= 2:
+            try:
+                qty = int(parts[0].strip())
+                name = parts[1].strip()
+                
+                # IMPORTANT: Updates the widget key directly
+                # If the item exists in our products.py catalog, this will update the counter
+                if f"qty_{name}" in st.session_state:
+                    st.session_state[f"qty_{name}"] = qty
+                elif f"qty_{name}" not in st.session_state:
+                    # Initialize it just in case logic runs before widget creation
+                    st.session_state[f"qty_{name}"] = qty
+            except:
+                pass 
+                
 def cancel_edit_mode():
     """Resets sidebar to Create Mode"""
     st.session_state.editing_mode = False
