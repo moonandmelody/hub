@@ -187,7 +187,7 @@ with st.sidebar:
         st.title("Collect New Order")
     with col_refresh:
         # Clicking this simply re-runs the script, pulling fresh data
-        st.button("🔄", help="Refresh Data", on_click=st.rerun)
+        st.button("Refresh", help="Refresh Data")
     
     if "error_msg" in st.session_state and st.session_state.error_msg:
         st.error(st.session_state.error_msg)
