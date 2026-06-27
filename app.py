@@ -194,9 +194,11 @@ with st.sidebar:
 
     if "form_customer" not in st.session_state: st.session_state["form_customer"] = ""
     if "form_contact" not in st.session_state: st.session_state["form_contact"] = ""
-
+    
+    st.title("Customer Details")
     st.text_input("Customer Name", key="form_customer")
     st.text_input("Contact (Phone)", key="form_contact")
+    st.divider()
 
     current_cart = {}
     running_total = 0.0
@@ -224,7 +226,6 @@ with st.sidebar:
                             current_cart[item_name] = qty
                             running_total += (qty * price)
         
-        st.divider()
     st.text_input("Special Notes/Instructions", key="form_notes")
     st.markdown(f"### Total: ₹{running_total:,.2f}")
     
