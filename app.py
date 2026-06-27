@@ -447,7 +447,7 @@ with tab_queue:
                                 
                         with c3:
                             if st.button("Delete", key=f"del_{row['Order ID']}", help="Delete Order", use_container_width=True):
-                                show_delete_dialog(row,row['Order ID'])
+                                show_delete_dialog(row['Order ID'])
                         
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
                         st.caption(f"📞 {row.get('Customer Contact', '-')}")
