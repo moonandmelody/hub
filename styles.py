@@ -126,7 +126,7 @@ def apply_custom_css():
             /* 8. BALLOON ANIMATION KEYFRAMES */
             @keyframes floatUp {{
                 0% {{ transform: translateY(100vh) rotate(0deg); opacity: 1; }}
-                100% {{ transform: translateY(-100vh) rotate(0deg); opacity: 0; }}
+                100% {{ transform: translateY(-100vh) rotate(0deg); opacity: 1; }}
             }}
 
         </style>
@@ -141,7 +141,7 @@ def celebrate():
     balloon_html = ""
     colors = [PRIMARY_COLOR, SECONDARY_COLOR, BACKGROUND_COLOR] 
     
-    for i in range(25): # Create 25 balloons
+    for i in range(36): # Create 36 balloons
         left_pos = random.randint(5, 95)
         duration = random.uniform(3, 6)
         delay = random.uniform(0, 1)
