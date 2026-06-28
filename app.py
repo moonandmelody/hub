@@ -481,7 +481,7 @@ with tab_queue:
                         else:
                             special_notes = str(raw_notes).strip()
 
-                        st.markdown(f"Special Notes: \n {special_notes}")
+                        st.markdown(f"Special Notes: \n- {special_notes}")
                         st.markdown(f"### ₹{row.get('Cost', 0.0):,.0f}")
                         
                         btn_key = f"done_{row.get('Order ID')}_{idx}"
