@@ -72,7 +72,7 @@ def apply_custom_css():
 
             /* 3. BUTTON STYLING */
             .stButton > button {{
-                background-color: {BACKGROUND_COLOR};
+                background-color: {BACKGROUND_COLOR} !important;
                 color: white;
                 border-radius: 8px;
                 border: none;
