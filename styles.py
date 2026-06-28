@@ -190,6 +190,11 @@ def apply_custom_css():
                 box-shadow: none;
             }}
 
+            /* Order Cards */
+            .st-emotion-cache-wt0xm9 {{
+                width: 33.33% !important;
+            }}
+
             /* 8. BALLOON ANIMATION KEYFRAMES */
             @keyframes floatUp {{
                 0% {{ transform: translateY(100vh) rotate(0deg); opacity: 1; }}
