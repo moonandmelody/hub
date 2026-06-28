@@ -143,6 +143,14 @@ def apply_custom_css():
             [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] {{
                 /* This targets the cards in your grid */
             }}
+
+            .st-emotion-cache-wt0xm9 {{
+                width: 300px !important;
+            }}
+
+            .st-emotion-cache-wt0xm9 > div {{
+                width: 300px !important;
+            }}
             
             /* Make the containers look like nice cards */
             div[data-testid="stContainer"] {{
@@ -188,11 +196,6 @@ def apply_custom_css():
             /* Button hover or focus */
             .st-emotion-cache-5qfegl:focus-visible{{
                 box-shadow: none;
-            }}
-
-            /* Order Cards */
-            .st-emotion-cache-wt0xm9 {{
-                width: 33.33% !important;
             }}
 
             /* 8. BALLOON ANIMATION KEYFRAMES */
