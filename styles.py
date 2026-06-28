@@ -68,6 +68,7 @@ def apply_custom_css():
             [data-testid="stTextInputRootElement"] {{
                 width: 350px;
                 box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.7);
+                border: none !important;
             }}
 
             /* 3. BUTTON STYLING */
