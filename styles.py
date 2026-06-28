@@ -72,6 +72,16 @@ def apply_custom_css():
                 border: none !important;
             }}
 
+            h1 {{
+                padding: 12px 0;
+                
+            }}
+            
+            [data-testid="stBaseButton-secondary"] {{
+                background-color: transparent;
+                border: 1px solid {BACKGROUND_COLOR};
+            }}
+
             /* 3. BUTTON STYLING */
             .stButton > button {{
                 background-color: {BACKGROUND_COLOR} !important;
