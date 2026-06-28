@@ -427,7 +427,11 @@ st.divider()
 tab_queue, tab_charts = st.tabs(["Work Queue", "Analytics & History"])
 
 with tab_queue:
-    if not df.empty and "Status" in df.columns:
+    if df.empty:
+        st.success("No pending orders! You are all caught up.")
+        styles.celebrate()
+
+    elif "Status" in df.columns:
         pending_orders = df[df["Status"] == "pending"]
         
         if pending_orders.empty:
