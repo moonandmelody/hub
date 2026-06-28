@@ -286,11 +286,15 @@ def process_sidebar_submission(mode="create"):
 # --- 4. CONFIRMATION DIALOG ---
 @st.dialog("Confirm Order")
 def show_confirmation_dialog(cart_items, total_cost, special_notes, mode):
-    st.write("**Items in Basket:**")
+    st.write("Items in Basket:")
     for item, qty in cart_items.items():
         st.write(f"- {qty}x {item}")
     st.divider()
-    st.write(f"Special Notes/Instructions")
+    st.write(f"Special Notes/Instructions:")
+    if special_notes.strip().empty
+        st.write(f"Not Available")
+    else:
+        st.write(f"{special_notes}")
     st.write(f"{special_notes}")
     st.markdown(f"### Total: ₹{total_cost:,.2f}")
     
