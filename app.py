@@ -474,7 +474,13 @@ with tab_queue:
                         st.markdown(f"**Items:**\n- {items_text}")
                         st.markdown("---");
 
-                        special_notes = str(row.get('Special Notes/Instructions', '')).strip()
+                        raw_notes = row.get('Special Notes/Instructions', '')
+                        # 2. Check if it's a Pandas NaN object, an empty string, or the text "nan"
+                        if pd.isna(raw_notes) or str(raw_notes).strip().lower() in ["nan", ""]:
+                            special_notes = "Not Available"
+                        else:
+                            special_notes = str(raw_notes).strip()
+
                         st.markdown(f"Special Notes/Instructions: \n {special_notes}")
                         st.markdown(f"### ₹{row.get('Cost', 0.0):,.0f}")
                         
