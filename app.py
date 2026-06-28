@@ -186,6 +186,7 @@ def update_order_status(order_id, new_status):
 
 def save_edited_order(order_id, new_name, new_contact, new_items, new_notes, new_cost):
     """Sends edited details to Google Sheets"""
+    local_ts = pd.Timestamp.now(tz="Asia/Kolkata")
     payload = {
         "action": "edit_order",
         "sheet_id": config.SHEET_ID,
