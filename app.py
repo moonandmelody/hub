@@ -358,16 +358,9 @@ with st.sidebar:
 
     current_cart = {}
     running_total = 0.0
-
-    # Reset All Counters First
-    for category, items_dict in products.CATALOG.items():
-        if isinstance(items_dict, dict):
-            for item_name in items_dict:
-                st.session_state[f"qty_{item_name}"] = 0
     
     for category, items_dict in products.CATALOG.items():
         st.markdown(f"##### {category}")
-        
         if isinstance(items_dict, dict):
             item_list = list(items_dict.items())
             for i in range(0, len(item_list), 2):
@@ -380,7 +373,7 @@ with st.sidebar:
                         
                         st.number_input(
                             f"{item_name}\n(₹{price:.0f})", 
-                            min_value=0, max_value=50, step=1, key=widget_key
+                            min_value=0, max_value=50, step=1, key=widget_key, value=st.session_state[widget_key]
                         )
                         
                         qty = st.session_state[widget_key]
