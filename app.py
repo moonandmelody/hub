@@ -342,7 +342,7 @@ with st.sidebar:
         col_header, col_refresh = st.columns([3, 1])
         with col_header: st.title("Log Order")
         with col_refresh: st.button(icon=":material/refresh:", label="", help="Refresh Data")
-        st.markdown(f"Next ID: **#{next_order_id}**")
+        #st.markdown(f"Next ID: **#{next_order_id}**")
 
     st.divider()
     
