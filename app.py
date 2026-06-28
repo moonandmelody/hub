@@ -285,11 +285,13 @@ def process_sidebar_submission(mode="create"):
 
 # --- 4. CONFIRMATION DIALOG ---
 @st.dialog("Confirm Order")
-def show_confirmation_dialog(cart_items, total_cost, mode):
+def show_confirmation_dialog(cart_items, total_cost, special_notes, mode):
     st.write("**Items in Basket:**")
     for item, qty in cart_items.items():
         st.write(f"- {qty}x {item}")
     st.divider()
+    st.write(f"Special Notes/Instructions")
+    st.write(f"{special_notes}")
     st.markdown(f"### Total: ₹{total_cost:,.2f}")
     
     col1, col2 = st.columns(2)
@@ -398,13 +400,13 @@ with st.sidebar:
             if st.button("Save Changes", type="primary", width='stretch'):
                 if st.session_state.form_customer.strip() == "": st.error("Name required!")
                 elif not current_cart: st.error("Basket empty!")
-                else: show_confirmation_dialog(current_cart, running_total, "edit")
+                else: show_confirmation_dialog(current_cart, running_total, notes_val, "edit")
     else:
         # CREATE MODE BUTTON
         if st.button("Submit", width='stretch'):
             if st.session_state.form_customer.strip() == "": st.error("Name required!")
             elif not current_cart: st.error("Basket empty!")
-            else: show_confirmation_dialog(current_cart, running_total, "create")
+            else: show_confirmation_dialog(current_cart, running_total, notes_val, "create")
 
 # --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
