@@ -291,10 +291,10 @@ def show_confirmation_dialog(cart_items, total_cost, special_notes, mode):
         st.write(f"- {qty}x {item}")
     st.divider()
     st.write(f"Special Notes/Instructions:")
-    if special_notes.empty:
-        st.write(f"Not Available")
-    else:
+    if not special_notes.empty:
         st.write(f"{special_notes}")
+    else:
+        st.write(f"Not Available")
     st.write(f"{special_notes}")
     st.markdown(f"### Total: ₹{total_cost:,.2f}")
     
