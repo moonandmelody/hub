@@ -63,6 +63,7 @@ def apply_custom_css():
 
             [data-testid="stNumberInputContainer"] {{
                 width: 200px;
+                border: none !important;
             }}
 
             [data-testid="stTextInputRootElement"] {{
