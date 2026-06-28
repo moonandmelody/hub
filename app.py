@@ -444,11 +444,11 @@ with tab_queue:
 
                         with c2:
                             # ✏️ EDIT BUTTON - Triggers Sidebar Population
-                            if st.button(icon=":material/edit:", label="Edit Order" , key=f"edit_{row['Order ID']}", help="Edit in Sidebar", width='stretch'):
+                            if st.button(icon=":material/edit:", label="" , key=f"edit_{row['Order ID']}", help="Edit in Sidebar", width='stretch'):
                                 show_edit_dialog(row,row['Order ID']);
                                 
                         with c3:
-                            if st.button(icon=":material/delete:", label="Delete Order", key=f"del_{row['Order ID']}", help="Delete Order", width='stretch'):
+                            if st.button(icon=":material/delete:", label="", key=f"del_{row['Order ID']}", help="Delete Order", width='stretch'):
                                 show_delete_dialog(row['Order ID'])
                         
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
