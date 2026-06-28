@@ -155,6 +155,10 @@ def apply_custom_css():
                 width: 50%;
             }}
 
+            .st-d7 {{
+                background-color: transparent;
+            }}
+
             /* Dialog box */
             [data-testid="stAlertContainer"]{{
                 background-color: transparent;
