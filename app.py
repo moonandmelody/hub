@@ -291,7 +291,7 @@ def show_confirmation_dialog(cart_items, total_cost, special_notes, mode):
         st.write(f"- {qty}x {item}")
     st.divider()
     st.write(f"Special Notes/Instructions:")
-    if not special_notes.empty:
+    if not special_notes:
         st.write(f"{special_notes}")
     else:
         st.write(f"Not Available")
