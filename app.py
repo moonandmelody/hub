@@ -472,6 +472,8 @@ with tab_queue:
                             items_text = raw_items.replace(",", "\n- ")
                             
                         st.markdown(f"**Items:**\n- {items_text}")
+                        st.markdown("---");
+                        st.markdown(f"Special Notes/Instructions: \n {row.get('Special Notes/Instructions', 'Not Available')}");
                         st.markdown(f"### ₹{row.get('Cost', 0.0):,.0f}")
                         
                         btn_key = f"done_{row.get('Order ID')}_{idx}"
