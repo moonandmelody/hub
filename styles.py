@@ -166,7 +166,7 @@ def apply_custom_css():
 
             /* Button hover or focus */
             .st-emotion-cache-5qfegl:focus-visible{{
-                
+                box-shadow: none;
             }}
 
             /* 8. BALLOON ANIMATION KEYFRAMES */
