@@ -74,7 +74,6 @@ def apply_custom_css():
 
             h1 {{
                 padding: 12px 0;
-                
             }}
             
             [data-testid="stBaseButton-secondary"] {{
