@@ -474,7 +474,7 @@ with tab_queue:
                         st.markdown(f"**Items:**\n- {items_text}")
                         st.markdown("---");
 
-                        special_notes = str(row.get('Special Notes/Instructions', 'Not Available'))
+                        special_notes = str(row.get('Special Notes/Instructions', 'Not Available')).strip()
                         st.markdown(f"Special Notes/Instructions: \n {special_notes}")
                         st.markdown(f"### ₹{row.get('Cost', 0.0):,.0f}")
                         
