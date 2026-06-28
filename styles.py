@@ -73,7 +73,8 @@ def apply_custom_css():
             }}
 
             h1 {{
-                padding: 12px 0px;
+                padding: 12px 0px !important;
+                font-size: 45px !important;
             }}
             
             [data-testid="stBaseButton-secondary"] {{
