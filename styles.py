@@ -171,10 +171,6 @@ def apply_custom_css():
                 background-color: transparent;
             }}
 
-            .st-c2 {{
-                background-color: transparent;
-            }}
-
             /* Dialog box */
             [data-testid="stAlertContainer"]{{
                 background-color: transparent;
