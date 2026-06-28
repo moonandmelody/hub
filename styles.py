@@ -164,6 +164,11 @@ def apply_custom_css():
                 font-family: 'Montserrat',serif;
             }}
 
+            /* Button hover or focus */
+            .st-emotion-cache-5qfegl:focus-visible{{
+                
+            }}
+
             /* 8. BALLOON ANIMATION KEYFRAMES */
             @keyframes floatUp {{
                 0% {{ transform: translateY(100vh) rotate(0deg); opacity: 1; }}
