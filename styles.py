@@ -155,6 +155,15 @@ def apply_custom_css():
                 width: 50%;
             }}
 
+            /* Dialog box */
+            [data-testid="stAlertContainer"]{{
+                background-color: transparent;
+            }}
+
+            .st-emotion-cache-yhc2tm {{
+                font-family: 'Montserrat',serif;
+            }}
+
             /* 8. BALLOON ANIMATION KEYFRAMES */
             @keyframes floatUp {{
                 0% {{ transform: translateY(100vh) rotate(0deg); opacity: 1; }}
