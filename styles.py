@@ -82,6 +82,10 @@ def apply_custom_css():
                 border: 1px solid {BACKGROUND_COLOR};
             }}
 
+            .st-emotion-cache-194zssa > div {{
+                justify-content: end;
+            }}
+
             /* 3. BUTTON STYLING */
             .stButton > button {{
                 background-color: {BACKGROUND_COLOR} !important;
