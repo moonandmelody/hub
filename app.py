@@ -392,8 +392,24 @@ def show_confirmation_dialog(cart_items, total_cost, mode):
 
     st.divider()
 
-    st.write(f"{packaging_breakdown}")
-    st.write(f"{packaging_total}")
+    formatted_markdown = "### Packaging Details\n"
+    # 2. Loop through every single item and add it as a new bullet point row
+    for line in packaging_breakdown:
+        # Optional: Clean up and capitalize item names for a better presentation
+        title_line = line.replace("(", "(").title()  # Ensures brand names are capitalised
+        formatted_markdown += f"- {title_line}\n"
+
+    # 3. Add a clean visual divider line below all items
+    formatted_markdown += "---\n"
+
+    # 4. Display the Total Packaging Fee on a brand new line at the very bottom
+    formatted_markdown += f"### **Total Packaging Fee:** ₹{packaging_cost:,.2f}"
+
+    # 5. Render it seamlessly on your Streamlit App interface
+    st.markdown(formatted_markdown)
+
+    #st.write(f"{packaging_breakdown}")
+    #st.write(f"{packaging_total}")
 
     st.divider()
     
