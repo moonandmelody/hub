@@ -439,7 +439,7 @@ m3.metric("Completed Orders", f"{len(df[df['Status']=='completed'])}")
 
 st.divider()
 
-tab_queue, tab_charts = st.tabs(["Work Queue", "Analytics & History"])
+tab_queue, tab_completed, tab_charts = st.tabs(["Work Queue", "Completed Orders", "Analytics & History"])
 
 with tab_queue:
     if df.empty:
@@ -498,6 +498,49 @@ with tab_queue:
                         if st.button("Done", key=btn_key, width='stretch'):
                             update_order_status(row['Order ID'], "Completed")
 
+with tab_completed:
+    if df.empty:
+        st.success("Complete orders to see them here!")
+
+    elif "Status" in df.columns:
+        completed_orders = df[df["Status"] == "completed"]
+        
+        if completed_order.empty:
+            st.success("Complete orders to see them here!")
+
+        else:
+            cols = st.columns(3)
+            for idx, (_, row) in enumerate(completed_orders.iterrows()):
+                col_idx = idx % 3
+                with cols[col_idx]:
+                    with st.container(border=True):
+                        c1 = st.columns([3])
+                        c1.markdown(f"**#{row.get('Order ID')}**")
+
+                        st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
+                        st.markdown(f"{row.get('Customer Contact', '-')}")
+                        st.markdown("---")
+                        
+                        raw_items = str(row.get('Items', ''))
+                        if "\n" in raw_items:
+                            items_text = raw_items.replace(",\n", "\n- ")
+                        else:
+                            items_text = raw_items.replace(",", "\n- ")
+                            
+                        st.markdown(f"**Items:**\n- {items_text}")
+                        st.markdown("---");
+
+                        raw_notes = row.get('Special Notes/Instructions', '')
+                        # 2. Check if it's a Pandas NaN object, an empty string, or the text "nan"
+                        if pd.isna(raw_notes) or str(raw_notes).strip().lower() in ["nan", ""]:
+                            special_notes = "None"
+                        else:
+                            special_notes = str(raw_notes).strip()
+
+                        st.markdown(f"**Special Notes:**")
+                        st.markdown(f"{special_notes}")
+                        st.markdown(f"### ₹{row.get('Cost', 0.0):,.0f}")
+                        
 with tab_charts:
     if not df.empty and "Status" in df.columns:
         completed = df[df["Status"] == "completed"]
