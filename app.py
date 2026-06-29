@@ -388,7 +388,7 @@ with st.sidebar:
                             current_cart[item_name] = qty
                             running_total += (qty * price)
     
-    st.divider()
+        st.divider()
         
     # 1. Inspect the value and force-heal it if it got mutated into a non-string
     if "form_notes" in st.session_state:
