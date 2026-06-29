@@ -39,9 +39,7 @@ def generate_packaging_rules():
           elif "pop" in item_name.lower() or "fry" in item_name.lower():
               pack_cost = 8.0
 
-          rules[item_name] = {
-              "type": "food", 
-          }
+          rules[item_name] = {"type": "food"}
                   
   return rules
 
