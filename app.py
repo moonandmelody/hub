@@ -530,7 +530,7 @@ with tab_completed:
 
                         with c2:
                             # ✏️ BACK BUTTON - Triggers State of Completed Order to Pending
-                            if st.button(icon=":material/arrow back:", label="" , key=f"edit_{row['Order ID']}", help="Return to Work Queue", width='stretch'):
+                            if st.button(icon=":material/arrow_back:", label="" , key=f"edit_{row['Order ID']}", help="Return to Work Queue", width='stretch'):
                                 show_return_to_work_queue_dialog(row,row['Order ID']);
 
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
