@@ -117,11 +117,6 @@ def trigger_edit_mode(row):
             for item_name in items_dict:
                 st.session_state[f"qty_{item_name}"] = 0 
     
-    for category, items_dict in products.CATALOG.items():
-        if isinstance(items_dict, dict):
-            for item_name in items_dict:
-                st.session_state[f"qty_{item_name}"] = 0
-    
     # 3. Parse Items String safely
     raw_items = str(row.get('Items', ''))
     print(f"raw_items ---- {raw_items}",flush=True)
