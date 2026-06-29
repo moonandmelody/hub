@@ -505,7 +505,7 @@ with tab_completed:
     elif "Status" in df.columns:
         completed_orders = df[df["Status"] == "completed"]
         
-        if completed_order.empty:
+        if completed_orders.empty:
             st.success("Complete orders to see them here!")
 
         else:
