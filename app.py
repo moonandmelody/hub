@@ -471,7 +471,7 @@ with tab_queue:
                                 show_delete_dialog(row['Order ID'])
                         
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
-                        st.markdown(f"{row.get('Customer Contact', '-')}")
+                        st.markdown(f"### {row.get('Customer Contact', '-')}")
                         st.markdown("---")
                         
                         raw_items = str(row.get('Items', ''))
