@@ -292,7 +292,7 @@ def show_confirmation_dialog(cart_items, total_cost, special_notes, mode):
     st.divider()
     st.write(f"Special Notes/Instructions:")
     if not special_notes:
-        st.write(f"Not Available")
+        st.write(f"None")
     else:
         st.write(f"{special_notes}")
     st.write(f"{special_notes}")
@@ -477,7 +477,7 @@ with tab_queue:
                         raw_notes = row.get('Special Notes/Instructions', '')
                         # 2. Check if it's a Pandas NaN object, an empty string, or the text "nan"
                         if pd.isna(raw_notes) or str(raw_notes).strip().lower() in ["nan", ""]:
-                            special_notes = "Not Available"
+                            special_notes = "None"
                         else:
                             special_notes = str(raw_notes).strip()
 
