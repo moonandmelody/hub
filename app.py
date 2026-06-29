@@ -117,45 +117,42 @@ def trigger_edit_mode(row):
             for item_name in items_dict:
                 st.session_state[f"qty_{item_name}"] = 0 
     
-    for category, items_dict in products.CATALOG.items():
-        if isinstance(items_dict, dict):
-            for item_name in items_dict:
-                st.session_state[f"qty_{item_name}"] = 0
-    
-    # 3. Parse Items String safely
+    # 3. Parse Items String (e.g. "2x Moon Dance\n1x Potato Pops")
     raw_items = str(row.get('Items', ''))
-    print(f"raw_items ---- {raw_items}")
-    
-    # Standardise separators by replacing commas with newlines
-    raw_items = raw_items.replace(',', '\n')
-    lines = raw_items.split('\n')
+    print(f"🔍 DEBUG - raw_items: {raw_items}",flush=True)
+    # Handle both newlines (new format) and commas (old format)
+    if "\n" in raw_items:
+        lines = raw_items.split('\n')
+    else:
+        lines = raw_items.split(',')
 
     for line in lines:
-        print(f"line ---- {line}")
+        print(f"🔍 DEBUG - lines list: {line}",flush=True)
         line = line.strip()
-        if not line: 
-            continue
-        
-        # Remove any leading markdown dashes if they exist in your saved string
-        line = line.lstrip('- ')
+        if not line: continue
         
         # Expecting format "2x Item Name"
-        if 'x ' in line:
-            parts = line.split('x ', 1) # Limit split to 1 to handle items with 'x' in their names
-            print(f"parts ---- {parts}")
+        parts = line.split('x ')
+        if len(parts) >= 2:
             try:
                 qty = int(parts[0].strip())
                 name = parts[1].strip()
-                
-                # CRITICAL FIX: Strip out stray punctuation like trailing commas, brackets or dots
-                name = name.rstrip(',. ')
+                name = name.replace(",","")
 
-                # Update the widget session state key directly
-                key_name = f"qty_{name}"
-                st.session_state[key_name] = qty
+                print(f"qty is ---- {qty}",flush=True)
+                print(f"name is ---- {name}",flush=True)
                 
-            except ValueError:
-                pass
+                # IMPORTANT: Updates the widget key directly
+                # If the item exists in our products.py catalog, this will update the counter
+                if f"qty_{name}" in st.session_state:
+                    st.session_state[f"qty_{name}"] = qty
+                    print("in session.state",flush=True)
+                elif f"qty_{name}" not in st.session_state:
+                    print("note in session.state",flush=True)
+                    # Initialize it just in case logic runs before widget creation
+                    st.session_state[f"qty_{name}"] = qty
+            except:
+                pass 
                 
 def cancel_edit_mode():
     """Resets sidebar to Create Mode"""
@@ -288,18 +285,17 @@ def process_sidebar_submission(mode="create"):
 
 # --- 4. CONFIRMATION DIALOG ---
 @st.dialog("Confirm Order")
-def show_confirmation_dialog(cart_items, total_cost, mode):
+def show_confirmation_dialog(cart_items, total_cost, special_notes, mode):
     st.write("Items in Basket:")
     for item, qty in cart_items.items():
         st.write(f"- {qty}x {item}")
     st.divider()
     st.write(f"Special Notes/Instructions:")
-    
-    special_notes = st.session_state.get("form_notes", "").strip()
     if not special_notes:
-        special_notes = "Not Available"
+        st.write(f"None")
     else:
         st.write(f"{special_notes}")
+    st.write(f"{special_notes}")
     st.markdown(f"### Total: ₹{total_cost:,.2f}")
     
     col1, col2 = st.columns(2)
@@ -393,11 +389,11 @@ with st.sidebar:
                 for j, (item_name, price) in enumerate(batch):
                     with cols[j]:
                         widget_key = f"qty_{item_name}"
-                        current_qty = st.session_state.get(widget_key, 0)
+                        if widget_key not in st.session_state: st.session_state[widget_key] = 0
                         
                         st.number_input(
                             f"{item_name}\n(₹{price:.0f})", 
-                            min_value=0, max_value=50, step=1, key=widget_key, value=int(current_qty)
+                            min_value=0, max_value=50, step=1, key=widget_key, value=st.session_state[widget_key]
                         )
                         
                         qty = st.session_state[widget_key]
@@ -412,10 +408,10 @@ with st.sidebar:
         # If it became None, NaN, or a float, convert it cleanly to a string
         if st.session_state["form_notes"] is None or not isinstance(st.session_state["form_notes"], str):
             st.session_state["form_notes"] = ""
-    else:
-        st.session_state["form_notes"] = ""
+        else:
+            st.session_state["form_notes"] = ""
 
-    st.text_input("Special Notes/Instructions", key="form_notes")
+    special_notes = st.text_input("Special Notes/Instructions", key="form_notes")
     st.divider()
     st.markdown(f"### Total: ₹{running_total:,.2f}")
 
@@ -430,13 +426,13 @@ with st.sidebar:
             if st.button("Save Changes", type="primary", width='stretch'):
                 if st.session_state.form_customer.strip() == "": st.error("Name required!")
                 elif not current_cart: st.error("Basket empty!")
-                else: show_confirmation_dialog(current_cart, running_total, "edit")
+                else: show_confirmation_dialog(current_cart, running_total, special_notes, "edit")
     else:
         # CREATE MODE BUTTON
         if st.button("Submit", width='stretch'):
             if st.session_state.form_customer.strip() == "": st.error("Name required!")
             elif not current_cart: st.error("Basket empty!")
-            else: show_confirmation_dialog(current_cart, running_total, "create")
+            else: show_confirmation_dialog(current_cart, running_total, special_notes, "create")
 
 # --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
@@ -491,34 +487,13 @@ with tab_queue:
                         st.markdown(f"{row.get('Customer Contact', '-')}")
                         st.markdown("---")
                         
-                        # 1. Cleanly pull the text, handling Pandas Series or missing objects safely
-                        raw_items = row.get('Items', '')
-                        
-                        # Handle cases where Pandas accidentally packages it as a Series/Object array
-                        if hasattr(raw_items, "to_string") or not isinstance(raw_items, (str, int, float)):
-                            try:
-                                # Convert a pandas Series or row subset back to pure scalar data
-                                raw_items = str(raw_items.values[0]) if hasattr(raw_items, "values") else str(raw_items)
-                            except:
-                                raw_items = str(raw_items)
+                        raw_items = str(row.get('Items', ''))
+                        if "\n" in raw_items:
+                            items_text = raw_items.replace(",\n", "\n- ")
                         else:
-                            raw_items = str(raw_items)
-
-                        # 2. Clean out dirty data artifacts or empty spaces
-                        raw_items_clean = raw_items.strip()
-                        if pd.isna(raw_items) or raw_items_clean.lower() in ["nan", "none", ""]:
-                            items_text = "No items selected"
-                        else:
-                            # 3. Format into structured markdown list items cleanly
-                            # Standardize old formats using commas to clean newlines first
-                            formatted_text = raw_items_clean.replace(",\n", "\n").replace(",", "\n")
+                            items_text = raw_items.replace(",", "\n- ")
                             
-                            # Build structural markdown bullet strings row by row
-                            lines = [f"- {line.strip().lstrip('- ')}" for line in formatted_text.split('\n') if line.strip()]
-                            items_text = "\n".join(lines)
-                            
-                        # 4. Render clean on your layout card
-                        st.markdown(f"**Items:**\n{items_text}")
+                        st.markdown(f"**Items:**\n- {items_text}")
                         st.markdown("---");
 
                         raw_notes = row.get('Special Notes/Instructions', '')
