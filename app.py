@@ -317,7 +317,7 @@ def show_confirmation_dialog(cart_items, total_cost, mode):
     
     special_notes = st.session_state.get("form_notes", "").strip()
     if not special_notes:
-        special_notes = "Not Available"
+        st.write(f"Not Available")
     else:
         st.write(f"{special_notes}")
     st.markdown(f"### Total: ₹{total_cost:,.2f}")
