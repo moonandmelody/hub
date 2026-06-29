@@ -31,6 +31,7 @@ def generate_packaging_rules():
           rules[item_name] = {"type": "liquid"}
               
         else:
+          print(f"item_name is {item_name}")
           rules[item_name] = {"type": "food"}
                   
   return rules
