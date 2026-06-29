@@ -329,6 +329,17 @@ def show_edit_dialog(order_id, order_number):
             st.rerun()
 
 
+@st.dialog("Return to Work Queue?")
+def show_return_to_work_queue_dialog(order_id, order_number):
+    st.warning(f"Are you sure you want to change status of #{order_id} from Completed to Pending?")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Cancel", width='stretch'): st.rerun()
+    with col2:
+        if st.button("Delete", type="primary", width='stretch'):
+            update_order_status(order_id, "Pending")
+
+
 # --- 5. SIDEBAR LAYOUT ---
 # Initialize Session State Variables
 if "editing_mode" not in st.session_state: st.session_state.editing_mode = False
@@ -514,7 +525,13 @@ with tab_completed:
                 col_idx = idx % 3
                 with cols[col_idx]:
                     with st.container(border=True):
-                        st.markdown(f"**#{row.get('Order ID')}**")
+                        c1, c2 = st.columns([3, 1])
+                        c1.markdown(f"**#{row.get('Order ID')}**")
+
+                        with c2:
+                            # ✏️ BACK BUTTON - Triggers State of Completed Order to Pending
+                            if st.button(icon=":material/arrow back:", label="" , key=f"edit_{row['Order ID']}", help="Return to Work Queue", width='stretch'):
+                                show_return_to_work_queue_dialog(row,row['Order ID']);
 
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
                         st.markdown(f"{row.get('Customer Contact', '-')}")
