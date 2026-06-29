@@ -409,8 +409,8 @@ with st.sidebar:
         # If it became None, NaN, or a float, convert it cleanly to a string
         if st.session_state["form_notes"] is None or not isinstance(st.session_state["form_notes"], str):
             st.session_state["form_notes"] = ""
-        else:
-            st.session_state["form_notes"] = ""
+    else:
+        st.session_state["form_notes"] = ""
 
     st.text_input("Special Notes/Instructions", key="form_notes")
     st.divider()
