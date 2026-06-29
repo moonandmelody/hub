@@ -1,5 +1,6 @@
 # You can add as many items as you want here!
 # FORMAT: "Category Name": { "Item Name": Price, ... }
+# ENTER NEW CATEGORY IN order_packaging.py
 
 CATALOG = {
     "Sipping Chocolate": {
