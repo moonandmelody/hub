@@ -127,7 +127,7 @@ def trigger_edit_mode(row):
         lines = raw_items.split(',')
 
     for line in lines:
-        print(f"🔍 DEBUG - lines list: {line}",flush=True)
+        print(f"🔍 DEBUG - lines list: {lines}",flush=True)
         line = line.strip()
         if not line: continue
         
