@@ -7,10 +7,12 @@ CATALOG = {
         "Moon Dance": 359,
         "Midnight Luxe Vegan": 369
     },
-    "Gourmet Teas": {
-        "Lemongrass Tea": 240,
-        "Chickoo Tea": 250,
-        "Mango Tea": 280
+    "Gourmet Tea": {
+        "Lemongrass Tea": 240
+    },
+    "Gourmet Coffee": {
+        "Biscoff Latte": 240,
+        "Sitaphal Coffee": 250 
     },
     "Sides": {
         "Potato Pops": 220,
