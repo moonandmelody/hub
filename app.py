@@ -388,7 +388,16 @@ with st.sidebar:
                             current_cart[item_name] = qty
                             running_total += (qty * price)
         st.divider()
-        
+
+    # 1. Clean up the data inside your trigger_edit_mode function (or wherever you set it)
+    raw_notes = row.get('Special Notes/Instructions', '')
+
+    # If it's a NaN or float object, convert it to a string ""
+    if pd.isna(raw_notes) or str(raw_notes).strip().lower() == "nan":
+        st.session_state.form_notes = ""
+    else:
+        st.session_state.form_notes = str(raw_notes).strip()
+
     special_notes = st.text_input("Special Notes/Instructions", key="form_notes")
     st.divider()
     st.markdown(f"### Total: ₹{running_total:,.2f}")
