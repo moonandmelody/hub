@@ -18,7 +18,8 @@ CATALOG = {
     "Sides": {
         "Potato Pops": 220,
         "Mini Croissants (2)": 200,
-        "Garlic Breadsticks": 280
+        "Garlic Breadsticks": 280,
+        "Bun Maska": 130
     },
     "Add Ons": {
         "Whipped Cream": 40,
