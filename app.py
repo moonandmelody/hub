@@ -260,7 +260,7 @@ def calculate_order_packaging(current_cart):
                 "qty": qty,
                 "packaging_type": rule.get("packaging_type")
             }
-            print(f"food_items -------------- {food_items}")
+            print(f"food_items -------------- {food_items}",flush=True)
             
     # 2. Liquid Logic: Maximize Big Cartons (holds 2), remainder to Small Carton
     for item_name, qty in liquid_items.items():
@@ -275,27 +275,27 @@ def calculate_order_packaging(current_cart):
         if small_cartons > 0: parts.append(f"{small_cartons}x Small Carton")
         
         packaging_breakdown.append(f"{' + '.join(parts)} ({item_name}): ₹{item_cost:.0f}")
-        print(f"packaging_breakdown in liquids is -------------- {packaging_breakdown}")
+        print(f"packaging_breakdown in liquids is -------------- {packaging_breakdown}",flush=True)
         
     # 3. Food Logic: Standard linear multiplication per item packaging cost
     for item_name, info in food_items.items():
-        print(f"item_name -------food------- {item_name}")
-        print(f"info -------food------- {info}")
+        print(f"item_name -------food------- {item_name}",flush=True)
+        print(f"info -------food------- {info}",flush=True)
         if "LONG_BOX_WITH_WINDOW" in info["packaging_type"]:
             # IF IT'S A LONG BOX THEN WE SEND A SMALL DIP CUP
             item_cost = info["qty"] * getattr(pkg, info["packaging_type"]) + pkg.SMALL_DIP_CUP
-            print(f"item_cost -------food--with dip cup----- {item_cost}")
+            print(f"item_cost -------food--with dip cup----- {item_cost}",flush=True)
             packaging_total += item_cost
-            print(f"packaging_total -------food---with dip cup---- {packaging_total}")
+            print(f"packaging_total -------food---with dip cup---- {packaging_total}",flush=True)
         else:
             item_cost = info["qty"] * getattr(pkg, info["packaging_type"])
-            print(f"item_cost -------square box------- {item_cost}")
+            print(f"item_cost -------square box------- {item_cost}",flush=True)
             packaging_total += item_cost
-            print(f"packaging_total ------square box-------- {packaging_total}")
+            print(f"packaging_total ------square box-------- {packaging_total}",flush=True)
             
         if item_cost > 0:
             packaging_breakdown.append(f"Packaging ({info['qty']}x {item_name}): ₹{item_cost:.0f}")
-            print(f"pricing breakdown is -------food------- {packaging_breakdown}")
+            print(f"pricing breakdown is -------food------- {packaging_breakdown}",flush=True)
             
     return packaging_total, packaging_breakdown
 
