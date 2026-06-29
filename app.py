@@ -433,6 +433,7 @@ else:
     total_rev = 0.0
 
 m1, m2, m3 = st.columns(3)
+st.markdown('<div class="special-card"></div>', unsafe_allow_html=True)
 m1.metric("Pending Orders", f"{pending_count}", delta_color="inverse")
 m2.metric("Total Revenue", f"₹{total_rev:,.0f}")
 m3.metric("Completed Orders", f"{len(df[df['Status']=='completed'])}")
