@@ -331,12 +331,12 @@ def show_edit_dialog(order_id, order_number):
 
 @st.dialog("Return to Work Queue?")
 def show_return_to_work_queue_dialog(order_id, order_number):
-    st.warning(f"Are you sure you want to change status of #{order_id} from Completed to Pending?")
+    st.warning(f"Change status of #{order_number} from Completed to Pending?")
     col1, col2 = st.columns(2)
     with col1:
         if st.button("Cancel", width='stretch'): st.rerun()
     with col2:
-        if st.button("Delete", type="primary", width='stretch'):
+        if st.button("Change", type="primary", width='stretch'):
             update_order_status(order_id, "Pending")
 
 
