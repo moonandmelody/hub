@@ -285,7 +285,7 @@ def process_sidebar_submission(mode="create"):
 
 # --- 4. CONFIRMATION DIALOG ---
 @st.dialog("Confirm Order")
-def show_confirmation_dialog(cart_items, total_cost, special_notes, mode):
+def show_confirmation_dialog(cart_items, total_cost, mode):
     st.write("Items in Basket:")
     for item, qty in cart_items.items():
         st.write(f"- {qty}x {item}")
