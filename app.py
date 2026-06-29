@@ -124,14 +124,14 @@ def trigger_edit_mode(row):
     
     # 3. Parse Items String safely
     raw_items = str(row.get('Items', ''))
-    print(f"raw_items ---- {raw_items}")
+    print(f"raw_items ---- {raw_items}",flush=True)
     
     # Standardise separators by replacing commas with newlines
     raw_items = raw_items.replace(',', '\n')
     lines = raw_items.split('\n')
 
     for line in lines:
-        print(f"line ---- {line}")
+        print(f"line ---- {line}",flush=True)
         line = line.strip()
         if not line: 
             continue
@@ -142,7 +142,7 @@ def trigger_edit_mode(row):
         # Expecting format "2x Item Name"
         if 'x ' in line:
             parts = line.split('x ', 1) # Limit split to 1 to handle items with 'x' in their names
-            print(f"parts ---- {parts}")
+            print(f"parts ---- {parts}",flush=True)
             try:
                 qty = int(parts[0].strip())
                 name = parts[1].strip()
