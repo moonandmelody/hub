@@ -514,8 +514,7 @@ with tab_completed:
                 col_idx = idx % 3
                 with cols[col_idx]:
                     with st.container(border=True):
-                        c1 = st.columns([3])
-                        c1.markdown(f"**#{row.get('Order ID')}**")
+                        st.markdown(f"**#{row.get('Order ID')}**")
 
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
                         st.markdown(f"{row.get('Customer Contact', '-')}")
