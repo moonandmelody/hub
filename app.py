@@ -558,13 +558,13 @@ with tab_queue:
 
 with tab_completed:
     if df.empty:
-        st.success("Complete orders to see them here!")
+        st.info("Complete orders to see them here!")
 
     elif "Status" in df.columns:
         completed_orders = df[df["Status"] == "completed"]
         
         if completed_orders.empty:
-            st.success("Complete orders to see them here!")
+            st.info("Complete orders to see them here!")
 
         else:
             cols = st.columns(3)
