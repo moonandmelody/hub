@@ -118,39 +118,42 @@ def trigger_edit_mode(row):
                 st.session_state[f"qty_{item_name}"] = 0 
     
     # 3. Parse Items String safely
+    # 3. Parse Items String (e.g. "2x Moon Dance\n1x Potato Pops")
     raw_items = str(row.get('Items', ''))
-    print(f"raw_items ---- {raw_items}",flush=True)
-    
-    # Standardise separators by replacing commas with newlines
-    raw_items = raw_items.replace(',', '\n')
-    lines = raw_items.split('\n')
+    print(f"🔍 DEBUG - raw_items: {raw_items}",flush=True)
+    # Handle both newlines (new format) and commas (old format)
+    if "\n" in raw_items:
+        lines = raw_items.split('\n')
+    else:
+        lines = raw_items.split(',')
 
     for line in lines:
-        print(f"line ---- {line}",flush=True)
+        print(f"🔍 DEBUG - lines list: {line}",flush=True)
         line = line.strip()
-        if not line: 
-            continue
-        
-        # Remove any leading markdown dashes if they exist in your saved string
-        line = line.lstrip('- ')
+        if not line: continue
         
         # Expecting format "2x Item Name"
-        if 'x ' in line:
-            parts = line.split('x ', 1) # Limit split to 1 to handle items with 'x' in their names
-            print(f"parts ---- {parts}",flush=True)
+        parts = line.split('x ')
+        if len(parts) >= 2:
             try:
                 qty = int(parts[0].strip())
                 name = parts[1].strip()
-                
-                # CRITICAL FIX: Strip out stray punctuation like trailing commas, brackets or dots
-                name = name.rstrip(',. ')
+                name = name.replace(",","")
 
-                # Update the widget session state key directly
-                key_name = f"qty_{name}"
-                st.session_state[key_name] = qty
+                print(f"qty is ---- {qty}",flush=True)
+                print(f"name is ---- {name}",flush=True)
                 
-            except ValueError:
-                pass
+                # IMPORTANT: Updates the widget key directly
+                # If the item exists in our products.py catalog, this will update the counter
+                if f"qty_{name}" in st.session_state:
+                    st.session_state[f"qty_{name}"] = qty
+                    print("in session.state",flush=True)
+                elif f"qty_{name}" not in st.session_state:
+                    print("note in session.state",flush=True)
+                    # Initialize it just in case logic runs before widget creation
+                    st.session_state[f"qty_{name}"] = qty
+            except:
+                pass 
                 
 def cancel_edit_mode():
     """Resets sidebar to Create Mode"""
