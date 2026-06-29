@@ -292,7 +292,7 @@ def show_confirmation_dialog(cart_items, total_cost, mode):
     st.divider()
     st.write(f"Special Notes/Instructions:")
     
-    special_notes= st.session_state.get("form_notes", "").strip()
+    special_notes = st.session_state.get("form_notes", "").strip()
     if not special_notes:
         special_notes = "Not Available"
     else:
@@ -412,7 +412,7 @@ with st.sidebar:
         else:
             st.session_state["form_notes"] = ""
 
-    special_notes = st.text_input("Special Notes/Instructions", key="form_notes")
+    st.text_input("Special Notes/Instructions", key="form_notes")
     st.divider()
     st.markdown(f"### Total: ₹{running_total:,.2f}")
 
