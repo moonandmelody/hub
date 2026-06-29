@@ -32,7 +32,11 @@ def generate_packaging_rules():
               
         else:
           print(f"item_name is {item_name}")
-          rules[item_name] = {"type": "food"}
+          item_name = str(item_name).strip().lower()
+          if "potato pops" in item_name or "garlic breadsticks" in item_name:
+            rules[item_name] = {"type": "food","packaging_type":"long_box"}
+          else:
+            rules[item_name] = {"type": "food","packaging_type":"square_box"}
                   
   return rules
 
