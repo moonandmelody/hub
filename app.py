@@ -118,8 +118,7 @@ def trigger_edit_mode(row):
                 st.session_state[f"qty_{item_name}"] = 0 
     
     # 3. Parse Items String safely
-    # 3. Parse Items String (e.g. "2x Moon Dance\n1x Potato Pops")
-    raw_items = str(row.get('Items', ''))
+    raw_items = row.get('Items', '')
     print(f"🔍 DEBUG - raw_items: {raw_items}",flush=True)
     # Handle both newlines (new format) and commas (old format)
     if "\n" in raw_items:
