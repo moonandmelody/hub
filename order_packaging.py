@@ -27,7 +27,7 @@ def generate_packaging_rules():
     if isinstance(items_dict, dict):
       for item_name in items_dict.keys():
         # If the item belongs to a "drinks" or "beverages" parent tag
-        if "drink" in category_clean or "beverage" in category_clean:
+        if "sipping chocolate" in category_clean or "gourmet tea" in category_clean or "gourmet coffee" in category_clean:
           rules[item_name] = {"type": "liquid"}
               
         else:
