@@ -295,7 +295,6 @@ def show_confirmation_dialog(cart_items, total_cost, special_notes, mode):
         st.write(f"None")
     else:
         st.write(f"{special_notes}")
-    st.write(f"{special_notes}")
     st.markdown(f"### Total: ₹{total_cost:,.2f}")
     
     col1, col2 = st.columns(2)
