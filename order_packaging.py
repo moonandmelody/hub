@@ -30,13 +30,22 @@ def generate_packaging_rules():
         if "sipping chocolate" in category_clean or "gourmet tea" in category_clean or "gourmet coffee" in category_clean:
           rules[item_name] = {"type": "liquid"}
               
-        else:
-          print(f"item_name is {item_name}",flush=True)
+        elif "sides" in category_clean:
+          print(f"item_name is {item_name}", flush=True)
           item_name = str(item_name).strip().lower()
           if "potato pops" in item_name or "garlic breadsticks" in item_name:
             rules[item_name] = {"type": "food","packaging_type":"long_box"}
           else:
             rules[item_name] = {"type": "food","packaging_type":"square_box"}
+            
+        else:
+          print(f"item_name is {item_name}", flush=True)
+          item_name = str(item_name).strip().lower()
+          if "whipped cream" in item_name:
+            rules[item_name] = {"type": "food","packaging_type":"big_dip_cup"}
+          else:
+            rules[item_name] = {"type": "food","packaging_type":"small_dip_cup"}
+          
 
   print(f"Rules are {rules}",flush=True)
   return rules
