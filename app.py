@@ -606,16 +606,28 @@ with tab_completed:
                         
 with tab_charts:
     if not df.empty and "Status" in df.columns:
-        completed = df[df["Status"] == "completed"]
+        # 1. Clean the DataFrame columns right before processing to remove duplicate references
+        # This keeps the first occurrence of any column name and drops the extra invisible ones
+        df_clean = df.loc[:, ~df.columns.duplicated()]
+        
+        # 2. Filter for completed orders using our clean reference
+        completed = df_clean[df_clean["Status"] == "completed"]
+        
         if not completed.empty:
             st.subheader("Daily Revenue Trend")
+            
+            # Make sure Date and Cost columns exist cleanly as text/numbers
             daily = completed.groupby("Date")["Cost"].sum().reset_index()
             st.bar_chart(daily, x="Date", y="Cost", color="#90EE90")
             
             st.subheader("Order History")
+            
+            # 3. Safely slice your target history view without crashing
+            history_view = completed[["Date", "Order ID", "Customer Name", "Items", "Cost"]]
+            
             st.dataframe(
-                completed[["Date", "Order ID", "Customer Name", "Items", "Cost"]],
-                width='stretch',
+                history_view,
+                use_container_width=True, # Note: 'width=stretch' is updated to modern Streamlit syntax
                 hide_index=True
             )
         else:
