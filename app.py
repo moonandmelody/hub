@@ -118,8 +118,31 @@ def trigger_edit_mode(row):
                 st.session_state[f"qty_{item_name}"] = 0 
     
     # 3. Parse Items String safely
-    raw_items = str(row.get('Items', ''))
-    print(f"🔍 DEBUG - raw_items: {raw_items}",flush=True)
+    # 1. Fetch the items structure
+    items_data = row.get('Items', '')
+
+    # 2. CRITICAL FIX: Extract the raw string from the Pandas Series
+    if hasattr(items_data, "iloc"):
+        # If it is a Series object, grab the very first row value safely
+        raw_items = str(items_data.iloc[0]) if len(items_data) > 0 else ""
+    elif isinstance(items_data, list) or hasattr(items_data, "values"):
+        # Fallback to extract scalar strings out of nested array blocks
+        try:
+            raw_items = str(items_data[0])
+        except:
+            raw_items = str(items_data)
+    else:
+        # If it is already a regular text cell, use it as is
+        raw_items = str(items_data)
+
+    # 3. Clean out dirty data artifacts or missing values completely
+    raw_items = raw_items.strip()
+    if raw_items.lower() in ["nan", "none", ""]:
+        raw_items = ""
+
+    # Now this print statement will output a clean, pure string on your console!
+    print(f"🔍 DEBUG - CLEAN raw_items: {raw_items}", flush=True)
+
     # Handle both newlines (new format) and commas (old format)
     if "\n" in raw_items:
         lines = raw_items.split('\n')
