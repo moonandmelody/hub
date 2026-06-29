@@ -168,7 +168,7 @@ def cancel_edit_mode():
     st.rerun()
 
 def update_order_status(order_id, new_status):
-    """Updates Status (Completed/Deleted/Pending)"""
+    """Updates Status (Completed/Deleted)"""
     payload = {
         "action": "update_status",
         "sheet_id": config.SHEET_ID,
@@ -326,19 +326,6 @@ def show_edit_dialog(order_id, order_number):
     with col2:
         if st.button("Edit", type="primary", width='stretch'):
             trigger_edit_mode(order_id)
-            st.rerun()
-
-
-@st.dialog("Return to Work Queue?")
-def show_return_to_work_queue_dialog(order_id, order_number):
-    st.warning(f"Change status of #{order_number} from Completed to Pending?")
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("Cancel", width='stretch'): st.rerun()
-    with col2:
-        if st.button("Change", type="primary", width='stretch'):
-            update_order_status(order_id, "Pending")
-            st.toast(f"Order #{order_number} updated successfully to pending status!")
             st.rerun()
 
 
@@ -527,13 +514,7 @@ with tab_completed:
                 col_idx = idx % 3
                 with cols[col_idx]:
                     with st.container(border=True):
-                        c1, c2 = st.columns([3, 1])
-                        c1.markdown(f"**#{row.get('Order ID')}**")
-
-                        with c2:
-                            # ✏️ BACK BUTTON - Triggers State of Completed Order to Pending
-                            if st.button(icon=":material/arrow_back:", label="" , key=f"edit_{row['Order ID']}", help="Return to Work Queue", width='stretch'):
-                                show_return_to_work_queue_dialog(row,row['Order ID']);
+                        st.markdown(f"**#{row.get('Order ID')}**")
 
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
                         st.markdown(f"{row.get('Customer Contact', '-')}")
