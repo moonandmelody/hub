@@ -361,7 +361,7 @@ def show_return_to_work_queue_dialog(order_id):
         if st.button("Cancel", width='stretch'): st.rerun()
     with col2:
         if st.button("Change", type="primary", width='stretch'):
-            update_order_status(order_id, "pending")
+            update_order_status(order_id, "Pending")
             st.toast(f"Order #{order_id} updated successfully to pending status!")
             st.rerun()
 
