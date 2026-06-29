@@ -168,7 +168,7 @@ def cancel_edit_mode():
     st.rerun()
 
 def update_order_status(order_id, new_status):
-    """Updates Status (Completed/Deleted)"""
+    """Updates Status (Completed/Deleted/Pending)"""
     payload = {
         "action": "update_status",
         "sheet_id": config.SHEET_ID,
