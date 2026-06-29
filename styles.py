@@ -140,27 +140,27 @@ def apply_custom_css():
             }}
 
             .st-emotion-cache-wt0xm9:nth-of-type(1) {{
-                calc(33.3333% - 1rem) !important;
+                width: calc(33.3333% - 1rem) !important;
             }}
 
             .st-emotion-cache-wt0xm9:nth-of-type(2) {{
-                calc(33.3333% - 1rem) !important;
+                width: calc(33.3333% - 1rem) !important;
             }}
 
             .st-emotion-cache-wt0xm9:nth-of-type(3) {{
-                calc(33.3333% - 1rem) !important;
+                width: calc(33.3333% - 1rem) !important;
             }}
 
             .st-emotion-cache-wt0xm9:nth-of-type(1) > div {{
-                calc(33.3333% - 1rem) !important;
+                width: calc(33.3333% - 1rem) !important;
             }}
 
             .st-emotion-cache-wt0xm9:nth-of-type(2) > div {{
-                calc(33.3333% - 1rem) !important;
+                width: calc(33.3333% - 1rem) !important;
             }}
 
             .st-emotion-cache-wt0xm9:nth-of-type(3) > div {{
-                calc(33.3333% - 1rem) !important;
+                width: calc(33.3333% - 1rem) !important;
             }}
 
             /* 5. POST-IT NOTE CARDS (Containers) */
