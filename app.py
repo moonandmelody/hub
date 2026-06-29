@@ -390,11 +390,12 @@ with st.sidebar:
                 for j, (item_name, price) in enumerate(batch):
                     with cols[j]:
                         widget_key = f"qty_{item_name}"
-                        if widget_key not in st.session_state: st.session_state[widget_key] = 0
+                        if widget_key not in st.session_state: 
+                            st.session_state[widget_key] = 0
                         
                         st.number_input(
                             f"{item_name}\n(₹{price:.0f})", 
-                            min_value=0, max_value=50, step=1, key=widget_key, value=st.session_state[widget_key]
+                            min_value=0, max_value=50, step=1, key=widget_key
                         )
                         
                         qty = st.session_state[widget_key]
