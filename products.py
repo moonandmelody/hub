@@ -8,7 +8,8 @@ CATALOG = {
         "Midnight Luxe Vegan": 369
     },
     "Gourmet Tea": {
-        "Lemongrass Tea": 240
+        "Lemongrass Tea": 240,
+        "Rose Tea": 240
     },
     "Gourmet Coffee": {
         "Biscoff Latte": 240,
