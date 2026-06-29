@@ -30,15 +30,7 @@ def generate_packaging_rules():
         if "drink" in category_clean or "beverage" in category_clean:
           rules[item_name] = {"type": "liquid"}
               
-        # Otherwise, default the parent association to food packaging rules
         else:
-          # Dynamically set packaging fees based on food name keywords
-          pack_cost = 10.0  # Default food container baseline fee
-          if "burger" in item_name.lower():
-              pack_cost = 15.0
-          elif "pop" in item_name.lower() or "fry" in item_name.lower():
-              pack_cost = 8.0
-
           rules[item_name] = {"type": "food"}
                   
   return rules
