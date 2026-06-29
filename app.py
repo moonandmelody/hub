@@ -6,6 +6,7 @@ import streamlit as st
 import products
 import config
 import styles  # <--- NEW: Imports your beautiful design file
+import packaging
 
 # 🎨 PAGE CONFIGURATION
 st.set_page_config(
