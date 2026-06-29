@@ -31,13 +31,14 @@ def generate_packaging_rules():
           rules[item_name] = {"type": "liquid"}
               
         else:
-          print(f"item_name is {item_name}")
+          print(f"item_name is {item_name}",flush=True)
           item_name = str(item_name).strip().lower()
           if "potato pops" in item_name or "garlic breadsticks" in item_name:
             rules[item_name] = {"type": "food","packaging_type":"long_box"}
           else:
             rules[item_name] = {"type": "food","packaging_type":"square_box"}
-                  
+
+  print(f"Rules are {rules}",flush=True)
   return rules
 
 # 2. Automatically generate the rules dictionary on import
