@@ -392,11 +392,11 @@ with st.sidebar:
         
     # 1. Inspect the value and force-heal it if it got mutated into a non-string
     if "form_notes" in st.session_state:
-    # If it became None, NaN, or a float, convert it cleanly to a string
-    if st.session_state["form_notes"] is None or not isinstance(st.session_state["form_notes"], str):
-        st.session_state["form_notes"] = ""
-    else:
-        st.session_state["form_notes"] = ""
+        # If it became None, NaN, or a float, convert it cleanly to a string
+        if st.session_state["form_notes"] is None or not isinstance(st.session_state["form_notes"], str):
+            st.session_state["form_notes"] = ""
+        else:
+            st.session_state["form_notes"] = ""
 
     special_notes = st.text_input("Special Notes/Instructions", key="form_notes")
     st.divider()
