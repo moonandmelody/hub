@@ -234,6 +234,60 @@ def save_edited_order(order_id, new_name, new_contact, new_items, new_notes, new
     except Exception as e:
         st.error(f"Edit failed: {e}")
 
+def calculate_order_packaging(current_cart):
+    """
+    Calculates packaging fees by analyzing current_cart items 
+    against the rules dynamically generated in packaging.py
+    """
+    packaging_total = 0.0
+    packaging_breakdown = []
+    
+    liquid_items = {}
+    food_items = {}
+    
+    # 1. Separate current cart items using the generated rules mapping
+    for item_name, qty in current_cart.items():
+        rule = pkg.PACKAGING_RULES.get(item_name)
+        if not rule:
+            continue  # Safeguard if an item is not found
+            
+        if rule["type"] == "liquid":
+            liquid_items[item_name] = qty
+        elif rule["type"] == "food":
+            food_items[item_name] = {
+                "qty": qty,
+                "packaging_type": rule.get("packaging_type")
+            }
+            
+    # 2. Liquid Logic: Maximize Big Cartons (holds 2), remainder to Small Carton
+    for item_name, qty in liquid_items.items():
+        big_cartons = qty // 2
+        small_cartons = qty % 2
+        
+        item_cost = (big_cartons * pkg.BIG_CARTON) + (small_cartons * pkg.SMALL_CARTON)
+        packaging_total += item_cost
+        
+        parts = []
+        if big_cartons > 0: parts.append(f"{big_cartons}x Big Carton")
+        if small_cartons > 0: parts.append(f"{small_cartons}x Small Carton")
+        
+        packaging_breakdown.append(f"{' + '.join(parts)} ({item_name}): ₹{item_cost:.0f}")
+        
+    # 3. Food Logic: Standard linear multiplication per item packaging cost
+    for item_name, info in food_items.items():
+        if "LONG_BOX_WITH_WINDOW" in info["packaging_type"]:
+            # IF IT'S A LONG BOX THEN WE SEND A SMALL DIP CUP
+            item_cost = info["qty"] * getattr(pkg, info["packaging_type"]) + pkg.SMALL_DIP_CUP 
+            packaging_total += item_cost
+        else:
+            item_cost = info["qty"] * getattr(pkg, info["packaging_type"])
+            packaging_total += item_cost
+            
+        if item_cost > 0:
+            packaging_breakdown.append(f"Packaging ({info['qty']}x {item_name}): ₹{item_cost:.0f}")
+            
+    return packaging_total, packaging_breakdown
+
 
 # --- 3. THE SUBMISSION HANDLER (CALLBACK) ---
 def process_sidebar_submission(mode="create"):
@@ -310,6 +364,7 @@ def process_sidebar_submission(mode="create"):
 # --- 4. CONFIRMATION DIALOG ---
 @st.dialog("Confirm Order")
 def show_confirmation_dialog(cart_items, total_cost, mode):
+    packaging_total, packaging_breakdown = calculate_order_packaging(cart_items)
     st.write("Items in Basket:")
     for item, qty in cart_items.items():
         st.write(f"- {qty}x {item}")
@@ -321,6 +376,14 @@ def show_confirmation_dialog(cart_items, total_cost, mode):
         st.write(f"Not Available")
     else:
         st.write(f"{special_notes}")
+
+    st.divider()
+
+    st.write(f"{packaging_breakdown}")
+    st.write(f"{packaging_total}")
+
+    st.divider()
+    
     st.markdown(f"### Total: ₹{total_cost:,.2f}")
     
     col1, col2 = st.columns(2)
