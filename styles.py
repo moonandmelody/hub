@@ -139,6 +139,18 @@ def apply_custom_css():
                 font-size: 17px;
             }}
 
+            .st-emotion-cache-wt0xm9:nth-of-type(1) {
+                width: 100%;
+            }
+
+            .st-emotion-cache-wt0xm9:nth-of-type(2) {
+                width: 100%;
+            }
+
+            .st-emotion-cache-wt0xm9:nth-of-type(3) {
+                width: 100%;
+            }
+
             /* 5. POST-IT NOTE CARDS (Containers) */
             [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] {{
                 /* This targets the cards in your grid */
