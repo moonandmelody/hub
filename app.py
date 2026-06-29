@@ -291,8 +291,10 @@ def show_confirmation_dialog(cart_items, total_cost, special_notes, mode):
         st.write(f"- {qty}x {item}")
     st.divider()
     st.write(f"Special Notes/Instructions:")
+    
+    special_notes= st.session_state.get("form_notes", "").strip()
     if not special_notes:
-        st.write(f"None")
+        special_notes = "Not Available"
     else:
         st.write(f"{special_notes}")
     st.markdown(f"### Total: ₹{total_cost:,.2f}")
@@ -425,13 +427,13 @@ with st.sidebar:
             if st.button("Save Changes", type="primary", width='stretch'):
                 if st.session_state.form_customer.strip() == "": st.error("Name required!")
                 elif not current_cart: st.error("Basket empty!")
-                else: show_confirmation_dialog(current_cart, running_total, special_notes, "edit")
+                else: show_confirmation_dialog(current_cart, running_total, "edit")
     else:
         # CREATE MODE BUTTON
         if st.button("Submit", width='stretch'):
             if st.session_state.form_customer.strip() == "": st.error("Name required!")
             elif not current_cart: st.error("Basket empty!")
-            else: show_confirmation_dialog(current_cart, running_total, special_notes, "create")
+            else: show_confirmation_dialog(current_cart, running_total, "create")
 
 # --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
