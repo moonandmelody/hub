@@ -1,8 +1,8 @@
 import products
 
 # Fixed box configurations for liquid drinks
-SMALL_CARTON_COST = 20.5
-BIG_CARTON_COST = 23.5
+SMALL_CARTON = 20.5
+BIG_CARTON = 23.5
 LONG_BOX_WITH_WINDOW = 15.5
 SQUARE_BOX = 15.5
 BIG_DIP_CUP = 3
