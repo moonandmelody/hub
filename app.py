@@ -403,7 +403,7 @@ def show_confirmation_dialog(cart_items, total_cost, mode):
     formatted_markdown += "---\n"
 
     # 4. Display the Total Packaging Fee on a brand new line at the very bottom
-    formatted_markdown += f"### **Total Packaging Fee:** ₹{packaging_cost:,.2f}"
+    formatted_markdown += f"### **Total Packaging Fee:** ₹{packaging_total:,.2f}"
 
     # 5. Render it seamlessly on your Streamlit App interface
     st.markdown(formatted_markdown)
