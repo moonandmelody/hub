@@ -247,6 +247,7 @@ def calculate_order_packaging(current_cart):
     
     # 1. Separate current cart items using the generated rules mapping
     for item_name, qty in current_cart.items():
+        item_name = str(item_name).strip().lower()
         rule = pkg.PACKAGING_RULES.get(item_name)
         print(f"rule inside is {rule}",flush=True)
         if not rule:
@@ -279,6 +280,7 @@ def calculate_order_packaging(current_cart):
         
     # 3. Food Logic: Standard linear multiplication per item packaging cost
     for item_name, info in food_items.items():
+        item_name = str(item_name).strip().lower()
         print(f"item_name -------food------- {item_name}",flush=True)
         print(f"info -------food------- {info}",flush=True)
         if "LONG_BOX_WITH_WINDOW" in info["packaging_type"]:
