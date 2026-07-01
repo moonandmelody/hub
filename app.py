@@ -7,6 +7,8 @@ import products
 import config
 import styles  # <--- NEW: Imports your beautiful design file
 import order_packaging as pkg
+import datetime
+import date_config as dt_cfg
 
 # 🎨 PAGE CONFIGURATION
 st.set_page_config(
@@ -458,6 +460,30 @@ def show_return_to_work_queue_dialog(order_id):
             st.toast(f"Order #{order_id} updated successfully to pending status!")
             st.rerun()
 
+# validate delivery date 
+def validate_selected_date():
+    """Fires instantly on user interaction to block invalid selections."""
+    selected = st.session_state.get("form_date")
+    if not selected:
+        return
+
+    # Check day of the week (0=Monday, 1=Tuesday)
+    is_weekday_blocked = selected.weekday() in [0, 1]
+    
+    # Check custom text-file list
+    selected_str = selected.strftime("%Y-%m-%d")
+    is_custom_blocked = selected_str in dt_cfg.CUSTOM_BLOCKED_DATES
+
+    if is_weekday_blocked or is_custom_blocked:
+        st.sidebar.error(f"❌ We are CLOSED on {selected.strftime('%A')} ({selected_str})!")
+        
+        # Reset back to the nearest safe operational day (e.g., today or tomorrow)
+        fallback = datetime.date.today()
+        while fallback.weekday() in [0, 1] or fallback.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
+            fallback += datetime.timedelta(days=1)
+            
+        st.session_state["form_date"] = fallback
+
 
 # --- 5. SIDEBAR LAYOUT ---
 # Initialize Session State Variables
@@ -529,7 +555,25 @@ with st.sidebar:
         st.session_state["form_notes"] = ""
 
     st.text_input("Special Notes/Instructions", key="form_notes")
+    
     st.divider()
+
+    if "form_date" not in st.session_state:
+    starting_day = datetime.date.today()
+    while starting_day.weekday() in [0, 1] or starting_day.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
+        starting_day += datetime.timedelta(days=1)
+    st.session_state["form_date"] = starting_day
+
+    # 2. Render the date field inside your form block
+    st.date_input(
+        label="Select Order Date",
+        key="form_date",
+        disabled_dates=dt_cfg.get_all_disabled_dates(), # Shades them out on screen
+        on_change=validate_selected_date               # Backend guardrail fallback [1.4]
+    )
+    
+    st.divider()
+    
     st.markdown(f"### Total: ₹{running_total:,.2f}")
 
     # FOOTER BUTTONS
