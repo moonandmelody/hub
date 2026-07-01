@@ -559,7 +559,7 @@ with st.sidebar:
     st.divider()
 
     if "form_date" not in st.session_state:
-    starting_day = datetime.date.today()
+        starting_day = datetime.date.today()
     while starting_day.weekday() in [0, 1] or starting_day.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
         starting_day += datetime.timedelta(days=1)
     st.session_state["form_date"] = starting_day
