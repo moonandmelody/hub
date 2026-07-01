@@ -560,20 +560,47 @@ with st.sidebar:
     
     st.divider()
 
-    # 1. INITIALIZE: Set the calendar default to the nearest active working day
+    # 1. INITIALIZE: Find the nearest open business day
     if "form_date" not in st.session_state:
         starting_day = datetime.date.today()
+        # 0 = Monday, 1 = Tuesday
         while starting_day.weekday() in [0, 1] or starting_day.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
             starting_day += datetime.timedelta(days=1)
         st.session_state["form_date"] = starting_day
-
-
-    # 2. RENDER: Standard native Streamlit arguments with your callback engine
+    
+    
+    # 2. THE CORRECTED GUARDIAN VALIDATION FUNCTION
+    def handle_date_change():
+        """Validates the input date and moves it forward if it hits a blocked day."""
+        # Read what the user actually picked from the temporary widget state
+        chosen_date = st.session_state.get("temp_date_picker")
+        if not chosen_date:
+            return
+    
+        # Keep advancing the date forward until it lands on an open operating day
+        validated_date = chosen_date
+        has_violation = False
+        
+        while validated_date.weekday() in [0, 1] or validated_date.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
+            has_violation = True
+            validated_date += datetime.timedelta(days=1)
+    
+        if has_violation:
+            # Show a friendly alert popup informing them of the adjustment
+            st.toast(f"ℹ️ We are closed on that day! Advanced order date to: {validated_date.strftime('%A, %d %b')}")
+        
+        # Save the clean, verified date into your permanent form state
+        st.session_state["form_date"] = validated_date
+    
+    
+    # 3. RENDER THE WIDGET SAFELY
+    # Use a temporary key name to decouple the widget from your active data pool
     st.date_input(
         label="Select Order Date",
-        min_value=datetime.date.today(), # Restricts past selections natively
-        key="form_date",
-        on_change=validate_selected_date # Triggers instantly to intercept bad dates
+        min_value=datetime.date.today(),
+        value=st.session_state["form_date"], # Forces the widget to reflect the true saved value
+        key="temp_date_picker",
+        on_change=handle_date_change        # Runs BEFORE the app draws the next screen
     )
     
     st.divider()
