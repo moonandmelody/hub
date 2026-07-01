@@ -563,9 +563,9 @@ with st.sidebar:
     # 1. INITIALIZE: Set the calendar default to the nearest active working day
     if "form_date" not in st.session_state:
         starting_day = datetime.date.today()
-    while starting_day.weekday() in [0, 1] or starting_day.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
-        starting_day += datetime.timedelta(days=1)
-    st.session_state["form_date"] = starting_day
+        while starting_day.weekday() in [0, 1] or starting_day.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
+            starting_day += datetime.timedelta(days=1)
+        st.session_state["form_date"] = starting_day
 
 
     # 2. RENDER: Standard native Streamlit arguments with your callback engine
