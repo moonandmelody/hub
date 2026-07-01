@@ -310,6 +310,8 @@ def process_sidebar_submission(mode="create"):
     customer_val = st.session_state.form_customer
     contact_val = st.session_state.form_contact
     notes_val = st.session_state.form_notes
+    delivery_date = st.session_state.form_date
+    delivery_time = st.session_state.form_time
     
     cart_items = {}
     running_total = 0.0
@@ -328,6 +330,13 @@ def process_sidebar_submission(mode="create"):
     if not cart_items:
         st.session_state.error_msg = "Error: Basket is empty!"
         return 
+    if not delivery_date:
+        st.session_state.error_msg = "Error: Select a delivery date"
+        return
+    if not delivery_time:
+        st.session_state.error_msg = "Error: Select a delivery time slot"
+        return
+    
 
     items_str_list = [f"{qty}x {name}" for name, qty in cart_items.items()]
     compiled_items = ",\n".join(items_str_list)
@@ -341,7 +350,9 @@ def process_sidebar_submission(mode="create"):
             contact_val, 
             compiled_items,
             notes_val,
-            running_total
+            running_total,
+            delivery_date,
+            delivery_time
         )
     else:
         # CREATE NEW
@@ -357,6 +368,8 @@ def process_sidebar_submission(mode="create"):
             "notes": notes_val,
             "cost": str(running_total),
             "status": "Pending",
+            "deliveryDate": delivery_date,
+            "deliveryTime": delivery_time
         }
         try:
             qs = urllib.parse.urlencode(payload)
@@ -367,6 +380,9 @@ def process_sidebar_submission(mode="create"):
             st.session_state.form_customer = ""
             st.session_state.form_contact = ""
             st.session_state.form_notes = ""
+            st.session_state.form_date = ""
+            st.session_state.form_time = ""
+            
             for category, items_dict in products.CATALOG.items():
                 if isinstance(items_dict, dict):
                     for p in items_dict: st.session_state[f"qty_{p}"] = 0
@@ -378,7 +394,7 @@ def process_sidebar_submission(mode="create"):
 
 # --- 4. CONFIRMATION DIALOG ---
 @st.dialog("Confirm Order")
-def show_confirmation_dialog(cart_items, total_cost, mode):
+def show_confirmation_dialog(cart_items, total_cost, delivery_date, delivery_time, mode):
     packaging_total, packaging_breakdown = calculate_order_packaging(cart_items)
     st.write("Items in Basket:")
     for item, qty in cart_items.items():
@@ -392,6 +408,10 @@ def show_confirmation_dialog(cart_items, total_cost, mode):
     else:
         st.write(f"{special_notes}")
 
+    st.divider()
+
+    st.write(f"Delivery on {delivery_date} at {delivery_time}")
+    
     st.divider()
 
     formatted_markdown = "### Packaging Details\n"
@@ -619,13 +639,13 @@ with st.sidebar:
             if st.button("Save Changes", type="primary", width='stretch'):
                 if st.session_state.form_customer.strip() == "": st.error("Name required!")
                 elif not current_cart: st.error("Basket empty!")
-                else: show_confirmation_dialog(current_cart, running_total, "edit")
+                else: show_confirmation_dialog(current_cart, running_total, delivery_date, delivery_time, "edit")
     else:
         # CREATE MODE BUTTON
         if st.button("Submit", width='stretch'):
             if st.session_state.form_customer.strip() == "": st.error("Name required!")
             elif not current_cart: st.error("Basket empty!")
-            else: show_confirmation_dialog(current_cart, running_total, "create")
+            else: show_confirmation_dialog(current_cart, running_total, delivery_date, delivery_time, "create")
 
 # --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
