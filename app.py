@@ -641,11 +641,11 @@ with st.sidebar:
     with time_col:
         # 3. SMART FILTER: If order is for today, look to drop past hours slots dynamically
         current_time = datetime.datetime.now()
-        active_slots = TIME_SLOTS.copy()
+        active_slots = dt_cfg.TIME_SLOTS.copy()
         
         if st.session_state["form_date"] == datetime.date.today():
             filtered_slots = []
-            for slot in TIME_SLOTS:
+            for slot in dt_cfg.TIME_SLOTS:
                 # Extract the starting hour from the string (e.g., "11:00 AM" -> 11, "03:00 PM" -> 15)
                 start_time_str = slot.split(" - ")[0]
                 parsed_hour = datetime.datetime.strptime(start_time_str, "%I:%M %p").hour
