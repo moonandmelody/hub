@@ -587,7 +587,8 @@ with st.sidebar:
     
         if has_violation:
             # Show a friendly alert popup informing them of the adjustment
-            st.toast(f"ℹ️ We are closed on that day! Advanced order date to: {validated_date.strftime('%A, %d %b')}")
+            st.error(f"ℹ️ We are closed on that day! Advanced order date to: {validated_date.strftime('%A, %d %b')}")
+            #st.toast(f"ℹ️ We are closed on that day! Advanced order date to: {validated_date.strftime('%A, %d %b')}")
         
         # Save the clean, verified date into your permanent form state
         st.session_state["form_date"] = validated_date
