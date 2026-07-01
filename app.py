@@ -587,6 +587,9 @@ with st.sidebar:
         while starting_day.weekday() in [0, 1] or starting_day.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
             starting_day += datetime.timedelta(days=1)
         st.session_state["form_date"] = starting_day
+
+    if "form_time_slot" not in st.session_state:
+        st.session_state["form_time_slot"] = dt_cfg.TIME_SLOTS[0]
     
     
     # 2. THE CORRECTED GUARDIAN VALIDATION FUNCTION
@@ -614,15 +617,46 @@ with st.sidebar:
         st.session_state["form_date"] = validated_date
     
     
-    # 3. RENDER THE WIDGET SAFELY
-    # Use a temporary key name to decouple the widget from your active data pool
-    st.date_input(
-        label="Select Order Date",
-        min_value=datetime.date.today(),
-        value=st.session_state["form_date"], # Forces the widget to reflect the true saved value
-        key="temp_date_picker",
-        on_change=handle_date_change        # Runs BEFORE the app draws the next screen
-    )
+    #3. RENDER THE WIDGET SAFELY
+    date_col, time_col = st.columns(2)
+
+    with date_col:
+        # Render your safe date dropdown selector
+        st.session_state["form_date"] = st.selectbox(
+            label="Select Order Date",
+            options=open_days,
+            index=open_days.index(st.session_state["form_date"]) if st.session_state["form_date"] in open_days else 0,
+            format_func=lambda x: date_labels.get(x, str(x))
+        )
+    
+    with time_col:
+        # 3. SMART FILTER: If order is for today, look to drop past hours slots dynamically
+        current_time = datetime.datetime.now()
+        active_slots = TIME_SLOTS.copy()
+        
+        if st.session_state["form_date"] == datetime.date.today():
+            filtered_slots = []
+            for slot in TIME_SLOTS:
+                # Extract the starting hour from the string (e.g., "11:00 AM" -> 11, "03:00 PM" -> 15)
+                start_time_str = slot.split(" - ")[0]
+                parsed_hour = datetime.datetime.strptime(start_time_str, "%I:%M %p").hour
+                
+                # Only keep slots where the starting hour is in the future
+                if current_time.hour < parsed_hour:
+                    filtered_slots.append(slot)
+            
+            # Fallback if it is very late in the day
+            active_slots = filtered_slots if filtered_slots else ["Slots Closed for Today"]
+        
+        # 4. Render the Time Slot Selectbox Dropdown
+        # Checks if your previously saved value is still valid in the current active slots list
+        default_time_idx = active_slots.index(st.session_state["form_time_slot"]) if st.session_state["form_time_slot"] in active_slots else 0
+        
+        st.session_state["form_time_slot"] = st.selectbox(
+            label="Select Time Slot",
+            options=active_slots,
+            index=default_time_idx
+        )
     
     st.divider()
     
