@@ -113,6 +113,11 @@ def trigger_edit_mode(row):
         st.session_state.form_contact = str(raw_contact).replace(".0", "")
     
     st.session_state.form_notes = row.get('Special Notes/Instructions', '')
+
+    st.session_state.form_date = row.get('Delivery Date', '')
+    
+    st.session_state["form_time_slot"] = str(row.get('Delivery Time', dt_cfg.TIME_SLOTS[0])).strip()
+
     
     # 2. Reset All Counters First
     for category, items_dict in products.CATALOG.items():
@@ -187,6 +192,8 @@ def cancel_edit_mode():
     st.session_state.form_customer = ""
     st.session_state.form_contact = ""
     st.session_state.form_notes = ""
+    st.session_state.form_date = ""
+    st.session_state["form_time_slot"] = dt_cfg.TIME_SLOTS[0]
     for category, items_dict in products.CATALOG.items():
         if isinstance(items_dict, dict):
             for item_name in items_dict:
@@ -210,7 +217,7 @@ def update_order_status(order_id, new_status):
     except Exception as e:
         st.error(f"Update failed: {e}")
 
-def save_edited_order(order_id, new_name, new_contact, new_items, new_notes, new_cost):
+def save_edited_order(order_id, new_name, new_contact, new_items, new_notes, new_cost, new_delivery_date, new_delivery_time):
     """Sends edited details to Google Sheets"""
     local_ts = pd.Timestamp.now(tz="Asia/Kolkata")
     payload = {
@@ -223,7 +230,9 @@ def save_edited_order(order_id, new_name, new_contact, new_items, new_notes, new
         "contact": new_contact,
         "items": new_items,
         "notes": new_notes,
-        "cost": str(new_cost)
+        "cost": str(new_cost),
+        "delivery_date": new_delivery_date,
+        "delivery_time": new_delivery_time
     }
     try:
         qs = urllib.parse.urlencode(payload)
