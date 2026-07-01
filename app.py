@@ -598,7 +598,7 @@ with st.sidebar:
             future_date = today + datetime.timedelta(days=i)
             
             # Filter out Mondays (0) and Tuesdays (1)
-            if future_date.weekday() in:
+            if future_date.weekday() in [0,1]:
                 continue
                 
             # Filter out custom holidays listed in your config file
