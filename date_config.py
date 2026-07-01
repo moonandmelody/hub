@@ -5,3 +5,10 @@ CUSTOM_BLOCKED_DATES = [
     "2026-08-15",  # Example: Independence Day Holiday
     "2026-10-02"  # Example: Gandhi Jayanti
 ]
+
+TIME_SLOTS = [
+    "06:00 PM - 07:00 PM",
+    "07:00 PM - 08:00 PM",
+    "08:00 PM - 09:00 PM",
+    "09:00 PM - 10:00 PM"
+]
