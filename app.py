@@ -462,26 +462,28 @@ def show_return_to_work_queue_dialog(order_id):
 
 # validate delivery date 
 def validate_selected_date():
-    """Fires instantly on user interaction to block invalid selections."""
+    """Natively validates and rejects selection of Mondays, Tuesdays, or custom holidays."""
     selected = st.session_state.get("form_date")
     if not selected:
         return
 
-    # Check day of the week (0=Monday, 1=Tuesday)
+    # Check day of the week (0 = Monday, 1 = Tuesday)
     is_weekday_blocked = selected.weekday() in [0, 1]
     
-    # Check custom text-file list
+    # Check your custom configuration blacklist file strings
     selected_str = selected.strftime("%Y-%m-%d")
     is_custom_blocked = selected_str in dt_cfg.CUSTOM_BLOCKED_DATES
 
     if is_weekday_blocked or is_custom_blocked:
-        st.sidebar.error(f"❌ We are CLOSED on {selected.strftime('%A')} ({selected_str})!")
+        # Raise an explicit visual alert on the user's workspace
+        st.sidebar.error(f"❌ Closed on {selected.strftime('%A')} ({selected_str})!")
         
-        # Reset back to the nearest safe operational day (e.g., today or tomorrow)
+        # Automatically calculate and snap to the next valid open operational day
         fallback = datetime.date.today()
         while fallback.weekday() in [0, 1] or fallback.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
             fallback += datetime.timedelta(days=1)
             
+        # Repair the session state variable value smoothly
         st.session_state["form_date"] = fallback
 
 
@@ -558,18 +560,20 @@ with st.sidebar:
     
     st.divider()
 
+    # 1. INITIALIZE: Set the calendar default to the nearest active working day
     if "form_date" not in st.session_state:
         starting_day = datetime.date.today()
     while starting_day.weekday() in [0, 1] or starting_day.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
         starting_day += datetime.timedelta(days=1)
     st.session_state["form_date"] = starting_day
 
-    # 2. Render the date field inside your form block
+
+    # 2. RENDER: Standard native Streamlit arguments with your callback engine
     st.date_input(
         label="Select Order Date",
+        min_value=datetime.date.today(), # Restricts past selections natively
         key="form_date",
-        disabled_dates=dt_cfg.get_all_disabled_dates(), # Shades them out on screen
-        on_change=validate_selected_date               # Backend guardrail fallback [1.4]
+        on_change=validate_selected_date # Triggers instantly to intercept bad dates
     )
     
     st.divider()
