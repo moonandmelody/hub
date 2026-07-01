@@ -589,6 +589,31 @@ with st.sidebar:
     
     st.divider()
 
+    def get_available_order_dates(days_to_show=21):
+        """Generates a clean list of upcoming selectable operational dates, filtering closures."""
+        available_dates = []
+        today = datetime.date.today()
+        
+        for i in range(days_to_show):
+            future_date = today + datetime.timedelta(days=i)
+            
+            # Filter out Mondays (0) and Tuesdays (1)
+            if future_date.weekday() in:
+                continue
+                
+            # Filter out custom holidays listed in your config file
+            if future_date.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
+                continue
+                
+            available_dates.append(future_date)
+        return available_dates
+    
+    
+    # --- GENERATE DATA INPUT POOLS (CRITICAL FIX FOR NAME-ERROR) ---
+    open_days = get_available_order_dates(days_to_show=21)
+    date_labels = {d: d.strftime("%A, %d %b") for d in open_days}
+
+
     # 1. INITIALIZE: Find the nearest open business day
     if "form_date" not in st.session_state:
         starting_day = datetime.date.today()
