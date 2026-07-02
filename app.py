@@ -166,7 +166,25 @@ def trigger_edit_mode(row):
     
     st.session_state.form_notes = row.get('Special Notes/Instructions', '')
 
-    st.session_state.form_date = row.get('Delivery Date', '')
+    raw_delivery_date = row.get('Delivery Date', '')
+
+    if pd.isna(raw_delivery_date) or str(raw_delivery_date).strip().lower() in ["nan", "", "none"]:
+        # Fallback to current calendar date if the sheet field cell is empty
+        st.session_state["form_date"] = datetime.date.today()
+    else:
+        try:
+            # Check if Pandas already natively converted it to a datetime/date object
+            if isinstance(raw_delivery_date, datetime.date):
+                st.session_state["form_date"] = raw_delivery_date
+            elif isinstance(raw_delivery_date, pd.Timestamp):
+                st.session_state["form_date"] = raw_delivery_date.date()
+            else:
+                # Clean and parse string dates formatted as YYYY-MM-DD from Google Sheets
+                clean_date_str = str(raw_delivery_date).strip().split("T")[0] # Cleans off any trailing time stamps
+                st.session_state["form_date"] = datetime.datetime.strptime(clean_date_str, "%Y-%m-%d").date()
+        except Exception as e:
+            print(f"⚠️ Date conversion failed for raw value '{raw_delivery_date}': {e}", flush=True)
+            st.session_state["form_date"] = datetime.date.today()
     
     st.session_state["form_time_slot"] = str(row.get('Delivery Time', dt_cfg.TIME_SLOTS[0])).strip()
 
@@ -724,11 +742,21 @@ with st.sidebar:
     date_col, time_col = st.columns(2)
 
     with date_col:
-        # Render your safe date dropdown selector
+        saved_form_date = st.session_state.get("form_date", datetime.date.today())
+    
+        # CRITICAL FALLBACK: If the order date exists but isn't inside our standard open_days list,
+        # temporarily append it to the options list so the selector can find its index.
+        if saved_form_date not in open_days:
+            open_days.append(saved_form_date)
+            open_days.sort() # Keeps chronological order intact
+            # Refresh your custom title-case display text dictionary map
+            date_labels[saved_form_date] = saved_form_date.strftime("%A, %d %b")
+    
+        # Render your date dropdown menu safely without resetting
         st.session_state["form_date"] = st.selectbox(
             label="Select Order Date",
             options=open_days,
-            index=open_days.index(st.session_state["form_date"]) if st.session_state["form_date"] in open_days else 0,
+            index=open_days.index(saved_form_date),
             format_func=lambda x: date_labels.get(x, str(x))
         )
     
