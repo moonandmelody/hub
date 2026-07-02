@@ -560,7 +560,7 @@ def show_edit_dialog(order_id, order_number):
         if st.button(label="Edit", 
                      type="primary", 
                      width='stretch',
-                     key=f"edit_{order_id.get('Order ID')}",
+                     key=f"dialog_{order_id.get('Order ID')}",
                      help="Edit in Sidebar",
                      on_click=trigger_edit_mode,  # <-- CRITICAL FIX: Pass function here
                     args=(order_id,)
@@ -951,7 +951,7 @@ with tab_completed:
 
                         with c2:
                             # ✏️ BACK BUTTON - Triggers State of Completed Order to Pending
-                            if st.button(icon=":material/arrow_back:", label="" , key=f"edit_{row['Order ID']}", help="Return to Work Queue", width='stretch'):
+                            if st.button(icon=":material/arrow_back:", label="" , key=f"back_{row['Order ID']}", help="Return to Work Queue", width='stretch'):
                                 show_return_to_work_queue_dialog(row['Order ID']);
 
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
