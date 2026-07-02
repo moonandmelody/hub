@@ -269,7 +269,7 @@ def update_order_status(order_id, new_status):
     except Exception as e:
         st.error(f"Update failed: {e}")
 
-def save_edited_order(order_id, new_name, new_contact, new_items, new_notes, new_cost, new_delivery_date, new_delivery_time):
+def save_edited_order(order_id, new_name, new_contact, new_items, packaging_breakdown, new_notes, new_cost, packaging_total, new_delivery_date, new_delivery_time):
     """Sends edited details to Google Sheets"""
     local_ts = pd.Timestamp.now(tz="Asia/Kolkata")
     payload = {
