@@ -37,7 +37,7 @@ def load_data():
         
         try:
             # Attempt to read the URL data from Google Sheets Macro
-            df_raw = pd.read_csv(f"{url}?action=get_data")
+            df_raw = pd.read_csv(f"{url}&action=get_data")
         except Exception as e:
             st.error(f"Failed to fetch data: {e}")
         
@@ -60,7 +60,8 @@ def load_data():
                 "Packaging Cost", "Status", "Delivery Date", "Delivery Time",
                 "Previous Date", "Previous Time", "Previous Items", "Previous Notes/Instructions"
             ])
-
+            
+        st.sidebar.write("Active Columns:", list(df.columns))
 
         mapping = {}
         for col in df.columns:
