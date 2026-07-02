@@ -338,7 +338,7 @@ def calculate_order_packaging(current_cart):
         if big_cartons > 0: parts.append(f"{big_cartons}x Big Carton")
         if small_cartons > 0: parts.append(f"{small_cartons}x Small Carton")
         
-        packaging_breakdown.append(f"{' + '.join(parts)} ({item_name}): ₹{item_cost:.0f}")
+        packaging_breakdown.append(f"{' + '.join(parts)} ({item_name}): ₹{str(item_cost)}")
         print(f"packaging_breakdown in liquids is -------------- {packaging_breakdown}",flush=True)
         
     # 3. Food Logic: Standard linear multiplication per item packaging cost
@@ -352,14 +352,21 @@ def calculate_order_packaging(current_cart):
             print(f"item_cost -------food--with dip cup----- {item_cost}",flush=True)
             packaging_total += item_cost
             print(f"packaging_total -------food---with dip cup---- {packaging_total}",flush=True)
-        else:
+            packaging_breakdown.append(f"{info['qty']}x Long Box with Window & Dip ({item_name}): ₹{str(item_cost)}")
+        elif "SQUARE_BOX" in info["packaging_type"]:
             item_cost = info["qty"] * getattr(pkg, info["packaging_type"])
             print(f"item_cost -------square box------- {item_cost}",flush=True)
             packaging_total += item_cost
             print(f"packaging_total ------square box-------- {packaging_total}",flush=True)
+            packaging_breakdown.append(f"{info['qty']}x Square Box ({item_name}): ₹{str(item_cost)}")
+        else:
+            item_cost = info["qty"] * getattr(pkg, info["packaging_type"])
+            print(f"item_cost -------big dip cup------- {item_cost}",flush=True)
+            packaging_total += item_cost
+            print(f"packaging_total ------big dip cup-------- {packaging_total}",flush=True)
+            packaging_breakdown.append(f"{info['qty']}x Big Dip Cup ({item_name}): ₹{str(item_cost)}")
             
         if item_cost > 0:
-            packaging_breakdown.append(f"Packaging ({info['qty']}x {item_name}): ₹{item_cost:.0f}")
             print(f"pricing breakdown is -------food------- {packaging_breakdown}",flush=True)
             
     return packaging_total, packaging_breakdown
