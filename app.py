@@ -557,7 +557,7 @@ def show_edit_dialog(order_id, order_number):
     with col1:
         if st.button("Cancel", width='stretch'): st.rerun()
     with col2:
-        if st.button("Edit", 
+        if st.button(label="Edit", 
                      type="primary", 
                      width='stretch',
                      key=f"edit_{order_id.get('Order ID')}",
