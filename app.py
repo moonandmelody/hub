@@ -565,6 +565,7 @@ def show_edit_dialog(order_id, order_number):
                      on_click=trigger_edit_mode,  # <-- CRITICAL FIX: Pass function here
                     args=(order_id,)
             )
+        st.rerun()
 
 
 @st.dialog("Return to Work Queue?")
