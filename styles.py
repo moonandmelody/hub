@@ -107,9 +107,15 @@ def apply_custom_css():
 
             .st-emotion-cache-1cl4umz{{
                 background-color: {BACKGROUND_COLOR};
+                border: none;
             }}
 
-            .st-emotion-cache-1cl4umz:hover, .st-emotion-cache-1cl4umz:focus-visible{{
+            .st-emotion-cache-1cl4umz:hover{{
+                background-color: {BACKGROUND_COLOR};
+                border: none;
+            }}
+
+            .st-emotion-cache-1cl4umz:focus-visible{{
                 background-color: {BACKGROUND_COLOR};
                 border: none;
             }}
