@@ -410,6 +410,8 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
 
     items_str_list = [f"{qty}x {name}" for name, qty in cart_items.items()]
     compiled_items = ",\n".join(items_str_list)
+
+    compiled_packaging_str_list = ",\n".join(packaging_breakdown)
     
     # C. Execute based on Mode
     if mode == "edit":
