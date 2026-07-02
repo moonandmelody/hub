@@ -118,6 +118,7 @@ def apply_custom_css():
             .st-emotion-cache-1cl4umz:focus-visible{{
                 background-color: {BACKGROUND_COLOR};
                 border: none;
+                box-shadow: none;
             }}
 
             /* 4. METRIC CARDS (Top Numbers) */
