@@ -742,15 +742,36 @@ with st.sidebar:
     date_col, time_col = st.columns(2)
 
     with date_col:
+        # 1. Fetch your target date variable from memory state
         saved_form_date = st.session_state.get("form_date", datetime.date.today())
+        
+        # 2. CRITICAL TYPE GUARD: Force convert string dates into datetime.date objects
+        if isinstance(saved_form_date, str):
+            try:
+                # Clean string and extract just the YYYY-MM-DD portion
+                clean_date_str = saved_form_date.strip().split("T")[0]
+                saved_form_date = datetime.datetime.strptime(clean_date_str, "%Y-%m-%d").date()
+            except Exception as e:
+                # Fallback if text format is heavily corrupted or unparseable
+                saved_form_date = datetime.date.today()
+                
+        # Save the cleaned object back into state to keep types synchronized
+        st.session_state["form_date"] = saved_form_date
     
-        # CRITICAL FALLBACK: If the order date exists but isn't inside our standard open_days list,
-        # temporarily append it to the options list so the selector can find its index.
+        # 3. SAFE INJECTOR: Handle dates outside your standard active calendar timeline window
         if saved_form_date not in open_days:
             open_days.append(saved_form_date)
-            open_days.sort() # Keeps chronological order intact
-            # Refresh your custom title-case display text dictionary map
+            # Both sides are now datetime.date objects, so sorting works flawlessly!
+            open_days.sort() 
             date_labels[saved_form_date] = saved_form_date.strftime("%A, %d %b")
+    
+        # 4. Render your date dropdown menu safely
+        st.session_state["form_date"] = st.selectbox(
+            label="Select Order Date",
+            options=open_days,
+            index=open_days.index(saved_form_date),
+            format_func=lambda x: date_labels.get(x, str(x))
+        )
     
         # Render your date dropdown menu safely without resetting
         st.session_state["form_date"] = st.selectbox(
