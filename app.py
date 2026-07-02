@@ -421,7 +421,7 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
             customer_val, 
             contact_val, 
             compiled_items,
-            packaging_breakdown,
+            compiled_packaging_str_list,
             notes_val,
             running_total,
             packaging_total,
