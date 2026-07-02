@@ -522,6 +522,8 @@ if "editing_mode" not in st.session_state: st.session_state.editing_mode = False
 if "form_customer" not in st.session_state: st.session_state["form_customer"] = ""
 if "form_contact" not in st.session_state: st.session_state["form_contact"] = ""
 if "form_notes" not in st.session_state: st.session_state["form_notes"] = ""
+if "form_date" not in st.session_state: st.session_state["form_date"] = ""
+if "form_time_slot" not in st.session_state: st.session_state["form_time_slot"] = ""
 
 with st.sidebar:
     # 🎨 BRAND LOGO FROM STYLES.PY
@@ -707,13 +709,13 @@ with st.sidebar:
             if st.button("Save Changes", type="primary", width='stretch'):
                 if st.session_state.form_customer.strip() == "": st.error("Name required!")
                 elif not current_cart: st.error("Basket empty!")
-                else: show_confirmation_dialog(current_cart, running_total, delivery_date, delivery_time, "edit")
+                else: show_confirmation_dialog(current_cart, running_total, st.session_state.form_date, st.session_state.form_time_slot, "edit")
     else:
         # CREATE MODE BUTTON
         if st.button("Submit", width='stretch'):
             if st.session_state.form_customer.strip() == "": st.error("Name required!")
             elif not current_cart: st.error("Basket empty!")
-            else: show_confirmation_dialog(current_cart, running_total, delivery_date, delivery_time, "create")
+            else: show_confirmation_dialog(current_cart, running_total, st.session_state.form_date, st.session_state.form_time_slot, "create")
 
 # --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
