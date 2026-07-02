@@ -28,26 +28,36 @@ except AttributeError:
 
 
 # --- 1. CORE FUNCTIONS ---
-
 def load_data():
     """Reads live private sales data directly from the universal CSV export stream."""
     try:
+        # Use the direct Google CSV export link as your source of truth
         url = f"https://docs.google.com/spreadsheets/d/{config.SHEET_ID}/export?format=csv&gid=0"
         df_raw = None
         
         try:
-            # Attempt to read the URL data from Google Sheets Macro
-            df_raw = pd.read_csv(f"{url}&action=get_data")
-            st.print(f"Fetch data: {df_raw}",flush=True)
+            # 1. Fetch direct raw CSV dataset
+            df_raw = pd.read_csv(url)
+            print(f"📡 DEBUG - Fetch raw data success. Columns: {list(df_raw.columns)}", flush=True)
         except Exception as e:
-            st.print(f"Failed to fetch data: {e}",flush=True)
+            # ✅ FIXED: Changed st.print to standard print
+            print(f"❌ DEBUG - Failed to fetch raw CSV data: {e}", flush=True)
+            
+            # Fallback to Macro URL if the direct CSV link fails
+            try:
+                df_raw = pd.read_csv(f"{url}?action=get_data")
+            except Exception as macro_err:
+                print(f"❌ DEBUG - Macro backup link also failed: {macro_err}", flush=True)
         
         # 2. THE ABSOLUTE GUARDRAIL MODULATOR
         if df_raw is not None and not df_raw.empty:
             # If Pandas read all columns into ONE single key string because of a tab separation issue:
-            if len(df_raw.columns) == 1 or "\t" in "".join(df_raw.columns):
+            if len(df_raw.columns) == 1 or "\t" in "".join(df_raw.columns.astype(str)):
                 # Force-reload the entire dataset specifying the tab character delimiter explicitly
-                df = pd.read_csv(f"{config.MACRO_URL}?action=get_data", sep="\t")
+                if "docs.google.com" in url:
+                    df = pd.read_csv(url, sep="\t")
+                else:
+                    df = pd.read_csv(f"{config.MACRO_URL}?action=get_data", sep="\t")
             else:
                 df = df_raw.copy()
                 
@@ -62,20 +72,22 @@ def load_data():
                 "Previous Date", "Previous Time", "Previous Items", "Previous Notes/Instructions"
             ])
             
+        # Display the active discovered column array in your Streamlit sidebar
         st.sidebar.write("Active Columns:", list(df.columns))
 
+        # 4. FLEXIBLE MAPPING SYSTEM (Accounts for spaces, tabs, and casing variations)
         mapping = {}
         for col in df.columns:
-            cleaned = str(col).lower().replace(" ", "")
-            if "orderid" in cleaned or "order id" in col.lower():
+            cleaned = str(col).lower().replace(" ", "").replace("\t", "").replace("\r", "")
+            if "orderid" in cleaned or "order id" in str(col).lower():
                 mapping[col] = "Order ID"
-            elif "customername" in cleaned:
+            elif "customername" in cleaned or "customer name" in str(col).lower():
                 mapping[col] = "Customer Name"
-            elif "customercontact" in cleaned:
+            elif "customercontact" in cleaned or "customer contact" in str(col).lower():
                 mapping[col] = "Customer Contact"
             elif "items" in cleaned:
                 mapping[col] = "Items"
-            elif "specialnotes/instructions" in cleaned:
+            elif "specialnotes/instructions" in cleaned or "specialnotes" in cleaned:
                 mapping[col] = "Special Notes/Instructions"
             elif "cost" in cleaned or "revenue" in cleaned:
                 mapping[col] = "Cost"
@@ -84,11 +96,15 @@ def load_data():
 
         df = df.rename(columns=mapping)
 
+        # 5. DATA CLEANING & REPAIRS
         if "Customer Name" in df.columns:
             df = df.dropna(subset=["Customer Name"])
             df = df[df["Customer Name"].astype(str).str.strip() != ""]
         else:
-            return pd.DataFrame()
+            # Instead of returning a blank dataframe, keep the structure intact with empty rows
+            print("⚠️ WARNING: 'Customer Name' column could not be mapped!", flush=True)
+            # Inject a blank column name temporarily so the file structure doesn't crash your metrics
+            df["Customer Name"] = ""
 
         if "Order ID" in df.columns:
             df["Order ID"] = pd.to_numeric(df["Order ID"], errors="coerce").fillna(0).astype(int).astype(str).str.zfill(4)
@@ -108,7 +124,7 @@ def load_data():
         return df
     except Exception as e:
         st.error(f"Google Cloud Sync Error: {e}")
-        return pd.DataFrame()
+        return pd.DataFrame(columns=["Status", "Cost", "Order ID", "Customer Name"]) # Keep basic structural fallbacks
 
 df = load_data()
 
