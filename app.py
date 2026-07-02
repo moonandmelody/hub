@@ -281,10 +281,12 @@ def save_edited_order(order_id, new_name, new_contact, new_items, packaging_brea
         "name": new_name,
         "contact": new_contact,
         "items": new_items,
+        "packaging": packaging_breakdown,
         "notes": new_notes,
         "cost": str(new_cost),
-        "delivery_date": new_delivery_date,
-        "delivery_time": new_delivery_time
+        "packagingCost": str(packaging_total),
+        "deliveryDate": new_delivery_date,
+        "deliveryTime": new_delivery_time
     }
     try:
         qs = urllib.parse.urlencode(payload)
