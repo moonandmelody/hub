@@ -314,7 +314,7 @@ def calculate_order_packaging(current_cart):
 
 
 # --- 3. THE SUBMISSION HANDLER (CALLBACK) ---
-def process_sidebar_submission(mode="create",packaging_breakdown, packaging_total):
+def process_sidebar_submission(packaging_breakdown, packaging_total, mode="create"):
     # A. Get Data
     customer_val = st.session_state.form_customer
     contact_val = st.session_state.form_contact
@@ -456,7 +456,7 @@ def show_confirmation_dialog(cart_items, total_cost, delivery_date, delivery_tim
     with col2:
         btn_txt = "Update Order" if mode == "edit" else "Create Order"
         if st.button(btn_txt, type="primary", width='stretch'):
-            process_sidebar_submission(mode,packaging_breakdown, packaging_total)
+            process_sidebar_submission(packaging_breakdown, packaging_total, mode)
             st.rerun()
 
 @st.dialog("Delete Order?")
