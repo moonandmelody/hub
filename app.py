@@ -773,14 +773,6 @@ with st.sidebar:
             format_func=lambda x: date_labels.get(x, str(x))
         )
     
-        # Render your date dropdown menu safely without resetting
-        st.session_state["form_date"] = st.selectbox(
-            label="Select Order Date",
-            options=open_days,
-            index=open_days.index(saved_form_date),
-            format_func=lambda x: date_labels.get(x, str(x))
-        )
-    
     with time_col:
         # 3. SMART FILTER: If order is for today, look to drop past hours slots dynamically
         current_time = datetime.datetime.now()
