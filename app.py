@@ -102,6 +102,8 @@ def load_data():
 
         df = df.rename(columns=mapping)
 
+        df = df.loc[:, ~df.columns.duplicated()]
+
         # 5. DATA CLEANING & REPAIRS
         if "Customer Name" in df.columns:
             df = df.dropna(subset=["Customer Name"])
