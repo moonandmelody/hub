@@ -752,7 +752,8 @@ else:
 m1, m2, m3 = st.columns(3)
 m1.metric("Pending Orders", f"{pending_count}", delta_color="inverse")
 m2.metric("Total Revenue", f"₹{total_rev:,.0f}")
-m3.metric("Completed Orders", f"{len(df[df['Status']=='completed'])}")
+completed_count = len(df[df['Status'].astype(str).str.strip().str.lower() == 'completed'])
+m3.metric("Completed Orders", f"{completed_count}")
 
 st.divider()
 
