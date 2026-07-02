@@ -269,16 +269,17 @@ if st.session_state.get("execute_edit_load", False):
 def cancel_edit_mode():
     """Resets sidebar to Create Mode"""
     st.session_state.editing_mode = False
-    st.session_state.editing_id = None
-    st.session_state.form_customer = ""
-    st.session_state.form_contact = ""
-    st.session_state.form_notes = ""
-    st.session_state.form_date = ""
-    st.session_state["form_time_slot"] = dt_cfg.TIME_SLOTS[0]
-    for category, items_dict in products.CATALOG.items():
-        if isinstance(items_dict, dict):
-            for item_name in items_dict:
-                st.session_state[f"qty_{item_name}"] = 0
+    st.session_state.editing_id = ""
+    
+    #st.session_state.form_customer = ""
+    #st.session_state.form_contact = ""
+    #st.session_state.form_notes = ""
+    #st.session_state.form_date = ""
+    #st.session_state["form_time_slot"] = dt_cfg.TIME_SLOTS[0]
+    #for category, items_dict in products.CATALOG.items():
+     #   if isinstance(items_dict, dict):
+      #      for item_name in items_dict:
+      #          st.session_state[f"qty_{item_name}"] = 0
     st.rerun()
 
 def update_order_status(order_id, new_status):
