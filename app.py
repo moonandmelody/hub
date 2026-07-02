@@ -33,25 +33,34 @@ def load_data():
     """Reads live private sales data directly from the universal CSV export stream."""
     try:
         url = f"https://docs.google.com/spreadsheets/d/{config.SHEET_ID}/export?format=csv&gid=0"
-        # 1. Fetch your raw data from Google Sheets link or cache
-        df = pd.read_csv(url)
+        df_raw = None
         
-        # 2. CRITICAL FIX: Split headers by tab characters if Pandas bunched them up
-        if not df.empty:
-            # If the first column name contains a tab, it means Pandas read it as a single string block
-            if len(df.columns) == 1 and "\t" in str(df.columns[0]):
-                # Re-parse the column name string by splitting it along tab spaces
-                raw_headers = str(df.columns[0]).split("\t")
-                
-                # Split the single text row of data values beneath it into columns as well
-                df = df[df.columns[0]].str.split("\t", expand=True)
-                
-                # Trim any extra columns if they don't match the header list size
-                df = df.iloc[:, :len(raw_headers)]
-                df.columns = raw_headers
+        try:
+            # Attempt to read the URL data from Google Sheets Macro
+            df_raw = pd.read_csv(f"{url}?action=get_data")
+        except Exception as e:
+            st.error(f"Failed to fetch data: {e}")
         
-            # 3. Clean up casing and remove hidden whitespace characters across all columns
+        # 2. THE ABSOLUTE GUARDRAIL MODULATOR
+        if df_raw is not None and not df_raw.empty:
+            # If Pandas read all columns into ONE single key string because of a tab separation issue:
+            if len(df_raw.columns) == 1 or "\t" in "".join(df_raw.columns):
+                # Force-reload the entire dataset specifying the tab character delimiter explicitly
+                df = pd.read_csv(f"{config.MACRO_URL}?action=get_data", sep="\t")
+            else:
+                df = df_raw.copy()
+                
+            # Standardize all column names by stripping trailing formatting codes (\r, spaces)
             df.columns = [str(col).strip() for col in df.columns]
+        else:
+            # 3. Emergency Safe Template: If your sheet has 0 rows, pre-build your exact columns
+            df = pd.DataFrame(columns=[
+                "Order ID", "Date", "Time", "Customer Name", "Customer Contact", 
+                "Items", "Packaging Items", "Special Notes/Instructions", "Cost", 
+                "Packaging Cost", "Status", "Delivery Date", "Delivery Time",
+                "Previous Date", "Previous Time", "Previous Items", "Previous Notes/Instructions"
+            ])
+
 
         mapping = {}
         for col in df.columns:
