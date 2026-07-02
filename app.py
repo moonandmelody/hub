@@ -725,7 +725,8 @@ with st.sidebar:
             label="Select Order Date",
             options=open_days,
             index=open_days.index(st.session_state["form_date"]) if st.session_state["form_date"] in open_days else 0,
-            format_func=lambda x: date_labels.get(x, str(x))
+            format_func=lambda x: date_labels.get(x, str(x)),
+            value=st.session_state["form_date"]
         )
     
     with time_col:
@@ -754,7 +755,8 @@ with st.sidebar:
         st.session_state["form_time_slot"] = st.selectbox(
             label="Select Time Slot",
             options=active_slots,
-            index=default_time_idx
+            index=default_time_idx,
+            value=st.session_state["form_time_slot"]
         )
     
     st.divider()
