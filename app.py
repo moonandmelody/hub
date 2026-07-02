@@ -73,7 +73,7 @@ def load_data():
             ])
             
         # Display the active discovered column array in your Streamlit sidebar
-         df = df.loc[:, ~df.columns.duplicated()]
+        df = df.loc[:, ~df.columns.duplicated()]
 
         # 4. FLEXIBLE MAPPING SYSTEM (Accounts for spaces, tabs, and casing variations)
         mapping = {}
