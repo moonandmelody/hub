@@ -88,6 +88,7 @@ def apply_custom_css():
             }}
 
             /* 3. BUTTON STYLING */
+            
             .stButton > button {{
                 background-color: {BACKGROUND_COLOR} !important;
                 color: white;
@@ -97,10 +98,15 @@ def apply_custom_css():
                 font-weight: 600;
                 transition: all 0.3s ease;
             }}
+            
             .stButton > button:hover {{
                 background-color: {BACKGROUND_COLOR};
                 transform: scale(1.02);
                 color: white;
+            }}
+
+            .st-emotion-cache-1cl4umz{{
+                background-color: {BACKGROUND_COLOR};
             }}
 
             /* 4. METRIC CARDS (Top Numbers) */
