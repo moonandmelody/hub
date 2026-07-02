@@ -557,14 +557,14 @@ def show_edit_dialog(order_id, order_number):
     with col1:
         if st.button("Cancel", width='stretch'): st.rerun()
     with col2:
-        if st.button(label="Edit", 
+        st.button(label="Edit", 
                      type="primary", 
                      width='stretch',
                      key=f"dialog_{order_id.get('Order ID')}",
                      help="Edit in Sidebar",
                      on_click=trigger_edit_mode,  # <-- CRITICAL FIX: Pass function here
                     args=(order_id,)
-            ):
+            )
 
 
 @st.dialog("Return to Work Queue?")
