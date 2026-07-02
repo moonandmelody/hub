@@ -17,14 +17,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-if st.session_state.get("execute_edit_load", False):
-    # 1. Fetch the stored row data
-    row_to_load = st.session_state.pop("selected_row_to_edit")
-    st.session_state.pop("execute_edit_load") # Reset the trigger flag
-    
-    # 2. Run your original parsing function natively in the main script context!
-    trigger_edit_mode(row_to_load)
-
 # 🎨 APPLY THEME
 styles.apply_custom_css()  # <--- NEW: Injects your brand colors and fonts
 
@@ -261,7 +253,18 @@ def trigger_edit_mode(row):
                     # Initialize it just in case logic runs before widget creation
                     st.session_state[f"qty_{name}"] = qty
             except:
-                pass 
+                pass
+
+
+
+if st.session_state.get("execute_edit_load", False):
+    # 1. Fetch the stored row data
+    row_to_load = st.session_state.pop("selected_row_to_edit")
+    st.session_state.pop("execute_edit_load") # Reset the trigger flag
+    
+    # 2. Run your original parsing function natively in the main script context!
+    trigger_edit_mode(row_to_load)
+
                 
 def cancel_edit_mode():
     """Resets sidebar to Create Mode"""
