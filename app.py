@@ -38,6 +38,7 @@ def load_data():
         try:
             # Attempt to read the URL data from Google Sheets Macro
             df_raw = pd.read_csv(f"{url}&action=get_data")
+            st.print(f"Fetch data: {df_raw}",flush=True)
         except Exception as e:
             st.print(f"Failed to fetch data: {e}",flush=True)
         
