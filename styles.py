@@ -109,6 +109,11 @@ def apply_custom_css():
                 background-color: {BACKGROUND_COLOR};
             }}
 
+            .st-emotion-cache-1cl4umz:hover, .st-emotion-cache-1cl4umz:focus-visible{{
+                background-color: {BACKGROUND_COLOR};
+                border: none;
+            }}
+
             /* 4. METRIC CARDS (Top Numbers) */
             div [class="st-emotion-cache-0"] {{
                 height:100%;
