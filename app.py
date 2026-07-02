@@ -34,7 +34,25 @@ def load_data():
     try:
         url = f"https://docs.google.com/spreadsheets/d/{config.SHEET_ID}/export?format=csv&gid=0"
         df = pd.read_csv(url)
-        df.columns = df.columns.str.strip()
+        # 1. Fetch your raw data from Google Sheets link or cache
+        df = your_google_sheets_fetch_function()
+        
+        # 2. CRITICAL FIX: Split headers by tab characters if Pandas bunched them up
+        if not df.empty:
+            # If the first column name contains a tab, it means Pandas read it as a single string block
+            if len(df.columns) == 1 and "\t" in str(df.columns[0]):
+                # Re-parse the column name string by splitting it along tab spaces
+                raw_headers = str(df.columns[0]).split("\t")
+                
+                # Split the single text row of data values beneath it into columns as well
+                df = df[df.columns[0]].str.split("\t", expand=True)
+                
+                # Trim any extra columns if they don't match the header list size
+                df = df.iloc[:, :len(raw_headers)]
+                df.columns = raw_headers
+        
+            # 3. Clean up casing and remove hidden whitespace characters across all columns
+            df.columns = [str(col).strip() for col in df.columns]
 
         mapping = {}
         for col in df.columns:
