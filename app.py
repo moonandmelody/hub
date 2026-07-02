@@ -320,7 +320,7 @@ def process_sidebar_submission(mode="create"):
     contact_val = st.session_state.form_contact
     notes_val = st.session_state.form_notes
     delivery_date = st.session_state.form_date
-    delivery_time = st.session_state.form_time
+    delivery_time = st.session_state.form_time_slot
     
     cart_items = {}
     running_total = 0.0
@@ -390,7 +390,7 @@ def process_sidebar_submission(mode="create"):
             st.session_state.form_contact = ""
             st.session_state.form_notes = ""
             st.session_state.form_date = ""
-            st.session_state.form_time = ""
+            st.session_state.form_time_slot = ""
             
             for category, items_dict in products.CATALOG.items():
                 if isinstance(items_dict, dict):
