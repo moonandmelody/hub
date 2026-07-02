@@ -73,7 +73,7 @@ def load_data():
             ])
             
         # Display the active discovered column array in your Streamlit sidebar
-        st.sidebar.write("Active Columns:", list(df.columns))
+         df = df.loc[:, ~df.columns.duplicated()]
 
         # 4. FLEXIBLE MAPPING SYSTEM (Accounts for spaces, tabs, and casing variations)
         mapping = {}
@@ -93,6 +93,12 @@ def load_data():
                 mapping[col] = "Cost"
             elif "status" in cleaned:
                 mapping[col] = "Status"
+            elif "packagingcost" in cleaned:
+                mapping[col] = "Packaging Cost"
+            elif "deliverydate" in cleaned:
+                mapping[col] = "Delivery Date"
+            elif "deliverytime" in cleaned:
+                mapping[col] = "Delivery Time"
 
         df = df.rename(columns=mapping)
 
