@@ -563,7 +563,7 @@ def show_edit_dialog(order_id, order_number):
                      key=f"dialog_{order_id.get('Order ID')}",
                      help="Edit in Sidebar",
                      on_click=trigger_edit_mode,  # <-- CRITICAL FIX: Pass function here
-                    args=(order_id)
+                    args=(order_id,)
             )
 
 
