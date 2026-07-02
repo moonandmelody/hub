@@ -33,9 +33,8 @@ def load_data():
     """Reads live private sales data directly from the universal CSV export stream."""
     try:
         url = f"https://docs.google.com/spreadsheets/d/{config.SHEET_ID}/export?format=csv&gid=0"
-        df = pd.read_csv(url)
         # 1. Fetch your raw data from Google Sheets link or cache
-        df = your_google_sheets_fetch_function()
+        df = pd.read_csv(url)
         
         # 2. CRITICAL FIX: Split headers by tab characters if Pandas bunched them up
         if not df.empty:
