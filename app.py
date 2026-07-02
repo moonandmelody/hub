@@ -17,6 +17,14 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+if st.session_state.get("execute_edit_load", False):
+    # 1. Fetch the stored row data
+    row_to_load = st.session_state.pop("selected_row_to_edit")
+    st.session_state.pop("execute_edit_load") # Reset the trigger flag
+    
+    # 2. Run your original parsing function natively in the main script context!
+    trigger_edit_mode(row_to_load)
+
 # 🎨 APPLY THEME
 styles.apply_custom_css()  # <--- NEW: Injects your brand colors and fonts
 
@@ -555,17 +563,13 @@ def show_edit_dialog(order_id, order_number):
     st.warning(f"Edit Order #{order_number}?")
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("Cancel", width='stretch'): st.rerun()
+        if st.button("Cancel", width='stretch'): 
+            st.rerun()
     with col2:
-        st.button(label="Edit", 
-                     type="primary", 
-                     width='stretch',
-                     key=f"dialog_{order_id.get('Order ID')}",
-                     help="Edit in Sidebar",
-                     on_click=trigger_edit_mode,  # <-- CRITICAL FIX: Pass function here
-                    args=(order_id,)
-            )
-
+        # When they click "Confirm", we set a trigger flag and close the dialog
+        if st.button("Confirm", type="primary", width='stretch'):
+            st.session_state["execute_edit_load"] = True
+            st.rerun()
 
 @st.dialog("Return to Work Queue?")
 def show_return_to_work_queue_dialog(order_id):
@@ -874,7 +878,8 @@ with tab_queue:
                         with c2:
                             # ✏️ EDIT BUTTON - Triggers Sidebar Population
                             if st.button(icon=":material/edit:", label="" , key=f"edit_{row['Order ID']}", help="Edit in Sidebar", width='stretch'):
-                                show_edit_dialog(row,row['Order ID']);
+                                st.session_state["selected_row_to_edit"] = row
+                                show_edit_dialog(row,row['Order ID'])
                                 
                         with c3:
                             if st.button(icon=":material/delete:", label="", key=f"del_{row['Order ID']}", help="Delete Order", width='stretch'):
