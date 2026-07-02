@@ -39,7 +39,7 @@ def load_data():
             # Attempt to read the URL data from Google Sheets Macro
             df_raw = pd.read_csv(f"{url}&action=get_data")
         except Exception as e:
-            st.error(f"Failed to fetch data: {e}")
+            st.print(f"Failed to fetch data: {e}",flush=True)
         
         # 2. THE ABSOLUTE GUARDRAIL MODULATOR
         if df_raw is not None and not df_raw.empty:
