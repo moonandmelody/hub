@@ -518,20 +518,23 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
         order_details.markdown(
             f"""
             <div id="detailsDiv" class="">
-                <h3>Order No.: #1111</h3>
                 <p><b>Name:</b> {customerName}</p>
                 <p><b>Mobile:</b> {customerContact}</p>
             </div>
             """,
             unsafe_allow_html=True
         )
-        
-        #order_details.write(f"Name: {customerName}")
-        #order_details.write(f"Mobile: {customerContact}")
 
     with delivery_details:
-        delivery_details.write(f"Date: {delivery_date}")
-        delivery_details.write(f"Time: {delivery_time}")
+        delivery_details.markdown(
+            f"""
+            <div id="deliveryDiv" class="">
+                <p><b>Date:</b> {delivery_date}</p>
+                <p><b>Time:</b> {delivery_time}</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     st.divider()
 
