@@ -883,9 +883,7 @@ with tab_queue:
                     with st.container(border=True):
                         c1, c2, c3 = st.columns([3, 1, 1])
                         c1.markdown(f"**#{row.get('Order ID')}**")
-                        c1.caption(f"{row.get('Delivery Date')}")
-                        c1.caption(f"{row.get('Delivery Time')}")
-
+                        
                         with c2:
                             # ✏️ EDIT BUTTON - Triggers Sidebar Population
                             if st.button(icon=":material/edit:", label="" , key=f"edit_{row['Order ID']}", help="Edit in Sidebar", width='stretch'):
@@ -895,7 +893,9 @@ with tab_queue:
                         with c3:
                             if st.button(icon=":material/delete:", label="", key=f"del_{row['Order ID']}", help="Delete Order", width='stretch'):
                                 show_delete_dialog(row['Order ID'])
-                        
+
+                        c1.caption(f"{row.get('Delivery Date')}")
+                        c1.caption(f"{row.get('Delivery Time')}")
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
                         st.markdown(f"{row.get('Customer Contact', '-')}")
                         st.markdown("---")
