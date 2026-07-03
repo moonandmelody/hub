@@ -68,7 +68,7 @@ def load_data():
             df = pd.DataFrame(columns=[
                 "Order ID", "Date", "Time", "Customer Name", "Customer Contact", 
                 "Items", "Packaging Items", "Special Notes/Instructions", "Cost", 
-                "Packaging Cost", "Status", "Delivery Date", "Delivery Time",
+                "Packaging Cost", "Status", "Type of Order", "Delivery Date", "Delivery Time",
                 "Previous Date", "Previous Time", "Previous Items", "Previous Notes/Instructions"
             ])
             
@@ -891,8 +891,10 @@ with st.sidebar:
 st.title("Moon & Melody Dashboard")
 
 if not df.empty:
-    pending_count = len(df[df["Status"] == "pending" & df["Type of Order"] == "preorder"])
-    walk_in_count = len(df[df["Status"] == "pending" & df["Type of Order"] == "walkin"])
+    #pending_count = len(df[df["Status"] == "pending" & df["Type of Order"] == "preorder"])
+    pending_count = len(df[df["Status"] == "pending"])
+    #walk_in_count = len(df[df["Status"] == "pending" & df["Type of Order"] == "walkin"])
+    walk_in_count = len(df[df["Status"] == "pending"])
     completed_df = df[df["Status"] == "completed"]
     total_rev = completed_df["Cost"].sum() if not completed_df.empty else 0.0
 else:
@@ -916,7 +918,7 @@ with tab_queue:
         styles.celebrate()
 
     elif "Status" in df.columns:
-        pending_orders = df[df["Status"] == "pending" & df["Status"] == "preorder"]
+        pending_orders = df[df["Status"] == "pending"]
         
         if pending_orders.empty:
             st.success("No pending orders! You are all caught up.")
