@@ -975,7 +975,7 @@ with tab_queue:
                             update_order_status(row['Order ID'], "Completed")
 
 with tab_walk_ins:
-
+    #nothing here yet
 
 with tab_completed:
     if df.empty:
