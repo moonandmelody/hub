@@ -194,7 +194,7 @@ def apply_custom_css():
                 width: 300px !important;
             }}
 
-            .stCaptionContainer > p {{
+            [data-testid="stCaptionContainer"] > p {{
                 margin: 0px;
                 font-size: 15px;
                 color: {BACKGROUND_COLOR};
