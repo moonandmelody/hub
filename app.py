@@ -391,6 +391,12 @@ def calculate_order_packaging(current_cart):
             packaging_total += item_cost
             print(f"packaging_total ------square box-------- {packaging_total}",flush=True)
             packaging_breakdown.append(f"{info['qty']}x Square Box ({item_name}): ₹{str(item_cost)}")
+        elif "SMALL_DIP_CUP" in info["packaging_type"]:
+            item_cost = info["qty"] * getattr(pkg, info["packaging_type"])
+            print(f"item_cost -------small dip cup------- {item_cost}",flush=True)
+            packaging_total += item_cost
+            print(f"packaging_total ------small dip cup-------- {packaging_total}",flush=True)
+            packaging_breakdown.append(f"{info['qty']}x Small Dip Cup ({item_name}): ₹{str(item_cost)}")
         else:
             item_cost = info["qty"] * getattr(pkg, info["packaging_type"])
             print(f"item_cost -------big dip cup------- {item_cost}",flush=True)
