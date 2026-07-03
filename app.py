@@ -976,6 +976,7 @@ with tab_queue:
 
 with tab_walk_ins:
     #nothing here yet
+    print(f"Walk-in code here")
 
 with tab_completed:
     if df.empty:
