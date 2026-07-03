@@ -199,6 +199,7 @@ def apply_custom_css():
                 font-size: 15px;
                 color: {BACKGROUND_COLOR};
                 font-family: 'Montserrat',serif;
+                opacity: 1;
             }}
             /* Make the containers look like nice cards */
             div[data-testid="stContainer"] {{
