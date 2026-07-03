@@ -515,27 +515,15 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
     packaging_total, packaging_breakdown = calculate_order_packaging(cart_items)
     order_details, delivery_details = st.columns(2)
     with order_details:
-        order_details.write(f"{customerName}")
-        order_details.write(f"{customerContact}")
+        order_details.write(f"Name: {customerName}")
+        order_details.write(f"Mobile: {customerContact}")
 
     with delivery_details:
-        delivery_details.write(f"{delivery_date}")
-        delivery_details.write(f"{delivery_time}")
+        delivery_details.write(f"Date: {delivery_date}")
+        delivery_details.write(f"Time: {delivery_time}")
 
     items, packaging = st.columns(2)
-    st.markdown("<div id='confirmOrder'>",unsafe_allow_html=True)
-    st.markdown(
-        """
-        <style>
-        /* Target the space between columns and add a left border to the second column */
-        div[data-testid="stColumn"]:nth-of-type(2) {
-            border-left: 2px solid #e0e0e0;
-            padding-left: 20px;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+   
     with items:
         items.write("Items in Basket:")
         for item, qty in cart_items.items():
