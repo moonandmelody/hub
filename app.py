@@ -370,7 +370,8 @@ def calculate_order_packaging(current_cart):
         if big_cartons > 0: parts.append(f"{big_cartons}x Big Carton")
         if small_cartons > 0: parts.append(f"{small_cartons}x Small Carton")
         
-        packaging_breakdown.append(f"{' + '.join(parts)} ({item_name}): ₹{str(item_cost)}")
+        #packaging_breakdown.append(f"{' + '.join(parts)} ({item_name}): ₹{str(item_cost)}")
+        packaging_breakdown.append(f"{' + '.join(parts)}: ₹{str(item_cost)}")
         print(f"packaging_breakdown in liquids is -------------- {packaging_breakdown}",flush=True)
         
     # 3. Food Logic: Standard linear multiplication per item packaging cost
@@ -384,25 +385,29 @@ def calculate_order_packaging(current_cart):
             print(f"item_cost -------food--with dip cup----- {item_cost}",flush=True)
             packaging_total += item_cost
             print(f"packaging_total -------food---with dip cup---- {packaging_total}",flush=True)
-            packaging_breakdown.append(f"{info['qty']}x Long Box with Window & Dip ({item_name}): ₹{str(item_cost)}")
+            #packaging_breakdown.append(f"{info['qty']}x Long Box with Window & Dip ({item_name}): ₹{str(item_cost)}")
+            packaging_breakdown.append(f"{info['qty']}x Long Box with Window & Dip: ₹{str(item_cost)}")
         elif "SQUARE_BOX" in info["packaging_type"]:
             item_cost = info["qty"] * getattr(pkg, info["packaging_type"])
             print(f"item_cost -------square box------- {item_cost}",flush=True)
             packaging_total += item_cost
             print(f"packaging_total ------square box-------- {packaging_total}",flush=True)
-            packaging_breakdown.append(f"{info['qty']}x Square Box ({item_name}): ₹{str(item_cost)}")
+            #packaging_breakdown.append(f"{info['qty']}x Square Box ({item_name}): ₹{str(item_cost)}")
+            packaging_breakdown.append(f"{info['qty']}x Square Box: ₹{str(item_cost)}")
         elif "SMALL_DIP_CUP" in info["packaging_type"]:
             item_cost = info["qty"] * getattr(pkg, info["packaging_type"])
             print(f"item_cost -------small dip cup------- {item_cost}",flush=True)
             packaging_total += item_cost
             print(f"packaging_total ------small dip cup-------- {packaging_total}",flush=True)
-            packaging_breakdown.append(f"{info['qty']}x Small Dip Cup ({item_name}): ₹{str(item_cost)}")
+            #packaging_breakdown.append(f"{info['qty']}x Small Dip Cup ({item_name}): ₹{str(item_cost)}")
+            packaging_breakdown.append(f"{info['qty']}x Small Dip Cup: ₹{str(item_cost)}")
         else:
             item_cost = info["qty"] * getattr(pkg, info["packaging_type"])
             print(f"item_cost -------big dip cup------- {item_cost}",flush=True)
             packaging_total += item_cost
             print(f"packaging_total ------big dip cup-------- {packaging_total}",flush=True)
-            packaging_breakdown.append(f"{info['qty']}x Big Dip Cup ({item_name}): ₹{str(item_cost)}")
+            #packaging_breakdown.append(f"{info['qty']}x Big Dip Cup ({item_name}): ₹{str(item_cost)}")
+            packaging_breakdown.append(f"{info['qty']}x Big Dip Cup: ₹{str(item_cost)}")
             
         if item_cost > 0:
             print(f"pricing breakdown is -------food------- {packaging_breakdown}",flush=True)
