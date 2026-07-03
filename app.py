@@ -523,13 +523,14 @@ def show_confirmation_dialog(cart_items, total_cost, delivery_date, delivery_tim
             formatted_markdown += f"- {title_line}\n"
     
         # 3. Add a clean visual divider line below all items
-        formatted_markdown += "---\n"
+        #formatted_markdown += "---\n"
     
         # 4. Display the Total Packaging Fee on a brand new line at the very bottom
-        formatted_markdown += f"### **Total Packaging Fee:** ₹{packaging_total:,.2f}"
+        #formatted_markdown += f"### **Total Packaging Fee:** ₹{packaging_total:,.2f}"
     
         # 5. Render it seamlessly on your Streamlit App interface
         packaging.write(f"{formatted_markdown}")
+        packaging.write(f"Total Packaging Fee: ₹{packaging_total:,.2f}")
     
         #st.write(f"{packaging_breakdown}")
         #st.write(f"{packaging_total}")
