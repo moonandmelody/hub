@@ -527,7 +527,7 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
     with order_details:
         order_details.markdown(
             f"""
-            <div id="detailsDiv" style="display:grid:justify-content:end;">
+            <div id="detailsDiv" style="display:grid;justify-content:end;">
                 <span><b>Name:</b> {customerName}</span>
                 <span><b>Mobile:</b> {customerContact}</span>
             </div>
@@ -540,7 +540,7 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
         raw_delivery_date = raw_delivery_date[8:10] + "/" + raw_delivery_date[5:7] + "/" + raw_delivery_date[0:4]
         delivery_details.markdown(
             f"""
-            <div id="deliveryDiv" style="display:grid:justify-content:end;">
+            <div id="deliveryDiv" style="display:grid;justify-content:end;">
                 <span><b>Date:</b> {raw_delivery_date}</span>
                 <span><b>Time:</b> {delivery_time}</span>
             </div>
