@@ -680,7 +680,7 @@ with st.sidebar:
 
     st.title("Type of Order")
     st.selectbox(
-        label="Select type of order",
+        label="Type of Order",
         options= ['Pre-Order','Walk-in'],
         key="form_type"
     )
