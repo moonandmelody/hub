@@ -523,7 +523,7 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
         delivery_details.write(f"{delivery_time}")
 
     items, packaging = st.columns(2)
-    st.markdown("<div id="confirmOrder">",unsafe_allow_html=True)
+    st.markdown("<div id='confirmOrder'>",unsafe_allow_html=True)
     st.markdown(
         """
         <style>
