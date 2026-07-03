@@ -567,12 +567,6 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
     
         # 5. Render it seamlessly on your Streamlit App interface
         packaging.write(f"{formatted_markdown}")
-        packaging.write(f"Total Packaging Fee: ₹{packaging_total:,.2f}")
-    
-        #st.write(f"{packaging_breakdown}")
-        #st.write(f"{packaging_total}")
-
-    st.markdown("</div>",unsafe_allow_html=True)
     
     st.divider()
     
@@ -585,7 +579,12 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
         st.write(f"{special_notes}")
 
     st.divider()
-    st.markdown(f"### Total: ₹{total_cost:,.2f}")
+    item_price, packaging_price = st.columns(1,1)
+    with item_price:
+        item_price.write(f"### Total: ₹{total_cost:,.2f}")
+
+    with packaging_price:
+        packaging_price.write(f"Total Packaging Fee: ₹{packaging_total:,.2f}")
     
     col1, col2 = st.columns(2)
     with col1:
