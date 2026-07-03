@@ -584,7 +584,12 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
         item_price.write(f"### Total: ₹{total_cost:,.2f}")
 
     with packaging_price:
-        packaging_price.write(f"Total Packaging Fee: ₹{packaging_total:,.2f}")
+        packaging_price.markdown(
+            f""",
+            <div id="packagingDiv">
+                <span><b>Total Packaging Fee:</b> ₹{packaging_total:,.2f}</span>
+            </div>
+        )
     
     col1, col2 = st.columns(2)
     with col1:
