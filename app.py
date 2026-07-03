@@ -17,6 +17,20 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+if not st.session_state.get("editing_mode", False):
+    # If we are NOT in edit mode, it is now 100% safe to clear the form values
+    st.session_state["form_customer"] = ""
+    st.session_state["form_contact"] = ""
+    st.session_state["form_notes"] = ""
+    st.session_state.form_date = ""
+    st.session_state["form_time_slot"] = dt_cfg.TIME_SLOTS[0]
+    
+    # Reset your catalog dynamic product counter values back to 0 baseline
+    for category, items_dict in products.CATALOG.items():
+        if isinstance(items_dict, dict):
+            for item_name in items_dict.keys():
+                st.session_state[f"qty_{item_name}"] = 0
+
 # 🎨 APPLY THEME
 styles.apply_custom_css()  # <--- NEW: Injects your brand colors and fonts
 
