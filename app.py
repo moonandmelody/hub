@@ -132,9 +132,9 @@ def load_data():
             df["Status"] = "pending"
 
         if "Type of Order" in df.columns:
-            df["Type Of Order"] = df["Type Of Order"].fillna("Pre-Order").astype(str).str.strip().str.lower().replace("-","")
+            df["Type of Order"] = df["Type of Order"].fillna("Pre-Order").astype(str).str.strip().str.lower().replace("-","")
         else:
-            df["Type Of Order"] = "preorder"
+            df["Type of Order"] = "preorder"
 
         return df
     except Exception as e:
