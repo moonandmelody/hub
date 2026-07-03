@@ -513,8 +513,8 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
 @st.dialog("Confirm Order")
 def show_confirmation_dialog(customerName, customerContact, cart_items, total_cost, delivery_date, delivery_time, mode):
     packaging_total, packaging_breakdown = calculate_order_packaging(cart_items)
-    order_details, delivery_details = st.columns(2)
     st.divider()
+    order_details, delivery_details = st.columns(2)
     with order_details:
         order_details.markdown(
             f"""
