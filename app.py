@@ -480,7 +480,7 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
             "name": customer_val,
             "contact": contact_val,
             "items": compiled_items,
-            "packaging": packaging_breakdown,
+            "packaging": compiled_packaging_str_list,
             "notes": notes_val,
             "cost": str(running_total),
             "packagingCost": str(packaging_total),
