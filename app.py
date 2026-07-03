@@ -881,7 +881,7 @@ with st.sidebar:
 st.title("Moon & Melody Dashboard")
 
 if not df.empty:
-    pending_count = len(df[df["Status"] == "pending" & df["Type of Order"] == "preorder"]])
+    pending_count = len(df[df["Status"] == "pending" & df["Type of Order"] == "preorder"])
     walk_in_count = len(df[df["Status"] == "pending" & df["Type of Order"] == "walkin"])
     completed_df = df[df["Status"] == "completed"]
     total_rev = completed_df["Cost"].sum() if not completed_df.empty else 0.0
