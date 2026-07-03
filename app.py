@@ -509,6 +509,18 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
 def show_confirmation_dialog(cart_items, total_cost, delivery_date, delivery_time, mode):
     packaging_total, packaging_breakdown = calculate_order_packaging(cart_items)
     items, packaging = st.columns(2)
+    st.markdown(
+        """
+        <style>
+        /* Target the space between columns and add a left border to the second column */
+        div[data-testid="column"]:nth-of-type(2) {
+            border-left: 2px solid #e0e0e0;
+            padding-left: 20px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
     with items:
         items.write("Items in Basket:")
         for item, qty in cart_items.items():
@@ -520,13 +532,7 @@ def show_confirmation_dialog(cart_items, total_cost, delivery_date, delivery_tim
         for line in packaging_breakdown:
             # Optional: Clean up and capitalize item names for a better presentation
             title_line = line.replace("(", "(").title()  # Ensures brand names are capitalised
-            formatted_markdown += f"- {title_line}\n"
-    
-        # 3. Add a clean visual divider line below all items
-        #formatted_markdown += "---\n"
-    
-        # 4. Display the Total Packaging Fee on a brand new line at the very bottom
-        #formatted_markdown += f"### **Total Packaging Fee:** ₹{packaging_total:,.2f}"
+            packaging.write(f"- {title_line}\n")
     
         # 5. Render it seamlessly on your Streamlit App interface
         packaging.write(f"{formatted_markdown}")
