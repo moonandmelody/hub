@@ -511,9 +511,19 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
 
 # --- 4. CONFIRMATION DIALOG ---
 @st.dialog("Confirm Order")
-def show_confirmation_dialog(cart_items, total_cost, delivery_date, delivery_time, mode):
+def show_confirmation_dialog(customerName, customerContact, cart_items, total_cost, delivery_date, delivery_time, mode):
     packaging_total, packaging_breakdown = calculate_order_packaging(cart_items)
+    order_details, delivery_details = st.columns(2)
+    with order_details:
+        order_details.write(f"{customerName}")
+        order_details.write(f"{customerContact}")
+
+    with delivery_details:
+        delivery_details.write(f"{delivery_date}")
+        delivery_details.write(f"{delivery_time}")
+
     items, packaging = st.columns(2)
+    st.markdown("<div id="confirmOrder">",unsafe_allow_html=True)
     st.markdown(
         """
         <style>
@@ -546,6 +556,7 @@ def show_confirmation_dialog(cart_items, total_cost, delivery_date, delivery_tim
         #st.write(f"{packaging_breakdown}")
         #st.write(f"{packaging_total}")
 
+    st.markdown("</div>",unsafe_allow_html=True)
     
     st.divider()
     
@@ -558,13 +569,6 @@ def show_confirmation_dialog(cart_items, total_cost, delivery_date, delivery_tim
         st.write(f"{special_notes}")
 
     st.divider()
-
-    st.write(f"Delivery on {delivery_date} at {delivery_time}")
-    
-    st.divider()
-    
-    st.divider()
-    
     st.markdown(f"### Total: ₹{total_cost:,.2f}")
     
     col1, col2 = st.columns(2)
@@ -853,13 +857,13 @@ with st.sidebar:
             if st.button("Save Changes", type="primary", width='stretch'):
                 if st.session_state.form_customer.strip() == "": st.error("Name required!")
                 elif not current_cart: st.error("Basket empty!")
-                else: show_confirmation_dialog(current_cart, running_total, st.session_state.form_date, st.session_state.form_time_slot, "edit")
+                else: show_confirmation_dialog(form_customer,form_contact,current_cart, running_total, st.session_state.form_date, st.session_state.form_time_slot, "edit")
     else:
         # CREATE MODE BUTTON
         if st.button("Submit", width='stretch'):
             if st.session_state.form_customer.strip() == "": st.error("Name required!")
             elif not current_cart: st.error("Basket empty!")
-            else: show_confirmation_dialog(current_cart, running_total, st.session_state.form_date, st.session_state.form_time_slot, "create")
+            else: show_confirmation_dialog(form_customer,form_contact,current_cart, running_total, st.session_state.form_date, st.session_state.form_time_slot, "create")
 
 # --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
