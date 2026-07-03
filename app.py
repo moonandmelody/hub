@@ -894,8 +894,8 @@ with tab_queue:
                             if st.button(icon=":material/delete:", label="", key=f"del_{row['Order ID']}", help="Delete Order", width='stretch'):
                                 show_delete_dialog(row['Order ID'])
 
-                        c1.caption(f"{row.get('Delivery Date')}")
-                        c1.caption(f"{row.get('Delivery Time')}")
+                        st.caption(f"{row.get('Delivery Date')}")
+                        st.caption(f"{row.get('Delivery Time')}")
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
                         st.markdown(f"{row.get('Customer Contact', '-')}")
                         st.markdown("---")
