@@ -93,6 +93,8 @@ def load_data():
                 mapping[col] = "Cost"
             elif "status" in cleaned:
                 mapping[col] = "Status"
+            elif "typeoforder" in cleaned:
+                mapping[col] = "Type of Order"
             elif "packagingcost" in cleaned:
                 mapping[col] = "Packaging Cost"
             elif "deliverydate" in cleaned:
@@ -128,6 +130,11 @@ def load_data():
             df["Status"] = df["Status"].fillna("pending").astype(str).str.strip().str.lower()
         else:
             df["Status"] = "pending"
+
+        if "Type of Order" in df.columns:
+            df["Type Of Order"] = df["Status"].fillna("preorder").astype(str).str.strip().str.lower()
+        else:
+            df["Status"] = "preorder"
 
         return df
     except Exception as e:
