@@ -154,7 +154,7 @@ def apply_custom_css():
                 justify-content: center;
             }}
             .st-emotion-cache-1ml8qm {{
-                font-size: 17px;
+                font-size: 15px;
             }}
 
             .st-emotion-cache-wt0xm9:nth-of-type(1) {{
