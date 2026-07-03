@@ -883,8 +883,8 @@ with tab_queue:
                     with st.container(border=True):
                         c1, c2, c3 = st.columns([3, 1, 1])
                         c1.markdown(f"**#{row.get('Order ID')}**")
-                        c1.markdown(f"####{row.get('Delivery Date')}")
-                        c1.markdown(f"####{row.get('Delivery Time')}")
+                        c1.markdown(f"#### {row.get('Delivery Date')}")
+                        c1.markdown(f"#### {row.get('Delivery Time')}")
 
                         with c2:
                             # ✏️ EDIT BUTTON - Triggers Sidebar Population
