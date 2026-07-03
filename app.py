@@ -527,7 +527,7 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
     with order_details:
         order_details.markdown(
             f"""
-            <div id="detailsDiv" style="display:grid;justify-content:end;">
+            <div id="detailsDiv" style="display:grid;">
                 <span><b>Name:</b> {customerName}</span>
                 <span><b>Mobile:</b> {customerContact}</span>
             </div>
