@@ -17,20 +17,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-if not st.session_state.get("editing_mode", False):
-    # If we are NOT in edit mode, it is now 100% safe to clear the form values
-    st.session_state["form_customer"] = ""
-    st.session_state["form_contact"] = ""
-    st.session_state["form_notes"] = ""
-    st.session_state.form_date = ""
-    st.session_state["form_time_slot"] = dt_cfg.TIME_SLOTS[0]
-    
-    # Reset your catalog dynamic product counter values back to 0 baseline
-    for category, items_dict in products.CATALOG.items():
-        if isinstance(items_dict, dict):
-            for item_name in items_dict.keys():
-                st.session_state[f"qty_{item_name}"] = 0
-
 # 🎨 APPLY THEME
 styles.apply_custom_css()  # <--- NEW: Injects your brand colors and fonts
 
@@ -285,16 +271,16 @@ def cancel_edit_mode():
     st.session_state.editing_mode = False
     st.session_state.editing_id = ""
     
-    #st.session_state.form_customer = ""
-    #st.session_state.form_contact = ""
-    #st.session_state.form_notes = ""
-    #st.session_state.form_date = ""
-    #st.session_state["form_time_slot"] = dt_cfg.TIME_SLOTS[0]
-    #for category, items_dict in products.CATALOG.items():
-     #   if isinstance(items_dict, dict):
-      #      for item_name in items_dict:
-      #          st.session_state[f"qty_{item_name}"] = 0
-    st.rerun()
+    st.session_state.form_customer = ""
+    st.session_state.form_contact = ""
+    st.session_state.form_notes = ""
+    st.session_state.form_date = ""
+    st.session_state["form_time_slot"] = dt_cfg.TIME_SLOTS[0]
+    for category, items_dict in products.CATALOG.items():
+        if isinstance(items_dict, dict):
+            for item_name in items_dict:
+                st.session_state[f"qty_{item_name}"] = 0
+    #st.rerun()
 
 def update_order_status(order_id, new_status):
     """Updates Status (Completed/Deleted/Pending)"""
@@ -838,8 +824,7 @@ with st.sidebar:
         # EDIT MODE BUTTONS
         c1, c2 = st.columns(2)
         with c1:
-            if st.button("Cancel", width='stretch'):
-                cancel_edit_mode()
+            st.button("Cancel", width='stretch',key="cancel_edit_sidebar_btn", on_click=cancel_edit_mode):
         with c2:
             if st.button("Save Changes", type="primary", width='stretch'):
                 if st.session_state.form_customer.strip() == "": st.error("Name required!")
