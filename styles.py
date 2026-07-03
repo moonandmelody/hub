@@ -249,7 +249,7 @@ def apply_custom_css():
 
             /* Confirmation Dialog Box */
             [data-testid="stDialog"] > div > div {{
-                width: 900px;
+                width: 1100px;
             }}
 
             /* 8. BALLOON ANIMATION KEYFRAMES */
