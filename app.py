@@ -895,7 +895,7 @@ with tab_queue:
                                 show_delete_dialog(row['Order ID'])
 
                         raw_date = str(row.get('Delivery Date'))
-                        raw_date = raw_date[8:9] + "/" + raw_date[5:6] + "/" + raw_date[0:3]
+                        raw_date = raw_date[8:10] + "/" + raw_date[5:7] + "/" + raw_date[0:4]
                         st.caption(f"{raw_date}")
                         st.caption(f"{row.get('Delivery Time')}")
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
