@@ -888,6 +888,7 @@ if not df.empty:
 else:
     pending_count = 0
     total_rev = 0.0
+    wal_in_count = 0
 
 m1, m2, m3 = st.columns(3)
 m1.metric("Total Pending Orders", f"{pending_count + walk_in_count}", delta_color="inverse")
