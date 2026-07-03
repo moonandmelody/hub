@@ -252,6 +252,10 @@ def apply_custom_css():
                 width: 1100px;
             }}
 
+            [data-testid="stDialog"] > div > div > div {{
+                justify-content: center;
+            }}
+
             /* 8. BALLOON ANIMATION KEYFRAMES */
             @keyframes floatUp {{
                 0% {{ transform: translateY(100vh) rotate(0deg); opacity: 1; }}
