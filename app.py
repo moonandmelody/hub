@@ -678,6 +678,13 @@ with st.sidebar:
         st.toast(st.session_state.success_msg, icon="🎉")
         st.session_state.success_msg = ""
 
+    st.title("Type of Order")
+    st.selectbox(
+        label="Select type of order",
+        options= ['Pre-Order','Walk-in'],
+        key="form_type"
+    )
+    st.divider()
     st.title("Customer Details")
     st.text_input("Name", key="form_customer")
     st.text_input("Mobile", key="form_contact")
@@ -874,7 +881,8 @@ with st.sidebar:
 st.title("Moon & Melody Dashboard")
 
 if not df.empty:
-    pending_count = len(df[df["Status"] == "pending"])
+    pending_count = len(df[df["Status"] == "pending" & df["Type of Order"] == "preorder"]])
+    walk_in_count = len(df[df["Status"] == "pending" & df["Type of Order"] == "walkin"])
     completed_df = df[df["Status"] == "completed"]
     total_rev = completed_df["Cost"].sum() if not completed_df.empty else 0.0
 else:
@@ -882,14 +890,14 @@ else:
     total_rev = 0.0
 
 m1, m2, m3 = st.columns(3)
-m1.metric("Pending Orders", f"{pending_count}", delta_color="inverse")
+m1.metric("Total Pending Orders", f"{{pending_count} + {walk_in_count}}", delta_color="inverse")
 m2.metric("Total Revenue", f"₹{total_rev:,.0f}")
 completed_count = len(df[df['Status'].astype(str).str.strip().str.lower() == 'completed'])
 m3.metric("Completed Orders", f"{completed_count}")
 
 st.divider()
 
-tab_queue, tab_walk_ins, tab_completed, tab_charts = st.tabs([f"Pre Orders :red[[{pending_count}]]", "Walk-ins", "Completed Orders", "Analytics & History"])
+tab_queue, tab_walk_ins, tab_completed, tab_charts = st.tabs([f"Pre Orders :red[[{pending_count}]]", "Walk-ins :red[[{walk_in_count}]]", "fCompleted Orders :green[[{completed_count}]]", "Analytics & History"])
 
 with tab_queue:
     if df.empty:
