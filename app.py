@@ -423,6 +423,7 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
     notes_val = st.session_state.form_notes
     delivery_date = st.session_state.form_date
     delivery_time = st.session_state.form_time_slot
+    type_of_order = st.session_state.form_order
     
     cart_items = {}
     running_total = 0.0
@@ -485,6 +486,7 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
             "cost": str(running_total),
             "packagingCost": str(packaging_total),
             "status": "Pending",
+            "typeOfOrder": type_of_order,
             "deliveryDate": delivery_date,
             "deliveryTime": delivery_time
         }
