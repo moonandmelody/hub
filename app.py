@@ -508,10 +508,35 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
 @st.dialog("Confirm Order")
 def show_confirmation_dialog(cart_items, total_cost, delivery_date, delivery_time, mode):
     packaging_total, packaging_breakdown = calculate_order_packaging(cart_items)
-    st.write("Items in Basket:")
-    for item, qty in cart_items.items():
-        st.write(f"- {qty}x {item}")
+    items, packaging = st.columns(2)
+    with items:
+        items.write("Items in Basket:")
+        for item, qty in cart_items.items():
+            items.write(f"- {qty}x {item}")
+    with packaging:
+        packaging.write(Packaging Details")
+        formatted_markdown = ""
+        # 2. Loop through every single item and add it as a new bullet point row
+        for line in packaging_breakdown:
+            # Optional: Clean up and capitalize item names for a better presentation
+            title_line = line.replace("(", "(").title()  # Ensures brand names are capitalised
+            formatted_markdown += f"- {title_line}\n"
+    
+        # 3. Add a clean visual divider line below all items
+        formatted_markdown += "---\n"
+    
+        # 4. Display the Total Packaging Fee on a brand new line at the very bottom
+        formatted_markdown += f"### **Total Packaging Fee:** ₹{packaging_total:,.2f}"
+    
+        # 5. Render it seamlessly on your Streamlit App interface
+        packaging.write(f"{formatted_markdown}")
+    
+        #st.write(f"{packaging_breakdown}")
+        #st.write(f"{packaging_total}")
+
+    
     st.divider()
+    
     st.write(f"Special Notes/Instructions:")
     
     special_notes = st.session_state.get("form_notes", "").strip()
@@ -525,26 +550,7 @@ def show_confirmation_dialog(cart_items, total_cost, delivery_date, delivery_tim
     st.write(f"Delivery on {delivery_date} at {delivery_time}")
     
     st.divider()
-
-    formatted_markdown = "### Packaging Details\n"
-    # 2. Loop through every single item and add it as a new bullet point row
-    for line in packaging_breakdown:
-        # Optional: Clean up and capitalize item names for a better presentation
-        title_line = line.replace("(", "(").title()  # Ensures brand names are capitalised
-        formatted_markdown += f"- {title_line}\n"
-
-    # 3. Add a clean visual divider line below all items
-    formatted_markdown += "---\n"
-
-    # 4. Display the Total Packaging Fee on a brand new line at the very bottom
-    formatted_markdown += f"### **Total Packaging Fee:** ₹{packaging_total:,.2f}"
-
-    # 5. Render it seamlessly on your Streamlit App interface
-    st.markdown(formatted_markdown)
-
-    #st.write(f"{packaging_breakdown}")
-    #st.write(f"{packaging_total}")
-
+    
     st.divider()
     
     st.markdown(f"### Total: ₹{total_cost:,.2f}")
