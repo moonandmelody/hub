@@ -897,7 +897,7 @@ with tab_queue:
         styles.celebrate()
 
     elif "Status" in df.columns:
-        pending_orders = df[df["Status"] == "pending"]
+        pending_orders = df[df["Status"] == "pending" & df["Status"] == "preorder"]
         
         if pending_orders.empty:
             st.success("No pending orders! You are all caught up.")
