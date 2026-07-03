@@ -514,7 +514,7 @@ def show_confirmation_dialog(cart_items, total_cost, delivery_date, delivery_tim
         for item, qty in cart_items.items():
             items.write(f"- {qty}x {item}")
     with packaging:
-        packaging.write(Packaging Details")
+        packaging.write("Packaging Details")
         formatted_markdown = ""
         # 2. Loop through every single item and add it as a new bullet point row
         for line in packaging_breakdown:
