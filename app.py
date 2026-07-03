@@ -889,7 +889,7 @@ m3.metric("Completed Orders", f"{completed_count}")
 
 st.divider()
 
-tab_queue, tab_completed, tab_charts = st.tabs(["Work Queue", "Completed Orders", "Analytics & History"])
+tab_queue, tav_walk-ins, tab_completed, tab_charts = st.tabs(["Pre Orders", "Walk-ins", "Completed Orders", "Analytics & History"])
 
 with tab_queue:
     if df.empty:
@@ -973,6 +973,9 @@ with tab_queue:
                         btn_key = f"done_{row.get('Order ID')}_{idx}"
                         if st.button("Done", key=btn_key, width='stretch'):
                             update_order_status(row['Order ID'], "Completed")
+
+with tab_walk-ins:
+
 
 with tab_completed:
     if df.empty:
