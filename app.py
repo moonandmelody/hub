@@ -513,7 +513,7 @@ def show_confirmation_dialog(cart_items, total_cost, delivery_date, delivery_tim
         """
         <style>
         /* Target the space between columns and add a left border to the second column */
-        div[data-testid="column"]:nth-of-type(2) {
+        div[data-testid="stColumn"]:nth-of-type(2) {
             border-left: 2px solid #e0e0e0;
             padding-left: 20px;
         }
