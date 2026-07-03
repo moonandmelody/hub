@@ -589,6 +589,8 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
             <div id="packagingDiv">
                 <span><b>Total Packaging Fee:</b> ₹{packaging_total:,.2f}</span>
             </div>
+            """,
+            unsafe_allow_html=True
         )
     
     col1, col2 = st.columns(2)
