@@ -824,7 +824,7 @@ with st.sidebar:
         # EDIT MODE BUTTONS
         c1, c2 = st.columns(2)
         with c1:
-            st.button("Cancel", width='stretch',key="cancel_edit_sidebar_btn", on_click=cancel_edit_mode):
+            st.button("Cancel", width='stretch',key="cancel_edit_sidebar_btn", on_click=cancel_edit_mode)
         with c2:
             if st.button("Save Changes", type="primary", width='stretch'):
                 if st.session_state.form_customer.strip() == "": st.error("Name required!")
