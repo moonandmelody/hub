@@ -579,7 +579,7 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
         st.write(f"{special_notes}")
 
     st.divider()
-    item_price, packaging_price = st.columns(1,1)
+    item_price, packaging_price = st.columns(2)
     with item_price:
         item_price.write(f"### Total: ₹{total_cost:,.2f}")
 
