@@ -857,13 +857,13 @@ with st.sidebar:
             if st.button("Save Changes", type="primary", width='stretch'):
                 if st.session_state.form_customer.strip() == "": st.error("Name required!")
                 elif not current_cart: st.error("Basket empty!")
-                else: show_confirmation_dialog(form_customer,form_contact,current_cart, running_total, st.session_state.form_date, st.session_state.form_time_slot, "edit")
+                else: show_confirmation_dialog(st.session_state["form_customer"],st.session_state["form_contact"],current_cart, running_total, st.session_state.form_date, st.session_state.form_time_slot, "edit")
     else:
         # CREATE MODE BUTTON
         if st.button("Submit", width='stretch'):
             if st.session_state.form_customer.strip() == "": st.error("Name required!")
             elif not current_cart: st.error("Basket empty!")
-            else: show_confirmation_dialog(form_customer,form_contact,current_cart, running_total, st.session_state.form_date, st.session_state.form_time_slot, "create")
+            else: show_confirmation_dialog(st.session_state["form_customer"],st.session_state["form_contact"],current_cart, running_total, st.session_state.form_date, st.session_state.form_time_slot, "create")
 
 # --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
