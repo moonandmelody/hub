@@ -247,6 +247,11 @@ def apply_custom_css():
                 box-shadow: none;
             }}
 
+            /* Confirmation Dialog Box */
+            [data-testid="stDialog"] > div > div {{
+                width: 900px;
+            }}
+
             /* 8. BALLOON ANIMATION KEYFRAMES */
             @keyframes floatUp {{
                 0% {{ transform: translateY(100vh) rotate(0deg); opacity: 1; }}
