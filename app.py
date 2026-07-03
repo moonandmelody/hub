@@ -889,7 +889,7 @@ m3.metric("Completed Orders", f"{completed_count}")
 
 st.divider()
 
-tab_queue, tav_walk-ins, tab_completed, tab_charts = st.tabs(["Pre Orders", "Walk-ins", "Completed Orders", "Analytics & History"])
+tab_queue, tab_walk-ins, tab_completed, tab_charts = st.tabs(["Pre Orders", "Walk-ins", "Completed Orders", "Analytics & History"])
 
 with tab_queue:
     if df.empty:
