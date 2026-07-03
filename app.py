@@ -515,7 +515,7 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
     packaging_total, packaging_breakdown = calculate_order_packaging(cart_items)
     order_details, delivery_details = st.columns(2)
     with order_details:
-        st.markdown(
+        order_details.markdown(
             f"""
             <div id="detailsDiv" class="">
                 <h3>Order No.: #{order_id}</h3>
