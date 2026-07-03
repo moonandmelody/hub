@@ -528,7 +528,7 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
     with delivery_details:
         delivery_details.markdown(
             f"""
-            <div id="deliveryDiv" class="">
+            <div id="deliveryDiv" style="padding-left:300px;">
                 <p><b>Date:</b> {delivery_date}</p>
                 <p><b>Time:</b> {delivery_time}</p>
             </div>
