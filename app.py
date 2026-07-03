@@ -518,7 +518,7 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
         order_details.markdown(
             f"""
             <div id="detailsDiv" class="">
-                <h3>Order No.: #{order_id}</h3>
+                <h3>Order No.: #1111</h3>
                 <p><b>Name:</b> {customerName}</p>
                 <p><b>Mobile:</b> {customerContact}</p>
             </div>
