@@ -585,7 +585,7 @@ def show_confirmation_dialog(customerName, customerContact, cart_items, total_co
 
     with packaging_price:
         packaging_price.markdown(
-            f""",
+            f"""
             <div id="packagingDiv">
                 <span><b>Total Packaging Fee:</b> ₹{packaging_total:,.2f}</span>
             </div>
