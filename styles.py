@@ -193,7 +193,13 @@ def apply_custom_css():
             .st-emotion-cache-wt0xm9 > div {{
                 width: 300px !important;
             }}
-            
+
+            .stCaptionContainer > p {{
+                margin: 0px;
+                font-size: 15px;
+                color: {BACKGROUND_COLOR};
+                font-family: 'Montserrat',serif;
+            }}
             /* Make the containers look like nice cards */
             div[data-testid="stContainer"] {{
                 background-color: white;
