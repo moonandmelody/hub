@@ -664,6 +664,7 @@ if "form_contact" not in st.session_state: st.session_state["form_contact"] = ""
 if "form_notes" not in st.session_state: st.session_state["form_notes"] = ""
 if "form_date" not in st.session_state: st.session_state["form_date"] = ""
 if "form_time_slot" not in st.session_state: st.session_state["form_time_slot"] = ""
+if "form_order" not in st.session_state: st.session_state["form_order"] = "preorder"
 
 with st.sidebar:
     # 🎨 BRAND LOGO FROM STYLES.PY
