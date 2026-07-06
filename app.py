@@ -430,7 +430,7 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
     delivery_time = st.session_state.form_time_slot
     type_of_order = st.session_state.form_order
 
-    print(f"type_of_order is {type_of_order}", flugh=True)
+    print(f"type_of_order is {type_of_order}", flush=True)
     
     cart_items = {}
     running_total = 0.0
