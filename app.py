@@ -926,7 +926,7 @@ with tab_queue:
         styles.celebrate()
 
     elif "Status" in df.columns:
-        pending_orders = len(df[(df["Status"] == "pending") & (df["Type of Order"] == "preorder")])
+        pending_orders = df[(df["Status"] == "pending") & (df["Type of Order"] == "preorder")]
         
         if pending_orders.empty:
             st.success("No pre-orders available! You are all caught up.")
@@ -1005,7 +1005,7 @@ with tab_queue:
 
 with tab_walk_ins:
     #nothing here yet
-    walkin_orders = len(df[(df["Status"] == "pending") & (df["Type of Order"] == "walkin")])
+    walkin_orders = df[(df["Status"] == "pending") & (df["Type of Order"] == "walkin")]
         
     if walkin_orders.empty:
         st.success("No walkin orders available! You are all caught up.")
