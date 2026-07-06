@@ -262,8 +262,6 @@ def trigger_edit_mode(row):
             except:
                 pass
 
-
-
 if st.session_state.get("execute_edit_load", False):
     # 1. Fetch the stored row data
     row_to_load = st.session_state.pop("selected_row_to_edit")
@@ -431,6 +429,8 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
     delivery_date = st.session_state.form_date
     delivery_time = st.session_state.form_time_slot
     type_of_order = st.session_state.form_order
+
+    print(f"type_of_order is {type_of_order}", flugh=True)
     
     cart_items = {}
     running_total = 0.0
@@ -899,10 +899,10 @@ with st.sidebar:
 st.title("Moon & Melody Dashboard")
 
 if not df.empty:
-    #pending_count = len(df[df["Status"] == "pending" & df["Type of Order"] == "preorder"])
-    pending_count = len(df[df["Status"] == "pending"])
-    #walk_in_count = len(df[df["Status"] == "pending" & df["Type of Order"] == "walkin"])
-    walk_in_count = len(df[df["Status"] == "pending"])
+    pending_count = len(df[df["Status"] == "pending" & df["Type of Order"] == "preorder"])
+    #pending_count = len(df[df["Status"] == "pending"])
+    walk_in_count = len(df[df["Status"] == "pending" & df["Type of Order"] == "walkin"])
+    #walk_in_count = len(df[df["Status"] == "walkin"])
     completed_df = df[df["Status"] == "completed"]
     total_rev = completed_df["Cost"].sum() if not completed_df.empty else 0.0
 else:
