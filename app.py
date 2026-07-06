@@ -132,7 +132,7 @@ def load_data():
             df["Status"] = "pending"
 
         if "Type of Order" in df.columns:
-            df["Type of Order"] = df["Type of Order"].fillna("Pre-Order").astype(str).str.strip().str.lower().replace("-","")
+            df["Type of Order"] = df["Type of Order"].fillna("preorder").astype(str).str.strip().str.lower().replace("-","")
         else:
             df["Type of Order"] = "preorder"
 
@@ -672,7 +672,7 @@ if "form_contact" not in st.session_state: st.session_state["form_contact"] = ""
 if "form_notes" not in st.session_state: st.session_state["form_notes"] = ""
 if "form_date" not in st.session_state: st.session_state["form_date"] = ""
 if "form_time_slot" not in st.session_state: st.session_state["form_time_slot"] = ""
-if "form_order" not in st.session_state: st.session_state["form_order"] = "preorder"
+if "form_order" not in st.session_state: st.session_state["form_order"] = ""
 
 with st.sidebar:
     # 🎨 BRAND LOGO FROM STYLES.PY
