@@ -926,10 +926,10 @@ with tab_queue:
         styles.celebrate()
 
     elif "Status" in df.columns:
-        pending_orders = df[df["Status"] == "pending"]
+        pending_orders = len(df[(df["Status"] == "pending") & (df["Type of Order"] == "preorder")])
         
         if pending_orders.empty:
-            st.success("No pending orders! You are all caught up.")
+            st.success("No pre-orders available! You are all caught up.")
             styles.celebrate()
         else:
             cols = st.columns(3)
@@ -1005,7 +1005,82 @@ with tab_queue:
 
 with tab_walk_ins:
     #nothing here yet
-    print(f"Walk-in code here")
+    walkin_orders = len(df[(df["Status"] == "pending") & (df["Type of Order"] == "walkin")])
+        
+        if walkin_orders.empty:
+            st.success("No walkin orders available! You are all caught up.")
+            styles.celebrate()
+        else:
+            cols = st.columns(3)
+            for idx, (_, row) in enumerate(walkin_orders.iterrows()):
+                col_idx = idx % 3
+                with cols[col_idx]:
+                    with st.container(border=True):
+                        c1, c2, c3 = st.columns([3, 1, 1])
+                        c1.markdown(f"**#{row.get('Order ID')}**")
+                        
+                        with c2:
+                            # ✏️ EDIT BUTTON - Triggers Sidebar Population
+                            if st.button(icon=":material/edit:", label="" , key=f"edit_{row['Order ID']}", help="Edit in Sidebar", width='stretch'):
+                                st.session_state["selected_row_to_edit"] = row
+                                show_edit_dialog(row,row['Order ID'])
+                                
+                        with c3:
+                            if st.button(icon=":material/delete:", label="", key=f"del_{row['Order ID']}", help="Delete Order", width='stretch'):
+                                show_delete_dialog(row['Order ID'])
+
+                        raw_date = str(row.get('Delivery Date'))
+                        raw_date = raw_date[8:10] + "/" + raw_date[5:7] + "/" + raw_date[0:4]
+                        st.caption(f"{raw_date}")
+                        st.caption(f"{row.get('Delivery Time')}")
+                        st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
+                        st.markdown(f"{row.get('Customer Contact', '-')}")
+                        st.markdown("---")
+                        
+                        # 1. Cleanly pull the text, handling Pandas Series or missing objects safely
+                        raw_items = row.get('Items', '')
+                        
+                        # Handle cases where Pandas accidentally packages it as a Series/Object array
+                        if hasattr(raw_items, "to_string") or not isinstance(raw_items, (str, int, float)):
+                            try:
+                                # Convert a pandas Series or row subset back to pure scalar data
+                                raw_items = str(raw_items.values[0]) if hasattr(raw_items, "values") else str(raw_items)
+                            except:
+                                raw_items = str(raw_items)
+                        else:
+                            raw_items = str(raw_items)
+
+                        # 2. Clean out dirty data artifacts or empty spaces
+                        raw_items_clean = raw_items.strip()
+                        if pd.isna(raw_items) or raw_items_clean.lower() in ["nan", "none", ""]:
+                            items_text = "No items selected"
+                        else:
+                            # 3. Format into structured markdown list items cleanly
+                            # Standardize old formats using commas to clean newlines first
+                            formatted_text = raw_items_clean.replace(",\n", "\n").replace(",", "\n")
+                            
+                            # Build structural markdown bullet strings row by row
+                            lines = [f"- {line.strip().lstrip('- ')}" for line in formatted_text.split('\n') if line.strip()]
+                            items_text = "\n".join(lines)
+                            
+                        # 4. Render clean on your layout card
+                        st.markdown(f"**Items:**\n{items_text}")
+                        st.markdown("---");
+
+                        raw_notes = row.get('Special Notes/Instructions', '')
+                        # 2. Check if it's a Pandas NaN object, an empty string, or the text "nan"
+                        if pd.isna(raw_notes) or str(raw_notes).strip().lower() in ["nan", ""]:
+                            special_notes = "None"
+                        else:
+                            special_notes = str(raw_notes).strip()
+
+                        st.markdown(f"**Special Notes:**")
+                        st.markdown(f"{special_notes}")
+                        st.markdown(f"### ₹{row.get('Cost', 0.0):,.0f}")
+                        
+                        btn_key = f"done_{row.get('Order ID')}_{idx}"
+                        if st.button("Done", key=btn_key, width='stretch'):
+                            update_order_status(row['Order ID'], "Completed")
 
 with tab_completed:
     if df.empty:
