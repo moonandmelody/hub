@@ -164,7 +164,7 @@ if st.session_state.current_view == "entry_form":
     header_col, close_col = st.columns([4, 1])
     with header_col:
         st.title("📝 New Inventory Entry")
-        st.write("Complete your updates in the interactive panel below.")
+        st.write("Enter new quantities below")
     with close_col:
         # Secure, functioning close button that switches state back immediately
         if st.button("✖️ Close Panel", use_container_width=True, type="primary"):
@@ -176,7 +176,7 @@ if st.session_state.current_view == "entry_form":
     st.components.v1.iframe(config.INVENTORY_LINK, height=700, scrolling=True)
     
     # Bottom alternative exit button
-    if st.button("🔄 Sync & Return to Dashboard", use_container_width=True):
+    if st.button("Save & Return to Dashboard", use_container_width=True):
         st.session_state.current_view = "dashboard"
         st.rerun()
         
