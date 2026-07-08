@@ -924,7 +924,7 @@ with st.sidebar:
 # --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
 
-if st.button("➕ Open Inventory Update Panel", type="primary", use_container_width=True):
+if st.button("Update Inventory", type="primary", use_container_width=True):
     st.session_state.current_view = "entry_form"
     st.rerun()
     
