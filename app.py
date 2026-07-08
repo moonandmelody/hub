@@ -167,54 +167,24 @@ with col1:
         st.rerun()
         
 if st.session_state.show_inventory_form:
-    # Visual container to distinguish the form from the background dashboard
-    with st.container(border=True):
-        
-        # Header row with a Close Button
-        form_header, close_btn_col = st.columns([4, 1])
-        with form_header:
-            st.subheader("📝 New Inventory Entry")
-        with close_btn_col:
-            # Button to close/hide the form manually
-            if st.button("Close", use_container_width=True):
-                st.session_state.show_inventory_form = False
+     with st.sidebar:
+        # Header layout with a close button inside the sidebar
+        side_col1, side_col2 = st.columns([3, 1])
+        with side_col1:
+            st.subheader("📝 New Entry")
+        with side_col2:
+            if st.button("✖️", help="Close panel"):
+                st.session_state.show_sidebar_form = False
                 st.rerun()
         
-        # Render the input fields
-        with st.form("inventory_form", clear_on_submit=True):
-            user_inputs = {}
-            
-            for product in inventory.PRODUCTS_MAP.keys():
-                user_inputs[product] = st.number_input(
-                    label=f"Quantity for {product}", 
-                    min_value=0, 
-                    value=0, 
-                    step=1
-                )
-                
-            submitted = st.form_submit_button("Submit Entry", use_container_width=True)
-
-        # ==========================================
-        # 5. SUBMISSION LOGIC
-        # ==========================================
-        if submitted:
-            form_payload = {}
-            for product, entry_id in PRODUCTS_MAP.items():
-                form_payload[entry_id] = user_inputs[product]
-                
-            try:
-                response = requests.post(config.INVENTORY_LINK, data=form_payload)
-                
-                if response.status_code == 200:
-                    st.success("Inventory updated successfully!")
-                    # Hide the form automatically after a successful submission
-                    st.session_state.show_inventory_form = False
-                    st.rerun()
-                else:
-                    st.error(f"Failed to send data. Code: {response.status_code}")
-                    
-            except Exception as e:
-                st.error(f"An error occurred: {e}")
+        # Embed the Google Form inside the sidebar framework
+        st.components.v1.iframe(GOOGLE_FORM_UI_URL, height=650, scrolling=True)
+        
+        st.markdown("---")
+        # Action button to refresh data logs and retract the panel
+        if st.button("🔄 Sync & Close Panel", use_container_width=True, type="secondary"):
+            st.session_state.show_sidebar_form = False
+            st.rerun()
 
 # --- 2. LOGIC: EDIT & DELETE ---
 def trigger_edit_mode(row):
@@ -959,6 +929,10 @@ with st.sidebar:
 # --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
 
+if st.button("Update Inventory", type="primary", use_container_width=True):
+    st.session_state.show_sidebar_form = True
+    st.rerun()
+    
 if not df.empty:
     pending_count = len(df[(df["Status"] == "pending") & (df["Type of Order"] == "preorder")])
     #pending_count = len(df[df["Status"] == "pending"])
