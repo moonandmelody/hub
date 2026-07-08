@@ -946,7 +946,7 @@ m2 = m2.metric("Total Revenue", f"₹{total_rev:,.0f}")
 completed_count = len(df[df['Status'].astype(str).str.strip().str.lower() == 'completed'])
 m3 = m3.metric("Completed Orders", f"{completed_count}")
 
-st.markdown(f"<div id="allMetricDiv"> {m1}{m2}{m3} </div>", unsafe_allow_html=True)
+st.markdown(f""","<div id="allMetricDiv"> {m1}{m2}{m3} </div>",""", unsafe_allow_html=True)
 
 st.divider()
 
