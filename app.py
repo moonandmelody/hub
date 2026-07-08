@@ -180,15 +180,20 @@ if submitted:
         form_payload[entry_id] = user_inputs[product]
         
     try:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
         # Silently submit data to the Google Sheet via the Form bridge
-        response = requests.post(config.INVENTORY_LINK, data=form_payload)
+        response = requests.post(config.INVENTORY_LINK, data=form_payload, headers=headers)
         
-        if response.status_code == 200:
-            st.success("Inventory updated successfully! Refreshing preview...")
+        if response.status_code in [200, 302]:
+            st.success("Inventory updated successfully!")
+            st.session_state.show_inventory_form = False
             st.rerun()
         else:
-            st.error(f"Failed to send data. Form returned status code: {response.status_code}")
-            
+            st.error(f"Failed to send data. Code: {response.status_code}")
+             
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
