@@ -944,19 +944,24 @@ m1, m2, m3 = st.columns(3)
 
 completed_count = len(df[df['Status'].astype(str).str.strip().str.lower() == 'completed'])
 
-with st.container(border=False):
-    # Wrap the elements inside a custom HTML div layout
-    st.markdown('<div class="allMetricDiv">', unsafe_allow_html=True)
-    
-    # Create column components inside the container layout
+with st.container(key="allMetricDiv"):
+    # 3. Use columns inside your styled box structure
     m1, m2, m3 = st.columns(3)
     
-    # Render native Streamlit components properly
-    m1.metric('Total Pending Orders', pending_count + walk_in_count, delta_color='inverse')
-    m2.metric('Total Revenue', f'₹{total_rev:,.0f}')
-    m3.metric('Completed Orders', completed_count)
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+    # 4. Generate native Streamlit content elements safely
+    m1.metric(
+        label='Total Pending Orders', 
+        value=pending_count + walk_in_count, 
+        delta_color='inverse'
+    )
+    m2.metric(
+        label='Total Revenue', 
+        value=f'₹{total_rev:,.0f}'
+    )
+    m3.metric(
+        label='Completed Orders', 
+        value=completed_count
+    )
 
 st.divider()
 
