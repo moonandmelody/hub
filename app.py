@@ -942,7 +942,6 @@ else:
 
 m1, m2, m3 = st.columns(3)
 
-m2.metric("Total Revenue", f"₹{total_rev:,.0f}")
 completed_count = len(df[df['Status'].astype(str).str.strip().str.lower() == 'completed'])
 
 
