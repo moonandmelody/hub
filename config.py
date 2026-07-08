@@ -11,4 +11,4 @@ MACRO_URL = f"https://script.google.com/macros/s/AKfycbzpc160FY_e73uGE_2FRGiPmtB
 INVENTORY_SHEET_GID = "346527641"
 
 # Inventory Post Data Link
-INVENTORY_LINK = "https://docs.google.com/forms/u/0/d/1nDerBMN5l5QwF0p-OOpMj6e10Zl61pUiNujFtxnf6c0/formResponse"
+INVENTORY_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSdM4fnBt_eu0xU3FEpdmgH9M-h0z1kwKL8c-obymw8GxYmR9g/formResponse"
