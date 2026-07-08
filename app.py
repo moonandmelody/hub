@@ -156,35 +156,30 @@ else:
     next_num = 1
 next_order_id = str(next_num).zfill(4)
 
-if "show_inventory_form" not in st.session_state:
-    st.session_state.show_inventory_form = False
+if "current_view" not in st.session_state:
+    st.session_state.current_view = "dashboard"
 
-col1, col2 = st.columns([1, 4])
-with col1:
-    # Button to open the form
-    if st.button("Update Inventory", type="primary"):
-        st.session_state.show_inventory_form = True
+if st.session_state.current_view == "entry_form":
+    # Layout for the dedicated workspace header
+    header_col, close_col = st.columns([4, 1])
+    with header_col:
+        st.title("📝 New Inventory Entry")
+        st.write("Complete your updates in the interactive panel below.")
+    with close_col:
+        # Secure, functioning close button that switches state back immediately
+        if st.button("✖️ Close Panel", use_container_width=True, type="primary"):
+            st.session_state.current_view = "dashboard"
+            st.rerun()
+
+    st.markdown("---");
+
+    st.components.v1.iframe(GOOGLE_FORM_UI_URL, height=700, scrolling=True)
+    
+    # Bottom alternative exit button
+    if st.button("🔄 Sync & Return to Dashboard", use_container_width=True):
+        st.session_state.current_view = "dashboard"
         st.rerun()
         
-if st.session_state.show_inventory_form:
-     with st.sidebar:
-        # Header layout with a close button inside the sidebar
-        side_col1, side_col2 = st.columns([3, 1])
-        with side_col1:
-            st.subheader("📝 New Entry")
-        with side_col2:
-            if st.button("✖️", help="Close panel"):
-                st.session_state.show_sidebar_form = False
-                st.rerun()
-        
-        # Embed the Google Form inside the sidebar framework
-        st.components.v1.iframe(config.INVENTORY_LINK, height=650, scrolling=True)
-        
-        st.markdown("---")
-        # Action button to refresh data logs and retract the panel
-        if st.button("🔄 Sync & Close Panel", use_container_width=True, type="secondary"):
-            st.session_state.show_sidebar_form = False
-            st.rerun()
 
 # --- 2. LOGIC: EDIT & DELETE ---
 def trigger_edit_mode(row):
@@ -928,6 +923,10 @@ with st.sidebar:
 
 # --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
+
+if st.button("➕ Open Inventory Update Panel", type="primary", use_container_width=True):
+    st.session_state.current_view = "entry_form"
+    st.rerun()
     
 if not df.empty:
     pending_count = len(df[(df["Status"] == "pending") & (df["Type of Order"] == "preorder")])
