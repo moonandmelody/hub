@@ -173,7 +173,7 @@ if st.session_state.current_view == "entry_form":
 
     st.markdown("---");
 
-    st.components.v1.iframe(GOOGLE_FORM_UI_URL, height=700, scrolling=True)
+    st.components.v1.iframe(config.INVENTORY_LINK, height=700, scrolling=True)
     
     # Bottom alternative exit button
     if st.button("🔄 Sync & Return to Dashboard", use_container_width=True):
