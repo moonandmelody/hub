@@ -9,6 +9,7 @@ import styles  # <--- NEW: Imports your beautiful design file
 import order_packaging as pkg
 import datetime
 import date_config as dt_cfg
+import inventory
 
 # 🎨 PAGE CONFIGURATION
 st.set_page_config(
@@ -153,6 +154,42 @@ if not df.empty and "Order ID" in df.columns:
 else:
     next_num = 1
 next_order_id = str(next_num).zfill(4)
+
+with st.form("inventory_form", clear_on_submit=True):
+    user_inputs = {}
+    
+    # Generate inputs based on the keys in your mapping dictionary
+    for product in inventory.PRODUCTS_MAP.keys():
+        user_inputs[product] = st.number_input(
+            label=f"Quantity for {product}", 
+            min_value=0, 
+            value=0, 
+            step=1
+        )
+        
+    submitted = st.form_submit_button("Submit Entry")
+
+# ==========================================
+# 3. NO-AUTH SUBMISSION LOGIC
+# ==========================================
+if submitted:
+    # Build the payload mapping the entry IDs to the user input values
+    form_payload = {}
+    for product, entry_id in inventory.PRODUCTS_MAP.items():
+        form_payload[entry_id] = user_inputs[product]
+        
+    try:
+        # Silently submit data to the Google Sheet via the Form bridge
+        response = requests.post(FORM_POST_URL, data=form_payload)
+        
+        if response.status_code == 200:
+            st.success("Inventory updated successfully! Refreshing preview...")
+            st.rerun()
+        else:
+            st.error(f"Failed to send data. Form returned status code: {response.status_code}")
+            
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
 
 
 # --- 2. LOGIC: EDIT & DELETE ---
