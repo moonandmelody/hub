@@ -680,6 +680,15 @@ def show_return_to_work_queue_dialog(order_id):
             st.toast(f"Order #{order_id} updated successfully to pending status!")
             st.rerun()
 
+@st.dialog("📝 New Inventory Entry", width="large")
+def open_inventory_modal():
+    # Renders the genuine Google Form inside a smooth, secure popup overlay
+    st.components.v1.iframe(config.INVENTORY_LINK, height=550, scrolling=True)
+    
+    # Provides an easy way for the user to close the window and sync the preview dataframe
+    if st.button("Add to Inventory", use_container_width=True):
+        st.rerun()
+
 # validate delivery date 
 def validate_selected_date():
     """Natively validates and rejects selection of Mondays, Tuesdays, or custom holidays."""
@@ -941,6 +950,9 @@ with st.sidebar:
 # --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
 
+if st.button("Update Inventory", type="primary", use_container_width=True):
+    open_inventory_modal()
+    
 if not df.empty:
     pending_count = len(df[(df["Status"] == "pending") & (df["Type of Order"] == "preorder")])
     #pending_count = len(df[df["Status"] == "pending"])
