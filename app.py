@@ -965,7 +965,7 @@ with st.container(key="allMetricDiv"):
 
 st.divider()
 
-tab_queue, tab_walk_ins, tab_completed, tab_charts = st.tabs([f"Pre Orders :red[{pending_count}]", f"Walk-ins :red[{walk_in_count}]", f"Completed Orders :green[{completed_count}]", "Analytics & History"])
+tab_queue, tab_walk_ins, tab_completed, tab_charts = st.tabs([f"Pre Orders        :red[{pending_count}]", f"Walk-ins        :red[{walk_in_count}]", f"Completed Orders        :green[{completed_count}]", "Analytics & History"])
 
 with tab_queue:
     if df.empty:
