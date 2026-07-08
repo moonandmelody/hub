@@ -162,7 +162,7 @@ if "show_inventory_form" not in st.session_state:
 col1, col2 = st.columns([1, 4])
 with col1:
     # Button to open the form
-    if st.button("➕ Update Inventory", type="primary"):
+    if st.button("Update Inventory", type="primary"):
         st.session_state.show_inventory_form = True
         st.rerun()
         
