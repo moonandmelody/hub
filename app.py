@@ -944,13 +944,19 @@ m1, m2, m3 = st.columns(3)
 
 completed_count = len(df[df['Status'].astype(str).str.strip().str.lower() == 'completed'])
 
-
-st.markdown(
-    f""",
-    "<div id='allMetricDiv'> {m1.metric('Total Pending Orders', {pending_count + walk_in_count}, delta_color='inverse')}
-    {m2.metric('Total Revenue', '₹{total_rev:,.0f}')}
-    {m3.metric('Completed Orders', {completed_count})} </div>",
-    """, unsafe_allow_html=True)
+with st.container(border=False):
+    # Wrap the elements inside a custom HTML div layout
+    st.markdown('<div class="allMetricDiv">', unsafe_allow_html=True)
+    
+    # Create column components inside the container layout
+    m1, m2, m3 = st.columns(3)
+    
+    # Render native Streamlit components properly
+    m1.metric('Total Pending Orders', pending_count + walk_in_count, delta_color='inverse')
+    m2.metric('Total Revenue', f'₹{total_rev:,.0f}')
+    m3.metric('Completed Orders', completed_count)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
 st.divider()
 
