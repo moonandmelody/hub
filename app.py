@@ -178,7 +178,7 @@ if st.session_state.show_inventory_form:
                 st.rerun()
         
         # Embed the Google Form inside the sidebar framework
-        st.components.v1.iframe(inventory.INVENTORY_LINK, height=650, scrolling=True)
+        st.components.v1.iframe(config.INVENTORY_LINK, height=650, scrolling=True)
         
         st.markdown("---")
         # Action button to refresh data logs and retract the panel
@@ -928,10 +928,6 @@ with st.sidebar:
 
 # --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
-
-if st.button("Update Inventory", type="primary", use_container_width=True):
-    st.session_state.show_sidebar_form = True
-    st.rerun()
     
 if not df.empty:
     pending_count = len(df[(df["Status"] == "pending") & (df["Type of Order"] == "preorder")])
