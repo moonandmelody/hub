@@ -9,6 +9,7 @@ import styles  # <--- NEW: Imports your beautiful design file
 import order_packaging as pkg
 import datetime
 import date_config as dt_cfg
+import requests
 import inventory
 
 # 🎨 PAGE CONFIGURATION
