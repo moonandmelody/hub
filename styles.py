@@ -181,6 +181,11 @@ def apply_custom_css():
                 width: auto !important;
             }}
 
+            .st-key-allMetricDiv > div > div > div > div > div{{
+                display: flex;
+                justify-content: center;
+            }}
+
             /* 5. POST-IT NOTE CARDS (Containers) */
             [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] {{
                 /* This targets the cards in your grid */
