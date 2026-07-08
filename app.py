@@ -941,12 +941,17 @@ else:
     walk_in_count = 0
 
 m1, m2, m3 = st.columns(3)
-m1 = m1.metric("Total Pending Orders", f"{pending_count + walk_in_count}", delta_color="inverse")
-m2 = m2.metric("Total Revenue", f"₹{total_rev:,.0f}")
-completed_count = len(df[df['Status'].astype(str).str.strip().str.lower() == 'completed'])
-m3 = m3.metric("Completed Orders", f"{completed_count}")
 
-st.markdown(f""","<div id="allMetricDiv"> {m1}{m2}{m3} </div>",""", unsafe_allow_html=True)
+m2.metric("Total Revenue", f"₹{total_rev:,.0f}")
+completed_count = len(df[df['Status'].astype(str).str.strip().str.lower() == 'completed'])
+
+
+st.markdown(
+    f""",
+    "<div id='allMetricDiv'> {m1.metric('Total Pending Orders', {pending_count + walk_in_count}, delta_color='inverse')}
+    {m2.metric('Total Revenue', '₹{total_rev:,.0f}')}
+    {m3.metric('Completed Orders', {completed_count})} </div>",
+    """, unsafe_allow_html=True)
 
 st.divider()
 
