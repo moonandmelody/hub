@@ -156,6 +156,48 @@ else:
     next_num = 1
 next_order_id = str(next_num).zfill(4)
 
+with st.form("inventory_form", clear_on_submit=True):
+    user_inputs = {}
+    
+    # Generate inputs based on the keys in your mapping dictionary
+    for product in inventory.PRODUCTS_MAP.keys():
+        user_inputs[product] = st.number_input(
+            label=f"Quantity for {product}", 
+            min_value=0, 
+            value=0, 
+            step=1
+        )
+        
+    submitted = st.form_submit_button("Submit Entry")
+
+# ==========================================
+# 3. NO-AUTH SUBMISSION LOGIC
+# ==========================================
+if submitted:
+    # Build the payload mapping the entry IDs to the user input values
+    form_payload = {}
+    for product, entry_id in inventory.PRODUCTS_MAP.items():
+        form_payload[entry_id] = user_inputs[product]
+        
+    try:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        # Silently submit data to the Google Sheet via the Form bridge
+        response = requests.post(config.INVENTORY_LINK, data=form_payload, headers=headers)
+        
+        if response.status_code in [200, 302]:
+            st.success("Inventory updated successfully!")
+            st.session_state.show_inventory_form = False
+            st.rerun()
+        else:
+            st.error(f"Failed to send data. Code: {response.status_code}")
+             
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+
+
 # --- 2. LOGIC: EDIT & DELETE ---
 def trigger_edit_mode(row):
     """Parses the order data and fills the sidebar session state"""
@@ -638,15 +680,6 @@ def show_return_to_work_queue_dialog(order_id):
             st.toast(f"Order #{order_id} updated successfully to pending status!")
             st.rerun()
 
-@st.dialog("📝 New Inventory Entry", width="large")
-def open_inventory_modal():
-    # Renders the genuine Google Form inside a smooth, secure popup overlay
-    st.components.v1.iframe(config.INVENTORY_LINK, height=550, scrolling=True)
-    
-    # Provides an easy way for the user to close the window and sync the preview dataframe
-    if st.button("Add to Inventory", use_container_width=True):
-        st.rerun()
-
 # validate delivery date 
 def validate_selected_date():
     """Natively validates and rejects selection of Mondays, Tuesdays, or custom holidays."""
@@ -908,9 +941,6 @@ with st.sidebar:
 # --- 6. MAIN DASHBOARD ---
 st.title("Moon & Melody Dashboard")
 
-if st.button("Update Inventory", type="primary", use_container_width=True):
-    open_inventory_modal()
-    
 if not df.empty:
     pending_count = len(df[(df["Status"] == "pending") & (df["Type of Order"] == "preorder")])
     #pending_count = len(df[df["Status"] == "pending"])
