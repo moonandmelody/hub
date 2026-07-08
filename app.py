@@ -181,7 +181,7 @@ if submitted:
         
     try:
         # Silently submit data to the Google Sheet via the Form bridge
-        response = requests.post(FORM_POST_URL, data=form_payload)
+        response = requests.post(config.INVENTORY_LINK, data=form_payload)
         
         if response.status_code == 200:
             st.success("Inventory updated successfully! Refreshing preview...")
