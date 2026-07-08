@@ -178,7 +178,7 @@ if st.session_state.show_inventory_form:
                 st.rerun()
         
         # Embed the Google Form inside the sidebar framework
-        st.components.v1.iframe(GOOGLE_FORM_UI_URL, height=650, scrolling=True)
+        st.components.v1.iframe(inventory.INVENTORY_LINK, height=650, scrolling=True)
         
         st.markdown("---")
         # Action button to refresh data logs and retract the panel
