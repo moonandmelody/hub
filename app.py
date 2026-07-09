@@ -972,7 +972,28 @@ with st.container(key="allMetricDiv"):
 st.divider()
 
 unique_dates = sorted(df["Delivery Date"].unique().tolist(), reverse=False)
+today_dt = datetime.datetime.date.today()
 today_str = datetime.datetime.now().strftime("%Y-%m-%d")
+
+# Filter out any dates that are before today
+future_and_today_dates = []
+for d_str in unique_dates:
+    try:
+        # Parse the string into a date object for accurate comparison
+        parsed_date = datetime.datetime.strptime(d_str, "%Y-%m-%d").date()
+        if parsed_date >= today_dt:
+            future_and_today_dates.append(d_str)
+    except ValueError:
+        # Skip rows with malformed dates or headers
+        continue
+        
+# Sort the remaining valid tracking dates (newest/closest dates first)
+unique_dates = sorted(future_and_today_dates)
+
+# If no current or future orders exist, fall back to showing just 'Today' so the UI doesn't crash
+if not unique_dates:
+    unique_dates = [today_str]
+
 default_date_idx = unique_dates.index(today_str) if today_str in unique_dates else 0
     
 # Dropdown selector for dates
