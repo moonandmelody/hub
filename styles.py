@@ -121,6 +121,12 @@ def apply_custom_css():
                 box-shadow: none;
             }}
 
+            .st-key-my_update_inventory_button > div > div {{
+                display: flex;
+                justify-contents: end;
+                width: auto;
+            }}
+
             /* 4. METRIC CARDS (Top Numbers) */
             div [class="st-emotion-cache-0"] {{
                 height:100%;
