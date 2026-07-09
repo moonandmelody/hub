@@ -187,7 +187,7 @@ def apply_custom_css():
             }}
 
             /* Filter Date */
-            [data-testid="stSelectbox"] {{
+            .stSelectbox:nth-of-type(4) {{
                     display: grid;
                     justify-content: end;
             }}
