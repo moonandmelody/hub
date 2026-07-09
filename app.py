@@ -538,7 +538,7 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
         # Silently push the reduction row into the spreadsheet backend
         headers = {"User-Agent": "Mozilla/5.0"}
         response = requests.post(config.UPDATE_INVENTORY_LINK, data=payload, headers=headers)
-        if response.status_code in:
+        if response.status_code in [200, 302]:
             st.success("Order processed! Quantities reduced successfully.")
             # Force instant layout refresh to show updated metric counts
             st.rerun()
