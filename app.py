@@ -928,7 +928,7 @@ with st.sidebar:
             else: show_confirmation_dialog(st.session_state["form_customer"],st.session_state["form_contact"],current_cart, running_total, st.session_state.form_date, st.session_state.form_time_slot, "create")
 
 # --- 6. MAIN DASHBOARD ---
-col1, col2 = st.columns(2)
+col1, col2 = st.columns([2,1])
 
 with col1:
    st.title("Moon & Melody Dashboard")
