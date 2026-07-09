@@ -253,13 +253,6 @@ def apply_custom_css():
                 font-family: 'Montserrat',serif;
             }}
 
-            input.st-c2 {{
-                background-color: none !important;
-            }}
-            .st-c2 {{
-                background-color: {BACKGROUND_COLOR};
-            }}
-
             /* Button hover or focus */
             .st-emotion-cache-5qfegl:focus-visible{{
                 box-shadow: none;
