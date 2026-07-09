@@ -167,15 +167,15 @@ if "current_view" not in st.session_state:
 
 if st.session_state.current_view == "entry_form":
     # Layout for the dedicated workspace header
-    header_col, close_col = st.columns([4, 1])
+    header_col, close_col = st.columns([3, 1])
     with header_col:
-        st.title("📝 New Inventory Entry")
-        st.write("Enter new quantities below")
+        st.title("New Inventory Entry")
     with close_col:
         # Secure, functioning close button that switches state back immediately
-        if st.button("✖️ Close Panel", use_container_width=True, type="primary"):
-            st.session_state.current_view = "dashboard"
-            st.rerun()
+        with st.container(key="my_update_inventory_button"):
+            if st.button("Close Panel", use_container_width=True, type="primary"):
+                st.session_state.current_view = "dashboard"
+                st.rerun()
 
     st.markdown("---");
 
