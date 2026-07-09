@@ -187,9 +187,9 @@ def apply_custom_css():
             }}
 
             /* Filter Date */
-            .stSelectbox:nth-of-type(3) {{
-                    display: grid;
-                    justify-content: end;
+            .st-key-my_custom_dropdown_box > div > div {{
+                display: grid;
+                justify-content: end;
             }}
 
             /* 5. POST-IT NOTE CARDS (Containers) */
