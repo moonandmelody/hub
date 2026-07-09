@@ -997,6 +997,20 @@ if not unique_dates:
 default_date_idx = unique_dates.index(today_str) if today_str in unique_dates else 0
     
 # Dropdown selector for dates
+st.markdown("""
+    <style>
+    #custom-dropdown-container div[data-baseweb="select"] > div {
+        background-color: #2b2b2b !important;
+        border: 2px solid #00ffcc !important;
+        border-radius: 12px !important;
+        color: #00ffcc !important;
+    }
+    #custom-dropdown-container p {
+        color: #00ffcc !important;
+        font-weight: bold;
+    }
+    </style>
+""", unsafe_allow_html=True)
 st.markdown('<div id="custom-dropdown-container">', unsafe_allow_html=True)
 
 selected_date = st.selectbox("Select a date to view orders", unique_dates, default_date_idx)
