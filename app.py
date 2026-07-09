@@ -11,6 +11,7 @@ import date_config as dt_cfg
 import requests
 import inventory
 import datetime
+import io
 
 INVENTORY_URL = f"https://docs.google.com/spreadsheets/d/{config.SHEET_ID}/export?format=csv&gid={config.INVENTORY_SHEET_ID}"
 UPDATE_INVENTORY_URL = f"https://docs.google.com/spreadsheets/d/{config.SHEET_ID}/export?format=csv&gid={config.UPDATE_INVENTORY_SHEET_ID}"
