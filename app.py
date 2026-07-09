@@ -979,7 +979,7 @@ default_date_idx = unique_dates.index(today_str) if today_str in unique_dates el
 selected_date = st.selectbox(
     "Select a tracking date to view orders:",
     options=unique_dates,
-    index=default_idx,
+    index=default_date_idx,
     help="Changing this date will update the post-it note views instantly."
 )
 
