@@ -454,44 +454,46 @@ def calculate_order_packaging(current_cart):
     return packaging_total, packaging_breakdown
 
 def get_live_stock(target_date_str):
-    """Calculates true live remaining stock for a given date using pandas."""
+    """Calculates true live remaining stock for a given date using pandas.
+    Forces both inventory and update logs into matched YYYY-MM-DD timelines.
+    """
     live_stock = {}
 
     request_headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
     }
     
+    # ==========================================
+    # PHASE 1: READ & PARSE INVENTORY STARTING VALUES
+    # ==========================================
     try:
         req_intake = urllib.request.Request(INVENTORY_URL, headers=request_headers)
-        print(f"Inventory_url is {INVENTORY_URL}", flush=True)
         with urllib.request.urlopen(req_intake, timeout=10) as response:
             csv_data = response.read().decode('utf-8')
             df_inventory = pd.read_csv(io.StringIO(csv_data))
 
         df_inventory.columns = df_inventory.columns.str.strip()
+        
         if "Timestamp" in df_inventory.columns:
-            # Safely convert to a standard datetime format
+            # Safe date parser parsing standard Google Forms timestamps
             df_inventory["Clean_DateTime"] = pd.to_datetime(df_inventory["Timestamp"], errors='coerce')
-            print(f"get datetime -------- {df_inventory["Clean_DateTime"]}",flush=True)
-            # Extract just the Date string portion (YYYY-MM-DD) to match your target string
-            print(f"Clean_datetime -------- {df_inventory["Clean_DateTime"].dt.strftime("%Y-%m-%d")}",flush=True)
-            df_inventory["Date"] = df_inventory["Clean_DateTime"].dt.strftime("%Y-%m-%d")
-            print(f"Date -------- {df_inventory["Date"]}",flush=True)
+            df_inventory["Normalized_Date"] = df_inventory["Clean_DateTime"].dt.strftime("%Y-%m-%d")
         else:
-            st.error("Error: Could not locate the built-in 'Timestamp' column in the Intake Sheet.")
+            st.error("Error: Could not locate 'Timestamp' column in your Inventory Sheet.")
             return live_stock
 
-        day_intake = df_inventory[df_inventory["Date"] == target_date_str]
-        print(f"Day intake ---------- {day_intake}")
+        # Isolate initial baseline logs for the selected target date
+        day_intake = df_inventory[df_inventory["Normalized_Date"] == target_date_str]
 
     except Exception as e:
-        # Fallback if intake sheet is completely unreadable or empty
         day_intake = pd.DataFrame()
-        print(f"Error reading inventory file because {e}", flush=True)
+        print(f"Error reading inventory file: {e}", flush=True)
 
+    # ==========================================
+    # PHASE 2: READ & PARSE UPDATE DEDUCTIONS LOG
+    # ==========================================
     try:    
         req_deduct = urllib.request.Request(UPDATE_INVENTORY_URL, headers=request_headers)
-        print(f"Update Inventory_url is {UPDATE_INVENTORY_URL}", flush=True)
         with urllib.request.urlopen(req_deduct, timeout=10) as response:
             csv_data = response.read().decode('utf-8')
             df_update_inventory = pd.read_csv(io.StringIO(csv_data))
@@ -499,44 +501,47 @@ def get_live_stock(target_date_str):
         df_update_inventory.columns = df_update_inventory.columns.str.strip()
         
         if "Date" in df_update_inventory.columns:
-            df_update_inventory["Date"] = df_update_inventory["Date"].astype(str).str.strip()
-            day_deductions = df_update_inventory[df_update_inventory["Date"] == target_date_str]
-            print(f"day_deductions ---------- {day_deductions}")
+            # FIX: Explicitly treat string entries as Day-First (dd/mm/yyyy) format
+            parsed_dates = pd.to_datetime(df_update_inventory["Date"], dayfirst=True, errors='coerce')
+            df_update_inventory["Normalized_Date"] = parsed_dates.dt.strftime("%Y-%m-%d")
         else:
-            # Fallback if your deduction sheet matches the column name 'Timestamp' too
-            df_update_inventory["Date"] = pd.to_datetime(df_update_inventory.iloc[:, 0], errors='coerce').dt.strftime("%Y-%m-%d")
-            day_deductions = pd.DataFrame()
+            # Fallback if your update sheet tracks entries via Timestamp column instead of manual Date question
+            fallback_col = df_update_inventory.columns[0]
+            parsed_dates = pd.to_datetime(df_update_inventory[fallback_col], errors='coerce')
+            df_update_inventory["Normalized_Date"] = parsed_dates.dt.strftime("%Y-%m-%d")
+
+        # Isolate logged sales rows for our selected target date
+        day_deductions = df_update_inventory[df_update_inventory["Normalized_Date"] == target_date_str]
 
     except Exception as e:
-        # FIX: If deduction sheet is blank/empty, create an empty DataFrame so the script doesn't crash
         day_deductions = pd.DataFrame()
-        print(f"Error reading update inventory file because {e}", flush=True)
+        print(f"Error reading update inventory file: {e}", flush=True)
 
+    # ==========================================
+    # PHASE 3: AGGREGATE FINAL QUANTITIES
+    # ==========================================
+    # Loop over tracking items defined in your mapping profile
     for product in inventory.UPDATE_INVENTORY_MAP.keys():
-        if product == "Date":
+        # Avoid processing structural parameters or dates as products
+        if product in ["Date", "date_entry"]:
             continue
             
-        # 1. Extract baseline from the latest intake submission of the day
         initial_qty = 0
         if not day_intake.empty and product in day_intake.columns:
             val = day_intake[product].iloc[-1]
             try:
-                # Handle floats or string numbers safely
                 initial_qty = int(float(val)) if pd.notna(val) and str(val).strip() != "" else 0
             except ValueError:
                 initial_qty = 0
             
-        # 2. FIX: Safely sum up deduction logs even if the sheet is 100% empty
         total_deducted = 0
         if not day_deductions.empty and product in day_deductions.columns:
-            # Force conversion to numbers, convert blanks (NaN) to 0, then sum
             total_deducted = pd.to_numeric(day_deductions[product], errors='coerce').fillna(0).astype(int).sum()
             
-        # 3. Final calculation math
+        # Complete accounting balancing
         live_stock[product] = max(0, initial_qty - total_deducted)
         
     return live_stock
-
 # --- 3. THE SUBMISSION HANDLER (CALLBACK) ---
 def process_sidebar_submission(packaging_breakdown, packaging_total, mode="create"):
     # A. Get Data
