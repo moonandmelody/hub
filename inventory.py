@@ -15,3 +15,20 @@ PRODUCTS_MAP = {
     "Whipped Cream": "entry.1904146326",
     "Roasted Nuts": "entry.1420863543"
 }
+
+UPDATE_INVENTORY_MAP = {
+    "Date": "entry.916941240" ,
+    "Midnight Luxe": "entry.1103829357",
+    "Moon Dance": "entry.747172608",
+    "Midnight Luxe Vegan": "entry.61407435",
+    "Biscoff Latte": "entry.431930697",
+    "Sitaphal Coffee": "entry.48217881",
+    "Rose Tea": "entry.187006303",
+    "Lemongrass Tea": "entry.241976791",
+    "Mini Croissants (2)": "entry.1274726954",
+    "Garlic Bread": "entry.1619677751",
+    "Bun Maska": "entry.1530424668",
+    "Potato Pops": "entry.1670183119",
+    "Whipped Cream": "entry.1859067227",
+    "Roasted Nuts": "entry.969283366"
+}
