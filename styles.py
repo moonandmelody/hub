@@ -121,6 +121,9 @@ def apply_custom_css():
                 box-shadow: none;
             }}
 
+            .st-key-my_update_inventory_button {{
+                padding-bottom: 13px;
+            }}
             .st-key-my_update_inventory_button > div {{
                 display: flex;
                 justify-content: end;
