@@ -172,7 +172,7 @@ if st.session_state.current_view == "entry_form":
         st.title("New Inventory Entry")
     with close_col:
         # Secure, functioning close button that switches state back immediately
-        with st.container(key="my_update_inventory_button"):
+        with st.container(key="my_close_inventory_button"):
             if st.button("Close Panel", use_container_width=True, type="primary"):
                 st.session_state.current_view = "dashboard"
                 st.rerun()
