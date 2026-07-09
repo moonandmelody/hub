@@ -30,7 +30,7 @@ def apply_custom_css():
             }}
             #moon-and-melody-dashboard {{
                 display: flex;
-                justify-content: center;
+                justify-content: end;
                 font-family: 'Cinzel', serif;
                 padding: 30px 60px !important;
             }}
