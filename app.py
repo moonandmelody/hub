@@ -455,9 +455,16 @@ def calculate_order_packaging(current_cart):
 def get_live_stock(target_date_str):
     """Calculates true live remaining stock for a given date using pandas."""
     live_stock = {}
+
+    request_headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    }
     
     try:
-        df_inventory = pd.read_csv(INVENTORY_URL)
+        req_intake = urllib.request.Request(INVENTORY_URL, headers=request_headers)
+        with urllib.request.urlopen(req_intake, timeout=10) as response:
+            csv_data = response.read().decode('utf-8')
+            df_inventory = pd.read_csv(io.StringIO(csv_data))
 
         df_inventory.columns = df_inventory.columns.str.strip()
         if "Timestamp" in df_inventory.columns:
@@ -478,7 +485,11 @@ def get_live_stock(target_date_str):
         print(f"Error reading inventory file because {e}", flush=True)
 
     try:    
-        df_update_inventory = pd.read_csv(UPDATE_INVENTORY_URL)
+        req_deduct = urllib.request.Request(UPDATE_INVENTORY_URL, headers=request_headers)
+        with urllib.request.urlopen(req_deduct, timeout=10) as response:
+            csv_data = response.read().decode('utf-8')
+            df_update_inventory = pd.read_csv(io.StringIO(csv_data))
+            
         df_deduct.columns = df_deduct.columns.str.strip()
         
         if "Date" in df_update_inventory.columns:
