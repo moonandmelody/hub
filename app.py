@@ -478,6 +478,8 @@ def get_live_stock(target_date_str):
             # Safe date parser parsing standard Google Forms timestamps
             df_inventory["Clean_DateTime"] = pd.to_datetime(df_inventory["Timestamp"], errors='coerce')
             df_inventory["Normalized_Date"] = df_inventory["Clean_DateTime"].dt.strftime("%Y-%m-%d")
+
+            print(f"Normalized date is --------- {df_inventory['Normalized_Date']}",flush=True)
         else:
             st.error("Error: Could not locate 'Timestamp' column in your Inventory Sheet.")
             return live_stock
@@ -504,6 +506,7 @@ def get_live_stock(target_date_str):
             # FIX: Explicitly treat string entries as Day-First (dd/mm/yyyy) format
             parsed_dates = pd.to_datetime(df_update_inventory["Date"], dayfirst=True, errors='coerce')
             df_update_inventory["Normalized_Date"] = parsed_dates.dt.strftime("%Y-%m-%d")
+            print(f"Normalized date is --------- {df_update_inventory['Normalized_Date']}",flush=True)
         else:
             # Fallback if your update sheet tracks entries via Timestamp column instead of manual Date question
             fallback_col = df_update_inventory.columns[0]
@@ -542,6 +545,7 @@ def get_live_stock(target_date_str):
         live_stock[product] = max(0, initial_qty - total_deducted)
         
     return live_stock
+    
 # --- 3. THE SUBMISSION HANDLER (CALLBACK) ---
 def process_sidebar_submission(packaging_breakdown, packaging_total, mode="create"):
     # A. Get Data
