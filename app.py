@@ -972,7 +972,7 @@ with st.container(key="allMetricDiv"):
 st.divider()
 
 unique_dates = sorted(df["Delivery Date"].unique().tolist(), reverse=True)
-today_str = datetime.now().strftime("%Y-%m-%d")
+today_str = datetime.datetime.now().strftime("%Y-%m-%d")
 default_date_idx = unique_dates.index(today_str) if today_str in unique_dates else 0
     
 # Dropdown selector for dates
