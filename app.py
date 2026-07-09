@@ -12,6 +12,9 @@ import requests
 import inventory
 import datetime
 
+INVENTORY_URL = f"https://google.com{config.SHEET_ID}/export?format=csv&gid={INVENTORY_SHEET_GID}"
+UPDATE_INVENTORY_URL = f"https://google.com{config.SHEET_ID}/export?format=csv&gid={UPDATE_INVENTORY_SHEET_ID}"
+
 # 🎨 PAGE CONFIGURATION
 st.set_page_config(
     page_title="Moon & Melody Hub",
