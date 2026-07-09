@@ -11,10 +11,6 @@ import date_config as dt_cfg
 import requests
 import inventory
 import datetime
-import io
-
-INVENTORY_URL = f"https://docs.google.com/spreadsheets/d/{config.SHEET_ID}/export?format=csv&gid={config.INVENTORY_SHEET_ID}"
-UPDATE_INVENTORY_URL = f"https://docs.google.com/spreadsheets/d/{config.SHEET_ID}/export?format=csv&gid={config.UPDATE_INVENTORY_SHEET_ID}"
 
 # 🎨 PAGE CONFIGURATION
 st.set_page_config(
@@ -176,7 +172,7 @@ if st.session_state.current_view == "entry_form":
         st.title("New Inventory Entry")
     with close_col:
         # Secure, functioning close button that switches state back immediately
-        with st.container(key="my_close_inventory_button"):
+        with st.container(key="my_update_inventory_button"):
             if st.button("Close Panel", use_container_width=True, type="primary"):
                 st.session_state.current_view = "dashboard"
                 st.rerun()
@@ -453,99 +449,7 @@ def calculate_order_packaging(current_cart):
             
     return packaging_total, packaging_breakdown
 
-def get_live_stock(target_date_str):
-    """Calculates true live remaining stock for a given date using pandas.
-    Forces both inventory and update logs into matched YYYY-MM-DD timelines.
-    """
-    live_stock = {}
 
-    request_headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-    }
-    
-    # ==========================================
-    # PHASE 1: READ & PARSE INVENTORY STARTING VALUES
-    # ==========================================
-    try:
-        req_intake = urllib.request.Request(INVENTORY_URL, headers=request_headers)
-        with urllib.request.urlopen(req_intake, timeout=10) as response:
-            csv_data = response.read().decode('utf-8')
-            df_inventory = pd.read_csv(io.StringIO(csv_data))
-
-        df_inventory.columns = df_inventory.columns.str.strip()
-        
-        if "Timestamp" in df_inventory.columns:
-            # Safe date parser parsing standard Google Forms timestamps
-            df_inventory["Clean_DateTime"] = pd.to_datetime(df_inventory["Timestamp"], errors='coerce')
-            df_inventory["Normalized_Date"] = df_inventory["Clean_DateTime"].dt.strftime("%Y-%m-%d")
-
-            print(f"Normalized date is --------- {df_inventory['Normalized_Date']}",flush=True)
-        else:
-            st.error("Error: Could not locate 'Timestamp' column in your Inventory Sheet.")
-            return live_stock
-
-        # Isolate initial baseline logs for the selected target date
-        day_intake = df_inventory[df_inventory["Normalized_Date"] == target_date_str]
-
-    except Exception as e:
-        day_intake = pd.DataFrame()
-        print(f"Error reading inventory file: {e}", flush=True)
-
-    # ==========================================
-    # PHASE 2: READ & PARSE UPDATE DEDUCTIONS LOG
-    # ==========================================
-    try:    
-        req_deduct = urllib.request.Request(UPDATE_INVENTORY_URL, headers=request_headers)
-        with urllib.request.urlopen(req_deduct, timeout=10) as response:
-            csv_data = response.read().decode('utf-8')
-            df_update_inventory = pd.read_csv(io.StringIO(csv_data))
-            
-        df_update_inventory.columns = df_update_inventory.columns.str.strip()
-        
-        if "Date" in df_update_inventory.columns:
-            # FIX: Explicitly treat string entries as Day-First (dd/mm/yyyy) format
-            parsed_dates = pd.to_datetime(df_update_inventory["Date"], dayfirst=True, errors='coerce')
-            df_update_inventory["Normalized_Date"] = parsed_dates.dt.strftime("%Y-%m-%d")
-            print(f"Normalized date is --------- {df_update_inventory['Normalized_Date']}",flush=True)
-        else:
-            # Fallback if your update sheet tracks entries via Timestamp column instead of manual Date question
-            fallback_col = df_update_inventory.columns[0]
-            parsed_dates = pd.to_datetime(df_update_inventory[fallback_col], errors='coerce')
-            df_update_inventory["Normalized_Date"] = parsed_dates.dt.strftime("%Y-%m-%d")
-
-        # Isolate logged sales rows for our selected target date
-        day_deductions = df_update_inventory[df_update_inventory["Normalized_Date"] == target_date_str]
-
-    except Exception as e:
-        day_deductions = pd.DataFrame()
-        print(f"Error reading update inventory file: {e}", flush=True)
-
-    # ==========================================
-    # PHASE 3: AGGREGATE FINAL QUANTITIES
-    # ==========================================
-    # Loop over tracking items defined in your mapping profile
-    for product in inventory.UPDATE_INVENTORY_MAP.keys():
-        # Avoid processing structural parameters or dates as products
-        if product in ["Date", "date_entry"]:
-            continue
-            
-        initial_qty = 0
-        if not day_intake.empty and product in day_intake.columns:
-            val = day_intake[product].iloc[-1]
-            try:
-                initial_qty = int(float(val)) if pd.notna(val) and str(val).strip() != "" else 0
-            except ValueError:
-                initial_qty = 0
-            
-        total_deducted = 0
-        if not day_deductions.empty and product in day_deductions.columns:
-            total_deducted = pd.to_numeric(day_deductions[product], errors='coerce').fillna(0).astype(int).sum()
-            
-        # Complete accounting balancing
-        live_stock[product] = max(0, initial_qty - total_deducted)
-        
-    return live_stock
-    
 # --- 3. THE SUBMISSION HANDLER (CALLBACK) ---
 def process_sidebar_submission(packaging_breakdown, packaging_total, mode="create"):
     # A. Get Data
@@ -560,33 +464,13 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
     
     cart_items = {}
     running_total = 0.0
-
-    # Setup Payload to update inventory
-    payload = {inventory.UPDATE_INVENTORY_MAP["Date"]: today_str}
-    
     for category, items_dict in products.CATALOG.items():
         if isinstance(items_dict, dict):
              for item_name, price in items_dict.items():
-                payload[inventory.UPDATE_INVENTORY_MAP[item_name]] = qty
-                
                 qty = st.session_state.get(f"qty_{item_name}", 0)
                 if qty > 0:
                     cart_items[item_name] = qty
                     running_total += (qty * price)
-
-    # try to update the inventory
-    try:
-        # Silently push the reduction row into the spreadsheet backend
-        headers = {"User-Agent": "Mozilla/5.0"}
-        response = requests.post(config.UPDATE_INVENTORY_LINK, data=payload, headers=headers)
-        if response.status_code in [200, 302]:
-            st.success("Order processed! Quantities reduced successfully.")
-            # Force instant layout refresh to show updated metric counts
-            st.rerun()
-        else:
-            st.error(f"Network error updating sheet logs. Code: {response.status_code}")
-    except Exception as e:
-        st.error(f"Failed to communicate deduction coordinates: {e}")
 
     # B. Validation
     if customer_val.strip() == "":
@@ -820,11 +704,6 @@ if "form_date" not in st.session_state: st.session_state["form_date"] = ""
 if "form_time_slot" not in st.session_state: st.session_state["form_time_slot"] = ""
 if "form_order" not in st.session_state: st.session_state["form_order"] = ""
 
-today_str = datetime.date.today().strftime("%Y-%m-%d")
-    
-# Calculate Live Available Inventory on the fly
-current_stock = get_live_stock(today_str)
-
 with st.sidebar:
     # 🎨 BRAND LOGO FROM STYLES.PY
     st.image(styles.LOGO_URL, width=60)
@@ -861,7 +740,7 @@ with st.sidebar:
 
     current_cart = {}
     running_total = 0.0
-
+    
     for category, items_dict in products.CATALOG.items():
         st.markdown(f"##### {category}")
         if isinstance(items_dict, dict):
@@ -871,15 +750,12 @@ with st.sidebar:
                 batch = item_list[i:i+2]
                 for j, (item_name, price) in enumerate(batch):
                     with cols[j]:
-                        available_qty = current_stock.get(item_name, 0)
-                        is_out_of_stock = (available_qty == 0)
-                        
                         widget_key = f"qty_{item_name}"
                         current_qty = st.session_state.get(widget_key, 0)
                         
                         st.number_input(
-                            f"{item_name} | {available_qty}", 
-                            min_value=0, max_value=max(0, available_qty), step=1, key=widget_key, value=int(min(current_qty, available_qty))
+                            f"{item_name}\n(₹{price:.0f})", 
+                            min_value=0, max_value=50, step=1, key=widget_key, value=int(current_qty)
                         )
                         
                         qty = st.session_state[widget_key]
