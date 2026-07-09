@@ -931,13 +931,13 @@ with st.sidebar:
 col1, col2 = st.columns(2)
 
 with col1:
-    with st.container(key="my_update_inventory_button"):
+   st.title("Moon & Melody Dashboard")
+
+with col2:
+     with st.container(key="my_update_inventory_button"):
         if st.button("Update Inventory", type="primary", use_container_width=True):
             st.session_state.current_view = "entry_form"
             st.rerun()
-
-with col2:
-    st.title("Moon & Melody Dashboard")
     
 if not df.empty:
     pending_count = len(df[(df["Status"] == "pending") & (df["Type of Order"] == "preorder")])
