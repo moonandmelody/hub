@@ -35,6 +35,10 @@ def apply_custom_css():
                 padding: 30px 60px !important;
             }}
 
+            .st-emotion-cache-zy6yx3 {{
+                padding-top: 2rem;
+            }}
+
             /* 2. SIDEBAR STYLING */
             [data-testid="stSidebar"] {{
                 background-color: {SIDEBAR_COLOR};
