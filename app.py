@@ -454,8 +454,8 @@ def get_live_stock(target_date_str):
     live_stock = {}
     
     try:
-        df_intake = pd.read_csv(config.INVENTORY_URL)
-        df_deduct = pd.read_csv(config.UPDATE_INVENTORY_URL)
+        df_intake = pd.read_csv(config.INVENTORY_LINK)
+        df_deduct = pd.read_csv(config.UPDATE_INVENTORY_LINK)
         
         # Clean date columns for perfect matching
         df_intake["Date"] = df_intake["Date"].astype(str).str.strip()
