@@ -313,8 +313,8 @@ def celebrate():
             position: fixed;
             bottom: -100px;
             left: {left_pos}%;
-            width: 50px;
-            height: 70px;
+            width: 70px;
+            height: 100px;
             background-color: {color};
             border-radius: 50%;
             opacity: 1;
