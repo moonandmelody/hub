@@ -138,6 +138,12 @@ def load_data():
         else:
             df["Type of Order"] = "preorder"
 
+        if "Delivery Date" in df.columns:
+            df["Delivery Date"] = df["Delivery Date"].astype(str).str.strip()
+        else:
+            st.warning("Could not find a 'Delivery Date' column in your Google Sheet.")
+            return
+
         return df
     except Exception as e:
         st.error(f"Google Cloud Sync Error: {e}")
@@ -965,7 +971,26 @@ with st.container(key="allMetricDiv"):
 
 st.divider()
 
-tab_queue, tab_walk_ins, tab_completed, tab_charts = st.tabs([f"Pre Orders        :red[{pending_count}]", f"Walk-ins        :red[{walk_in_count}]", f"Completed Orders        :green[{completed_count}]", "Analytics & History"])
+# Code to filter based on delivery dates
+unique_dates = sorted(df["Delivery Date"].unique().tolist(), reverse=True)
+today_str = datetime.now().strftime("%Y-%m-%d")
+
+default_idx = unique_dates.index(today_str) if today_str in unique_dates else 0
+    
+# Dropdown selector for dates
+selected_date = st.selectbox(
+    "Select a tracking date to view orders:",
+    options=unique_dates,
+    index=default_idx,
+    help="Changing this date will update the post-it note views instantly."
+)
+
+# 4. Apply the Data Filtering Operation
+# Keeps only rows that match the user's selected dropdown choice
+df_filtered_preorders = df[(df["Delivery Date"] == selected_date) & (df["Type of Order"] == "preorder")]
+df_filtered_walkin = df[(df["Delivery Date"] == selected_date) & (df["Type of Order"] == "walkin")]
+
+tab_queue, tab_walk_ins, tab_completed, tab_charts = st.tabs([f"Pre Orders        :red[{len(df_filtered_preorders)}]", f"Walk-ins        :red[{len(df_filtered_walkin)}]", f"Completed Orders        :green[{completed_count}]", "Analytics & History"])
 
 with tab_queue:
     if df.empty:
@@ -973,14 +998,14 @@ with tab_queue:
         styles.celebrate()
 
     elif "Status" in df.columns:
-        pending_orders = df[(df["Status"] == "pending") & (df["Type of Order"] == "preorder")]
+        #pending_orders = df[(df["Status"] == "pending") & (df["Type of Order"] == "preorder")]
         
-        if pending_orders.empty:
+        if df_filtered_preorders.empty:
             st.success("No pre-orders available! You are all caught up.")
             styles.celebrate()
         else:
             cols = st.columns(3)
-            for idx, (_, row) in enumerate(pending_orders.iterrows()):
+            for idx, (_, row) in enumerate(df_filtered_preorders.iterrows()):
                 col_idx = idx % 3
                 with cols[col_idx]:
                     with st.container(border=True):
@@ -1052,14 +1077,14 @@ with tab_queue:
 
 with tab_walk_ins:
     #nothing here yet
-    walkin_orders = df[(df["Status"] == "pending") & (df["Type of Order"] == "walkin")]
+    #walkin_orders = df[(df["Status"] == "pending") & (df["Type of Order"] == "walkin")]
         
-    if walkin_orders.empty:
+    if df_filtered_walkin.empty:
         st.success("No walkin orders available! You are all caught up.")
         styles.celebrate()
     else:
         cols = st.columns(3)
-        for idx, (_, row) in enumerate(walkin_orders.iterrows()):
+        for idx, (_, row) in enumerate(df_filtered_walkin.iterrows()):
             col_idx = idx % 3
             with cols[col_idx]:
                 with st.container(border=True):
