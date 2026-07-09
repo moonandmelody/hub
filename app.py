@@ -485,8 +485,8 @@ def get_live_stock(target_date_str):
     day_deductions = df_update_inventory[df_update_inventory["Date"] == target_date_str]
 
     # Calculate real-time state for each item in your map
-    for product in DEDUCTION_MAP.keys():
-        if product == "date_entry":
+    for product in inventory.UPDATE_INVENTORY_MAP.keys():
+        if product == "Date":
             continue
             
         # 1. Starting stock baseline
