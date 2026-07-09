@@ -493,7 +493,7 @@ def get_live_stock(target_date_str):
             csv_data = response.read().decode('utf-8')
             df_update_inventory = pd.read_csv(io.StringIO(csv_data))
             
-        df_deduct.columns = df_deduct.columns.str.strip()
+        df_update_inventory.columns = df_deduct.columns.str.strip()
         
         if "Date" in df_update_inventory.columns:
             df_update_inventory["Date"] = df_update_inventory["Date"].astype(str).str.strip()
