@@ -1011,11 +1011,9 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-st.markdown('<div id="custom-dropdown-container">', unsafe_allow_html=True)
 
-selected_date = st.selectbox("Select a date to view orders", unique_dates, default_date_idx)
-
-st.markdown('</div>', unsafe_allow_html=True)
+with st.container(key="my_custom_dropdown_box"):
+    selected_date = st.selectbox("Select a date to view orders", unique_dates, default_date_idx)
 
 # 4. Apply the Data Filtering Operation
 # Keeps only rows that match the user's selected dropdown choice
