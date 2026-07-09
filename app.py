@@ -464,6 +464,7 @@ def get_live_stock(target_date_str):
             # Safely convert to a standard datetime format
             df_inventory["Clean_DateTime"] = pd.to_datetime(df_inventory["Timestamp"], errors='coerce')
             # Extract just the Date string portion (YYYY-MM-DD) to match your target string
+            print(f"Clean_datetime -------- {df_inventory["Clean_DateTime"].dt.strftime("%Y-%m-%d")}",flush=True)
             df_inventory["Date"] = df_inventory["Clean_DateTime"].dt.strftime("%Y-%m-%d")
         else:
             st.error("Error: Could not locate the built-in 'Timestamp' column in the Intake Sheet.")
