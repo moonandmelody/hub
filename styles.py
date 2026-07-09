@@ -187,7 +187,7 @@ def apply_custom_css():
             }}
 
             /* Filter Date */
-            [data-baseweb="stSelectbox"]:nth-of-type(3) {{
+            .stSelectbox:nth-of-type(3) {{
                     display: grid;
                     justify-content: end;
             }}
