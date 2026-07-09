@@ -997,11 +997,11 @@ if not unique_dates:
 default_date_idx = unique_dates.index(today_str) if today_str in unique_dates else 0
     
 # Dropdown selector for dates
-selected_date = st.selectbox(
-    "Select a date to view orders",
-    options=unique_dates,
-    index=default_date_idx
-)
+st.markdown('<div id="custom-dropdown-container">', unsafe_allow_html=True)
+
+selected_date = st.selectbox("Select a date to view orders", unique_dates, default_date_idx)
+
+st.markdown('</div>', unsafe_allow_html=True)
 
 # 4. Apply the Data Filtering Operation
 # Keeps only rows that match the user's selected dropdown choice
