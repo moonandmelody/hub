@@ -11,7 +11,6 @@ import date_config as dt_cfg
 import requests
 import inventory
 import datetime
-from datetime import datetime
 
 # 🎨 PAGE CONFIGURATION
 st.set_page_config(
@@ -974,7 +973,7 @@ st.divider()
 
 # Code to filter based on delivery dates
 unique_dates = sorted(df["Delivery Date"].unique().tolist(), reverse=True)
-today_str = datetime.now().strftime("%Y-%m-%d")
+today_str = datetime.datetime.now().strftime("%Y-%m-%d")
 
 default_idx = unique_dates.index(today_str) if today_str in unique_dates else 0
     
