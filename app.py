@@ -1004,7 +1004,8 @@ with st.container(key="my_custom_dropdown_box"):
 df_filtered_preorders = df[(df["Delivery Date"] == selected_date) & (df["Type of Order"] == "preorder")]
 df_filtered_walkin = df[(df["Delivery Date"] == selected_date) & (df["Type of Order"] == "walkin")]
 
-tab_queue, tab_walk_ins, tab_completed, tab_charts = st.tabs([f"Pre Orders        :red[{len(df_filtered_preorders)}]", f"Walk-ins        :red[{len(df_filtered_walkin)}]", f"Completed Orders        :green[{completed_count}]", "Analytics & History"])
+#tab_queue, tab_walk_ins, tab_completed, tab_charts = st.tabs([f"Pre Orders        :red[{len(df_filtered_preorders)}]", f"Walk-ins        :red[{len(df_filtered_walkin)}]", f"Completed Orders        :green[{completed_count}]", "Analytics & History"])
+tab_queue, tab_walk_ins, tab_completed, tab_charts = st.tabs([f"Pre Orders", f"Walk-ins", f"Completed Orders", "Analytics & History"])
 
 with tab_queue:
     if df.empty:
