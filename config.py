@@ -12,3 +12,6 @@ INVENTORY_SHEET_GID = "346527641"
 
 # Inventory Post Data Link
 INVENTORY_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSdM4fnBt_eu0xU3FEpdmgH9M-h0z1kwKL8c-obymw8GxYmR9g/formResponse"
+
+# Update Inventory Sheet ID
+UPDATE_INVENTORY_SHEET_ID = "219140601"
