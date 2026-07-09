@@ -15,3 +15,6 @@ INVENTORY_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSdM4fnBt_eu0xU3FEpdmg
 
 # Update Inventory Sheet ID
 UPDATE_INVENTORY_SHEET_ID = "219140601"
+
+# Update Inventory Form
+UPDATE_INVENTORY_FORM = "https://docs.google.com/forms/d/e/1FAIpQLScQEq_-kZIDJr5ftk1_4YJMW5oCZbckbS4lw9jCnCe6io_uoQ/formResponse"
