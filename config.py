@@ -8,7 +8,7 @@ SHEET_ID = "1CZwgF9I47zE7EZ_091ngwSNi2hqGc-fZnwgSY6FFjeI"
 MACRO_URL = f"https://script.google.com/macros/s/AKfycbzpc160FY_e73uGE_2FRGiPmtB-WeFlMfZBGePOXOmS3wGpWH8_O1Kx5S3u1x-e4nuE/exec"
 
 # Inventory Sheet ID
-INVENTORY_SHEET_GID = "1346527641"
+INVENTORY_SHEET_ID = "1346527641"
 
 # Inventory Post Data Link
 INVENTORY_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSdM4fnBt_eu0xU3FEpdmgH9M-h0z1kwKL8c-obymw8GxYmR9g/formResponse"
