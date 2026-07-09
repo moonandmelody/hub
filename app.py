@@ -878,8 +878,8 @@ with st.sidebar:
                         current_qty = st.session_state.get(widget_key, 0)
                         
                         st.number_input(
-                            f"{item_name} | {available_qty}" if not is_out_of_stock else "(❌)", 
-                            min_value=0, max_value=max(0, available_qty), step=1, key=widget_key, value=int(min(current_qty, available_qty)),disabled=is_out_of_stock
+                            f"{item_name} | {available_qty}", 
+                            min_value=0, max_value=max(0, available_qty), step=1, key=widget_key, value=int(min(current_qty, available_qty))
                         )
                         
                         qty = st.session_state[widget_key]
