@@ -462,6 +462,7 @@ def get_live_stock(target_date_str):
     
     try:
         req_intake = urllib.request.Request(INVENTORY_URL, headers=request_headers)
+        print(f"Inventory_url is {INVENTORY_URL}", flush=True)
         with urllib.request.urlopen(req_intake, timeout=10) as response:
             csv_data = response.read().decode('utf-8')
             df_inventory = pd.read_csv(io.StringIO(csv_data))
@@ -486,6 +487,7 @@ def get_live_stock(target_date_str):
 
     try:    
         req_deduct = urllib.request.Request(UPDATE_INVENTORY_URL, headers=request_headers)
+        print(f"Update Inventory_url is {UPDATE_INVENTORY_URL}", flush=True)
         with urllib.request.urlopen(req_deduct, timeout=10) as response:
             csv_data = response.read().decode('utf-8')
             df_update_inventory = pd.read_csv(io.StringIO(csv_data))
