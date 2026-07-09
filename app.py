@@ -449,6 +449,20 @@ def calculate_order_packaging(current_cart):
             
     return packaging_total, packaging_breakdown
 
+def get_live_stock(target_date_str):
+    """Calculates true live remaining stock for a given date using pandas."""
+    live_stock = {}
+    
+    try:
+        df_intake = pd.read_csv(config.INVENTORY_URL)
+        df_deduct = pd.read_csv(config.UPDATE_INVENTORY_URL)
+        
+        # Clean date columns for perfect matching
+        df_intake["Date"] = df_intake["Date"].astype(str).str.strip()
+        df_deduct["Date"] = df_deduct["Date"].astype(str).str.strip()
+    except Exception:
+        # Return empty if sheets are completely uninitialized
+        return live_stock
 
 # --- 3. THE SUBMISSION HANDLER (CALLBACK) ---
 def process_sidebar_submission(packaging_breakdown, packaging_total, mode="create"):
