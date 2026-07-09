@@ -472,14 +472,17 @@ def get_live_stock(target_date_str):
         if "Timestamp" in df_inventory.columns:
             # Safely convert to a standard datetime format
             df_inventory["Clean_DateTime"] = pd.to_datetime(df_inventory["Timestamp"], errors='coerce')
+            print(f"get datetime -------- {df_inventory["Clean_DateTime"]}",flush=True)
             # Extract just the Date string portion (YYYY-MM-DD) to match your target string
             print(f"Clean_datetime -------- {df_inventory["Clean_DateTime"].dt.strftime("%Y-%m-%d")}",flush=True)
             df_inventory["Date"] = df_inventory["Clean_DateTime"].dt.strftime("%Y-%m-%d")
+            print(f"Date -------- {df_inventory["Date"].dt.strftime("%Y-%m-%d")}",flush=True)
         else:
             st.error("Error: Could not locate the built-in 'Timestamp' column in the Intake Sheet.")
             return live_stock
 
         day_intake = df_inventory[df_inventory["Date"] == target_date_str]
+        print(f"Day intake ---------- {day_intake}")
 
     except Exception as e:
         # Fallback if intake sheet is completely unreadable or empty
@@ -498,6 +501,7 @@ def get_live_stock(target_date_str):
         if "Date" in df_update_inventory.columns:
             df_update_inventory["Date"] = df_update_inventory["Date"].astype(str).str.strip()
             day_deductions = df_update_inventory[df_update_inventory["Date"] == target_date_str]
+            print(f"day_deductions ---------- {day_deductions}")
         else:
             # Fallback if your deduction sheet matches the column name 'Timestamp' too
             df_update_inventory["Date"] = pd.to_datetime(df_update_inventory.iloc[:, 0], errors='coerce').dt.strftime("%Y-%m-%d")
