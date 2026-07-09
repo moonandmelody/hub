@@ -458,8 +458,8 @@ def get_live_stock(target_date_str):
     
     try:
         df_inventory = pd.read_csv(INVENTORY_URL)
-        df_update_inventory = pd.read_csv(UPDATE_INVENTORY_URL)
 
+        df_inventory.columns = df_inventory.columns.str.strip()
         if "Timestamp" in df_inventory.columns:
             # Safely convert to a standard datetime format
             df_inventory["Clean_DateTime"] = pd.to_datetime(df_inventory["Timestamp"], errors='coerce')
@@ -468,39 +468,48 @@ def get_live_stock(target_date_str):
         else:
             st.error("Error: Could not locate the built-in 'Timestamp' column in the Intake Sheet.")
             return live_stock
-            
+
+        day_intake = df_inventory[df_inventory["Date"] == target_date_str]
+
+    except Exception as e:
+        # Fallback if intake sheet is completely unreadable or empty
+        day_intake = pd.DataFrame()
+
+    try:    
+        df_update_inventory = pd.read_csv(UPDATE_INVENTORY_URL)
+        df_deduct.columns = df_deduct.columns.str.strip()
+        
         if "Date" in df_update_inventory.columns:
             df_update_inventory["Date"] = df_update_inventory["Date"].astype(str).str.strip()
         else:
             # Fallback if your deduction sheet matches the column name 'Timestamp' too
             df_update_inventory["Date"] = pd.to_datetime(df_update_inventory.iloc[:, 0], errors='coerce').dt.strftime("%Y-%m-%d")
-            
-    except Exception as e:
-        # Returns an empty map if sheets are completely uninitialized or locked
-        return live_stock
 
-    day_intake = df_inventory[df_inventory["Date"] == target_date_str]
-    
-    # Get all deduction records logged for this date
-    day_deductions = df_update_inventory[df_update_inventory["Date"] == target_date_str]
+    except Exception:
+        # FIX: If deduction sheet is blank/empty, create an empty DataFrame so the script doesn't crash
+        day_deductions = pd.DataFrame()
 
-    # Calculate real-time state for each item in your map
     for product in inventory.UPDATE_INVENTORY_MAP.keys():
         if product == "Date":
             continue
             
-        # 1. Starting stock baseline
+        # 1. Extract baseline from the latest intake submission of the day
         initial_qty = 0
         if not day_intake.empty and product in day_intake.columns:
-            val = df_inventory[product].iloc[-1]
-            initial_qty = int(val) if pd.notna(val) and str(val).isdigit() else 0
+            val = day_intake[product].iloc[-1]
+            try:
+                # Handle floats or string numbers safely
+                initial_qty = int(float(val)) if pd.notna(val) and str(val).strip() != "" else 0
+            except ValueError:
+                initial_qty = 0
             
-        # 2. Total items deducted by processed orders
+        # 2. FIX: Safely sum up deduction logs even if the sheet is 100% empty
         total_deducted = 0
         if not day_deductions.empty and product in day_deductions.columns:
-            total_deducted = day_deductions[product].fillna(0).astype(int).sum()
+            # Force conversion to numbers, convert blanks (NaN) to 0, then sum
+            total_deducted = pd.to_numeric(day_deductions[product], errors='coerce').fillna(0).astype(int).sum()
             
-        # 3. True Availability Math
+        # 3. Final calculation math
         live_stock[product] = max(0, initial_qty - total_deducted)
         
     return live_stock
