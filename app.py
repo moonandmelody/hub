@@ -497,7 +497,7 @@ def get_live_stock(target_date_str):
         
         if "Date" in df_update_inventory.columns:
             df_update_inventory["Date"] = df_update_inventory["Date"].astype(str).str.strip()
-             day_deductions = df_update_inventory[df_update_inventory["Date"] == target_date_str]
+            day_deductions = df_update_inventory[df_update_inventory["Date"] == target_date_str]
         else:
             # Fallback if your deduction sheet matches the column name 'Timestamp' too
             df_update_inventory["Date"] = pd.to_datetime(df_update_inventory.iloc[:, 0], errors='coerce').dt.strftime("%Y-%m-%d")
