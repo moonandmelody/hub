@@ -457,8 +457,8 @@ def get_live_stock(target_date_str):
     live_stock = {}
     
     try:
-        df_inventory = pd.read_csv(config.INVENTORY_URL)
-        df_update_inventory = pd.read_csv(config.UPDATE_INVENTORY_URL)
+        df_inventory = pd.read_csv(INVENTORY_URL)
+        df_update_inventory = pd.read_csv(UPDATE_INVENTORY_URL)
 
         if "Timestamp" in df_inventory.columns:
             # Safely convert to a standard datetime format
