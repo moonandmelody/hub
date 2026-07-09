@@ -12,7 +12,7 @@ import requests
 import inventory
 import datetime
 
-INVENTORY_URL = f"https://google.com{config.SHEET_ID}/export?format=csv&gid={config.INVENTORY_SHEET_GID}"
+INVENTORY_URL = f"https://google.com{config.SHEET_ID}/export?format=csv&gid={config.INVENTORY_SHEET_ID}"
 UPDATE_INVENTORY_URL = f"https://google.com{config.SHEET_ID}/export?format=csv&gid={config.UPDATE_INVENTORY_SHEET_ID}"
 
 # 🎨 PAGE CONFIGURATION
