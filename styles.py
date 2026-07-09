@@ -123,13 +123,12 @@ def apply_custom_css():
 
             .st-key-my_update_inventory_button > div {{
                 display: flex;
-                justify-contents: end;
-                width: auto;
+                justify-content: end;
             }}
             
             .st-key-my_update_inventory_button > div > div {{
                 display: flex;
-                justify-contents: end;
+                justify-content: end;
                 width: auto;
             }}
 
