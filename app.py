@@ -972,7 +972,7 @@ with st.container(key="allMetricDiv"):
 st.divider()
 
 unique_dates = sorted(df["Delivery Date"].unique().tolist(), reverse=False)
-today_dt = datetime.datetime.date.today()
+today_dt = datetime.date.today()
 today_str = datetime.datetime.now().strftime("%Y-%m-%d")
 
 # Filter out any dates that are before today
