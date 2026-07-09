@@ -187,7 +187,7 @@ def apply_custom_css():
             }}
 
             /* Filter Date */
-            [data-testid="stSelectbox"]:nth-of-type(3) {{
+            [data-baseweb="stSelectbox"]:nth-of-type(3) {{
                     display: grid;
                     justify-content: end;
             }}
@@ -242,6 +242,10 @@ def apply_custom_css():
 
             .st-d7 {{
                 background-color: transparent;
+            }}
+
+            [data-baseweb="tab-highlight"] {{
+                    background-color: {BACKGROUND_COLOR};
             }}
 
             /* Dialog box */
