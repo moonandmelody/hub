@@ -177,7 +177,7 @@ if st.session_state.current_view == "entry_form":
                 st.session_state.current_view = "dashboard"
                 st.rerun()
 
-    st.iframe(config.INVENTORY_LINK, height=700, scrolling=True)
+    st.iframe(config.INVENTORY_LINK, height=700)
         
 
 # --- 2. LOGIC: EDIT & DELETE ---
