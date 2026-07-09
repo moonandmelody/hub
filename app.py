@@ -177,12 +177,7 @@ if st.session_state.current_view == "entry_form":
                 st.session_state.current_view = "dashboard"
                 st.rerun()
 
-    st.components.v1.iframe(config.INVENTORY_LINK, height=700, scrolling=True)
-    
-    # Bottom alternative exit button
-    if st.button("Save & Return to Dashboard", use_container_width=True):
-        st.session_state.current_view = "dashboard"
-        st.rerun()
+    st.iframe(config.INVENTORY_LINK, height=700, scrolling=True)
         
 
 # --- 2. LOGIC: EDIT & DELETE ---
