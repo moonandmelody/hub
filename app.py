@@ -457,15 +457,53 @@ def get_live_stock(target_date_str):
     live_stock = {}
     
     try:
-        df_intake = pd.read_csv(config.INVENTORY_LINK)
-        df_deduct = pd.read_csv(config.UPDATE_INVENTORY_LINK)
-        
-        # Clean date columns for perfect matching
-        df_intake["Date"] = df_intake["Date"].astype(str).str.strip()
-        df_deduct["Date"] = df_deduct["Date"].astype(str).str.strip()
-    except Exception:
-        # Return empty if sheets are completely uninitialized
+        df_inventory = pd.read_csv(config.INVENTORY_URL)
+        df_update_inventory = pd.read_csv(config.UPDATE_INVENTORY_URL)
+
+        if "Timestamp" in df_inventory.columns:
+            # Safely convert to a standard datetime format
+            df_inventory["Clean_DateTime"] = pd.to_datetime(df_inventory["Timestamp"], errors='coerce')
+            # Extract just the Date string portion (YYYY-MM-DD) to match your target string
+            df_inventory["Date"] = df_inventory["Clean_DateTime"].dt.strftime("%Y-%m-%d")
+        else:
+            st.error("Error: Could not locate the built-in 'Timestamp' column in the Intake Sheet.")
+            return live_stock
+            
+        if "Date" in df_update_inventory.columns:
+            df_update_inventory["Date"] = df_update_inventory["Date"].astype(str).str.strip()
+        else:
+            # Fallback if your deduction sheet matches the column name 'Timestamp' too
+            df_update_inventory["Date"] = pd.to_datetime(df_update_inventory.iloc[:, 0], errors='coerce').dt.strftime("%Y-%m-%d")
+            
+    except Exception as e:
+        # Returns an empty map if sheets are completely uninitialized or locked
         return live_stock
+
+    day_intake = df_inventory[df_inventory["Date"] == target_date_str]
+    
+    # Get all deduction records logged for this date
+    day_deductions = df_update_inventory[df_update_inventory["Date"] == target_date_str]
+
+    # Calculate real-time state for each item in your map
+    for product in DEDUCTION_MAP.keys():
+        if product == "date_entry":
+            continue
+            
+        # 1. Starting stock baseline
+        initial_qty = 0
+        if not day_intake.empty and product in day_intake.columns:
+            val = df_inventory[product].iloc[-1]
+            initial_qty = int(val) if pd.notna(val) and str(val).isdigit() else 0
+            
+        # 2. Total items deducted by processed orders
+        total_deducted = 0
+        if not day_deductions.empty and product in day_deductions.columns:
+            total_deducted = day_deductions[product].fillna(0).astype(int).sum()
+            
+        # 3. True Availability Math
+        live_stock[product] = max(0, initial_qty - total_deducted)
+        
+    return live_stock
 
 # --- 3. THE SUBMISSION HANDLER (CALLBACK) ---
 def process_sidebar_submission(packaging_breakdown, packaging_total, mode="create"):
@@ -721,6 +759,11 @@ if "form_date" not in st.session_state: st.session_state["form_date"] = ""
 if "form_time_slot" not in st.session_state: st.session_state["form_time_slot"] = ""
 if "form_order" not in st.session_state: st.session_state["form_order"] = ""
 
+today_str = datetime.date.today().strftime("%Y-%m-%d")
+    
+# Calculate Live Available Inventory on the fly
+current_stock = get_live_stock(today_str)
+
 with st.sidebar:
     # 🎨 BRAND LOGO FROM STYLES.PY
     st.image(styles.LOGO_URL, width=60)
@@ -757,7 +800,10 @@ with st.sidebar:
 
     current_cart = {}
     running_total = 0.0
-    
+
+    order_inputs = {}
+    stock_error_triggered = False
+        
     for category, items_dict in products.CATALOG.items():
         st.markdown(f"##### {category}")
         if isinstance(items_dict, dict):
@@ -767,12 +813,15 @@ with st.sidebar:
                 batch = item_list[i:i+2]
                 for j, (item_name, price) in enumerate(batch):
                     with cols[j]:
+                        available_qty = current_stock.get(item_name, 0)
+                        is_out_of_stock = (available_qty == 0)
+                        
                         widget_key = f"qty_{item_name}"
                         current_qty = st.session_state.get(widget_key, 0)
                         
                         st.number_input(
-                            f"{item_name}", 
-                            min_value=0, max_value=50, step=1, key=widget_key, value=int(current_qty)
+                            f"{item_name} | {available_qty}" if not is_out_of_stock else " (❌), 
+                            min_value=0, max_value=max(0, available_qty), step=1, key=widget_key, value=int(min(current_qty, available_qty)),disabled=is_out_of_stock
                         )
                         
                         qty = st.session_state[widget_key]
