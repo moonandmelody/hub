@@ -475,6 +475,7 @@ def get_live_stock(target_date_str):
     except Exception as e:
         # Fallback if intake sheet is completely unreadable or empty
         day_intake = pd.DataFrame()
+        print(f"Error reading inventory file", flush=True)
 
     try:    
         df_update_inventory = pd.read_csv(UPDATE_INVENTORY_URL)
@@ -489,6 +490,7 @@ def get_live_stock(target_date_str):
     except Exception:
         # FIX: If deduction sheet is blank/empty, create an empty DataFrame so the script doesn't crash
         day_deductions = pd.DataFrame()
+        print(f"Error reading update inventory file", flush=True)
 
     for product in inventory.UPDATE_INVENTORY_MAP.keys():
         if product == "Date":
