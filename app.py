@@ -754,7 +754,7 @@ with st.sidebar:
                         current_qty = st.session_state.get(widget_key, 0)
                         
                         st.number_input(
-                            f"{item_name}\n(₹{price:.0f})", 
+                            f"{item_name}\n)", 
                             min_value=0, max_value=50, step=1, key=widget_key, value=int(current_qty)
                         )
                         
