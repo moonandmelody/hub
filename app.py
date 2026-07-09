@@ -177,8 +177,6 @@ if st.session_state.current_view == "entry_form":
                 st.session_state.current_view = "dashboard"
                 st.rerun()
 
-    st.markdown("---");
-
     st.components.v1.iframe(config.INVENTORY_LINK, height=700, scrolling=True)
     
     # Bottom alternative exit button
