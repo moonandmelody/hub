@@ -928,12 +928,16 @@ with st.sidebar:
             else: show_confirmation_dialog(st.session_state["form_customer"],st.session_state["form_contact"],current_cart, running_total, st.session_state.form_date, st.session_state.form_time_slot, "create")
 
 # --- 6. MAIN DASHBOARD ---
-with st.container(key="my_update_inventory_button"):
-    if st.button("Update Inventory", type="primary", use_container_width=True):
-        st.session_state.current_view = "entry_form"
-        st.rerun()
-    
-st.title("Moon & Melody Dashboard")
+col1, sol2 = st.columns(1,1)
+
+with col1:
+    with st.container(key="my_update_inventory_button"):
+        if st.button("Update Inventory", type="primary", use_container_width=True):
+            st.session_state.current_view = "entry_form"
+            st.rerun()
+
+with col2:
+    st.title("Moon & Melody Dashboard")
     
 if not df.empty:
     pending_count = len(df[(df["Status"] == "pending") & (df["Type of Order"] == "preorder")])
