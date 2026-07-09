@@ -32,7 +32,7 @@ def apply_custom_css():
                 display: flex;
                 justify-content: center;
                 font-family: 'Cinzel', serif;
-                padding: 30px 20px !important;
+                padding: 30px 60px !important;
             }}
 
             /* 2. SIDEBAR STYLING */
