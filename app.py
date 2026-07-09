@@ -519,13 +519,34 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
     
     cart_items = {}
     running_total = 0.0
+
+    # Setup Payload to update inventory
+    payload = {inventory.UPDATE_INVENTORY_MAP["Date"]: today_str}
+    
     for category, items_dict in products.CATALOG.items():
         if isinstance(items_dict, dict):
              for item_name, price in items_dict.items():
+                payload[inventory.UPDATE_INVENTORY_MAP[item_name]] = qty
+                
                 qty = st.session_state.get(f"qty_{item_name}", 0)
                 if qty > 0:
                     cart_items[item_name] = qty
                     running_total += (qty * price)
+
+    # try to update the inventory
+    try:
+            # Silently push the reduction row into the spreadsheet backend
+            headers = {"User-Agent": "Mozilla/5.0"}
+            response = requests.post(config.UPDATE_INVENTORY_LINK, data=payload, headers=headers)
+            
+            if response.status_code in:
+                st.success("Order processed! Quantities reduced successfully.")
+                # Force instant layout refresh to show updated metric counts
+                st.rerun()
+            else:
+                st.error(f"Network error updating sheet logs. Code: {response.status_code}")
+        except Exception as e:
+            st.error(f"Failed to communicate deduction coordinates: {e}")
 
     # B. Validation
     if customer_val.strip() == "":
@@ -801,9 +822,6 @@ with st.sidebar:
     current_cart = {}
     running_total = 0.0
 
-    order_inputs = {}
-    stock_error_triggered = False
-        
     for category, items_dict in products.CATALOG.items():
         st.markdown(f"##### {category}")
         if isinstance(items_dict, dict):
@@ -820,7 +838,7 @@ with st.sidebar:
                         current_qty = st.session_state.get(widget_key, 0)
                         
                         st.number_input(
-                            f"{item_name} | {available_qty}" if not is_out_of_stock else " (❌), 
+                            f"{item_name} | {available_qty}" if not is_out_of_stock else "(❌)", 
                             min_value=0, max_value=max(0, available_qty), step=1, key=widget_key, value=int(min(current_qty, available_qty)),disabled=is_out_of_stock
                         )
                         
