@@ -186,6 +186,12 @@ def apply_custom_css():
                 justify-content: center;
             }}
 
+            /* Filter Date */
+            [data-testid="stSelectbox"] {{
+                    display: grid;
+                    justify-content: end;
+            }}
+
             /* 5. POST-IT NOTE CARDS (Containers) */
             [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] {{
                 /* This targets the cards in your grid */
@@ -245,6 +251,10 @@ def apply_custom_css():
 
             .st-emotion-cache-yhc2tm {{
                 font-family: 'Montserrat',serif;
+            }}
+
+            .st-c2 {{
+                background-color: {BACKGROUND_COLOR};
             }}
 
             /* Button hover or focus */
