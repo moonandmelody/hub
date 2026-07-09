@@ -971,16 +971,16 @@ with st.container(key="allMetricDiv"):
 
 st.divider()
 
+open_days = get_available_order_dates(days_to_show=21)
 # Code to filter based on delivery dates
-unique_dates = sorted(df["Delivery Date"].unique().tolist(), reverse=True)
 today_str = datetime.datetime.now().strftime("%Y-%m-%d")
 
-default_idx = unique_dates.index(today_str) if today_str in unique_dates else 0
+default_idx = 0
     
 # Dropdown selector for dates
 selected_date = st.selectbox(
     "Select a tracking date to view orders:",
-    options=unique_dates,
+    options=open_days,
     index=default_idx,
     help="Changing this date will update the post-it note views instantly."
 )
