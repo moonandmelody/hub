@@ -289,7 +289,7 @@ def apply_custom_css():
             }}
 
             .st-emotion-cache-qksclw[data-hovered] {{
-                color: black !important;
+                color: #31333F !important;
             }}
 
             /* Dialog box */
