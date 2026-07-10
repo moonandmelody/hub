@@ -39,6 +39,10 @@ def apply_custom_css():
                 padding-top: 2rem;
             }}
 
+            .stMainBlockContainer {{
+                padding-top: 3rem;
+            }}
+
             /* 2. SIDEBAR STYLING */
             [data-testid="stSidebar"] {{
                 background-color: {SIDEBAR_COLOR};
@@ -152,6 +156,24 @@ def apply_custom_css():
             }}
 
             .st-key-my_update_inventory_button > div > div > button:hover{{
+                background-color: {BACKGROUND_COLOR} !important;
+                color: white;
+            }}
+
+            /* Close button for form */
+            .st-key-my_close_inventory_button {{
+                    background-color: transparent !important;
+                    position: relative;
+                    top: 27px;
+                    left: -16px; 
+            }}
+
+            .st-key-my_close_inventory_button > div > div > button{{
+                background-color: transparent !important;
+                color: {BACKGROUND_COLOR};
+            }}
+
+            .st-key-my_close_inventory_button > div > div > button:hover{{
                 background-color: {BACKGROUND_COLOR} !important;
                 color: white;
             }}
