@@ -1012,7 +1012,7 @@ df_filtered_preorders = df[(df["Delivery Date"] == selected_date) & (df["Status"
 df_filtered_walkin = df[(df["Delivery Date"] == selected_date) & (df["Status"] == "pending") & (df["Type of Order"] == "walkin")]
 df_deleted = df[(df["Delivery Date"] == selected_date) & (df["Status"] == "deleted")]
 
-tab_queue, tab_walk_ins, tab_completed, tab_deleted, tab_charts = st.tabs([f"Pre Orders        :red[{len(df_filtered_preorders)}]", f"Walk-ins        :red[{len(df_filtered_walkin)}]", f"Completed Orders        :green[{completed_count}]", f"Deleted Orders :red[{len(df_deleted)}]", "Analytics & History"])
+tab_queue, tab_walk_ins, tab_completed, tab_deleted, tab_charts = st.tabs([f"Pre Orders :red[{len(df_filtered_preorders)}]", f"Walk-ins :red[{len(df_filtered_walkin)}]", f"Completed :green[{completed_count}]", f"Deleted :red[{len(df_deleted)}]", "Analytics & History"])
 #tab_queue, tab_walk_ins, tab_completed, tab_charts = st.tabs([f"Pre Orders", f"Walk-ins", f"Completed Orders", "Analytics & History"])
 
 with tab_queue:
