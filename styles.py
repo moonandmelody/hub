@@ -290,6 +290,7 @@ def apply_custom_css():
 
             .st-emotion-cache-cqof3x > div {{
                 width: 25% !important;
+                justify-content: center;
             }}
 
             /* Button hover or focus */
