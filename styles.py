@@ -227,6 +227,10 @@ def apply_custom_css():
                 justify-content: end;
             }}
 
+            .st-emotion-cache-vbnxax[data-focus-within] {{
+                border-color: transparent;
+            }}
+
             /* 5. POST-IT NOTE CARDS (Containers) */
             [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] {{
                 /* This targets the cards in your grid */
