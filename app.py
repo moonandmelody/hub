@@ -784,32 +784,29 @@ with st.sidebar:
     current_cart = {}
     running_total = 0.0
 
-    with st.form("sidebar_catalog_form"):
-        for category, items_dict in products.CATALOG.items():
-            st.markdown(f"##### {category}")
-            if isinstance(items_dict, dict):
-                item_list = list(items_dict.items())
-                for i in range(0, len(item_list), 2):
-                    cols = st.columns(2)
-                    batch = item_list[i:i+2]
-                    for j, (item_name, price) in enumerate(batch):
-                        with cols[j]:
-                            widget_key = f"qty_{item_name}"
-                            current_qty = st.session_state.get(widget_key, 0)
-                            
-                            st.number_input(
-                                f"{item_name}\n(₹{price:.0f})", 
-                                min_value=0, max_value=50, step=1, key=widget_key, value=int(current_qty)
-                            )
-                            
-                            qty = st.session_state[widget_key]
-                            if qty > 0:
-                                current_cart[item_name] = qty
-                                running_total += (qty * price)
-        
-            st.divider()
-            
-        lock_basket = st.form_submit_button("🛒 Update Basket Total", use_container_width=True)
+    for category, items_dict in products.CATALOG.items():
+        st.markdown(f"##### {category}")
+        if isinstance(items_dict, dict):
+            item_list = list(items_dict.items())
+            for i in range(0, len(item_list), 2):
+                cols = st.columns(2)
+                batch = item_list[i:i+2]
+                for j, (item_name, price) in enumerate(batch):
+                    with cols[j]:
+                        widget_key = f"qty_{item_name}"
+                        current_qty = st.session_state.get(widget_key, 0)
+                        
+                        st.number_input(
+                            f"{item_name}\n(₹{price:.0f})", 
+                            min_value=0, max_value=50, step=1, key=widget_key, value=int(current_qty)
+                        )
+                        
+                        qty = st.session_state[widget_key]
+                        if qty > 0:
+                            current_cart[item_name] = qty
+                            running_total += (qty * price)
+    
+        st.divider()
         
     if "form_notes" in st.session_state:
         # If it became None, NaN, or a float, convert it cleanly to a string
