@@ -291,6 +291,8 @@ def apply_custom_css():
             .st-emotion-cache-cqof3x > div {{
                 width: 25% !important;
                 justify-content: center;
+                background-color: {BACKGROUND_COLOR} !important;
+                color: white !important;
             }}
 
             /* Button hover or focus */
