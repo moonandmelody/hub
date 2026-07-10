@@ -309,6 +309,10 @@ def apply_custom_css():
                     background-color: {BACKGROUND_COLOR};
             }}
 
+            .st-emotion-cache-cqof3x {{
+            
+            }}
+            
             .st-emotion-cache-cqof3x::after {{
                 bottom: 7px;
             }}
@@ -316,6 +320,8 @@ def apply_custom_css():
             .st-emotion-cache-cqof3x > div {{
                 width: 25% !important;
                 justify-content: center;
+                border-radius: 5px;
+                backgound-color: {PRIMARY_COLOR};
             }}
 
             .react-aria-SelectionIndicator {{
