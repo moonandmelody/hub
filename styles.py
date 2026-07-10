@@ -289,14 +289,14 @@ def apply_custom_css():
             .stTabs [data-baseweb="tab"] {{
                 height: 50px;
                 white-space: pre-wrap;
-                background-color: white;
+                background-color: {PRIMARY_COLOR};
                 border-radius: 5px;
                 color: {BACKGROUND_COLOR};
                 font-weight: 600;
                 width: 50%;
             }}
             .stTabs [aria-selected="true"] {{
-                background-color: {PRIMARY_COLOR} !important;
+                background-color: {SECONDARY_COLOR} !important;
                 color: {BACKGROUND_COLOR} !important;
                 width: 50%;
             }}
