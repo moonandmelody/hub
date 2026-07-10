@@ -288,6 +288,10 @@ def apply_custom_css():
                 font-family: 'Montserrat',serif;
             }}
 
+            .st-emotion-cache-cqof3x > div {{
+                width: 25% !important;
+            }}
+
             /* Button hover or focus */
             .st-emotion-cache-5qfegl:focus-visible{{
                 box-shadow: none;
