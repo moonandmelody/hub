@@ -1002,6 +1002,36 @@ df_filtered_preorders = df[(df["Delivery Date"] == selected_date) & (df["Status"
 df_filtered_walkin = df[(df["Delivery Date"] == selected_date) & (df["Status"] == "pending") & (df["Type of Order"] == "walkin")]
 df_deleted = df[(df["Delivery Date"] == selected_date) & (df["Status"] == "deleted")]
 
+# Inject fixed layout styling to permanently stop tabs from expanding and shrinking during reruns
+st.markdown(
+    """
+    <style>
+    /* 1. Force the parent tab container block to distribute space equally and never change height */
+    div[data-testid="stTabs"] [role="tablist"] {
+        display: flex !important;
+        width: 100% !important;
+        height: 48px !important;  /* Locks the height of the tab row container */
+    }
+    
+    /* 2. Force every tab item to be exactly the same size and freeze its boundaries */
+    div[data-testid="stTabs"] button {
+        flex: 1 1 0% !important;       /* Forces strict, perfectly equal layout width */
+        min-width: 0 !important;       /* Stops text size changes from widening the item */
+        max-width: 100% !important;
+        text-align: center !important;  /* Keeps headers perfectly centered */
+        white-space: nowrap !important; /* Prevents text from dropping to a second line during load */
+    }
+    
+    /* 3. Lock typography font attributes so unselected and selected tabs don't change size */
+    div[data-testid="stTabs"] button div[data-testid="stMarkdownContainer"] p {
+        font-weight: 500 !important;   /* Locks the font thickness uniformly */
+        font-size: 14px !important;    /* Forces absolute text size scaling limits */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 tab_queue, tab_walk_ins, tab_completed, tab_deleted, tab_charts = st.tabs([f"Pre Orders :red[{len(df_filtered_preorders)}]", f"Walk-ins :red[{len(df_filtered_walkin)}]", f"Completed :green[{completed_count}]", f"Deleted :red[{len(df_deleted)}]", "Analytics & History"])
 #tab_queue, tab_walk_ins, tab_completed, tab_charts = st.tabs([f"Pre Orders", f"Walk-ins", f"Completed Orders", "Analytics & History"])
 
