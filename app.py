@@ -460,6 +460,9 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
     type_of_order = st.session_state.form_order
 
     print(f"type_of_order is {type_of_order}", flush=True)
+
+    # make it lowercase and remove -
+    type_of_order = type_of_order.str().lower().replace("-","")
     
     cart_items = {}
     running_total = 0.0
