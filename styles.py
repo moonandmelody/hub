@@ -144,6 +144,7 @@ def apply_custom_css():
 
             .st-key-my_update_inventory_button > div > div > button{{
                 background-color: transparent !important;
+                color: {BACKGROUND_COLOR};
             }}
 
             /* 4. METRIC CARDS (Top Numbers) */
