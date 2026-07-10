@@ -126,7 +126,10 @@ def apply_custom_css():
             }}
 
             .st-key-my_update_inventory_button {{
-                padding-bottom: 13px;
+                    background-color: transparent !important;
+                    position: relative;
+                    top: 27px;
+                    left: -16px; 
             }}
             .st-key-my_update_inventory_button > div {{
                 display: flex;
@@ -137,6 +140,10 @@ def apply_custom_css():
                 display: flex;
                 justify-content: end;
                 width: auto;
+            }}
+
+            .st-key-my_update_inventory_button > div > div > button{{
+                background-color: transparent !important;
             }}
 
             /* 4. METRIC CARDS (Top Numbers) */
