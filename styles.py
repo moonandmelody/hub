@@ -147,6 +147,11 @@ def apply_custom_css():
                 color: {BACKGROUND_COLOR};
             }}
 
+            .st-key-my_update_inventory_button > div > div > button:hover{{
+                background-color: {BACKGROUND_COLOR};
+                color: white;
+            }}
+
             /* 4. METRIC CARDS (Top Numbers) */
             div [class="st-emotion-cache-0"] {{
                 height:100%;
