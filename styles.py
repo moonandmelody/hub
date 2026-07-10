@@ -361,7 +361,7 @@ def celebrate():
                 bottom: -10px;
                 left: 24px;
                 width: 2px;
-                height: 30px;
+                height: 90px;
                 background-color: rgba(0,0,0,1);
             "></div>
         </div>
