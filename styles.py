@@ -323,6 +323,11 @@ def apply_custom_css():
                 justify-content: center;
             }}
 
+            .st-emotion-cache-1wjw5f2 {{
+                justify-content: center;
+                color: {BACKGROUND_COLOR};
+            }}
+
             /* 8. BALLOON ANIMATION KEYFRAMES */
             @keyframes floatUp {{
                 0% {{ transform: translateY(100vh) rotate(0deg); opacity: 1; }}
