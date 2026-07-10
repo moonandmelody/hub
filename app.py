@@ -1010,8 +1010,9 @@ with st.container(key="my_custom_dropdown_box"):
 # Keeps only rows that match the user's selected dropdown choice
 df_filtered_preorders = df[(df["Delivery Date"] == selected_date) & (df["Status"] == "pending") & (df["Type of Order"] == "preorder")]
 df_filtered_walkin = df[(df["Delivery Date"] == selected_date) & (df["Status"] == "pending") & (df["Type of Order"] == "walkin")]
+df_deleted = df[(df["Delivery Date"] == selected_date) & (df["Status"] == "deleted")]
 
-tab_queue, tab_walk_ins, tab_completed, tab_charts = st.tabs([f"Pre Orders        :red[{len(df_filtered_preorders)}]", f"Walk-ins        :red[{len(df_filtered_walkin)}]", f"Completed Orders        :green[{completed_count}]", "Analytics & History"])
+tab_queue, tab_walk_ins, tab_completed, tab_deleted, tab_charts = st.tabs([f"Pre Orders        :red[{len(df_filtered_preorders)}]", f"Walk-ins        :red[{len(df_filtered_walkin)}]", f"Completed Orders        :green[{completed_count}]", f"Deleted Orders :red[{len(df_deleted)}]", "Analytics & History"])
 #tab_queue, tab_walk_ins, tab_completed, tab_charts = st.tabs([f"Pre Orders", f"Walk-ins", f"Completed Orders", "Analytics & History"])
 
 with tab_queue:
@@ -1197,6 +1198,74 @@ with tab_completed:
 
                         with c2:
                             # ✏️ BACK BUTTON - Triggers State of Completed Order to Pending
+                            if st.button(icon=":material/arrow_back:", label="" , key=f"back_{row['Order ID']}", help="Return to Work Queue", width='stretch'):
+                                show_return_to_work_queue_dialog(row['Order ID']);
+
+                        st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
+                        st.markdown(f"{row.get('Customer Contact', '-')}")
+                        st.markdown("---")
+                        
+                        # 1. Cleanly pull the text, handling Pandas Series or missing objects safely
+                        raw_items = row.get('Items', '')
+                        # Handle cases where Pandas accidentally packages it as a Series/Object array
+                        if hasattr(raw_items, "to_string") or not isinstance(raw_items, (str, int, float)):
+                            try:
+                                # Convert a pandas Series or row subset back to pure scalar data
+                                raw_items = str(raw_items.values[0]) if hasattr(raw_items, "values") else str(raw_items)
+                            except:
+                                raw_items = str(raw_items)
+                        else:
+                            raw_items = str(raw_items)
+
+                        # 2. Clean out dirty data artifacts or empty spaces
+                        raw_items_clean = raw_items.strip()
+                        if pd.isna(raw_items) or raw_items_clean.lower() in ["nan", "none", ""]:
+                            items_text = "No items selected"
+                        else:
+                            # 3. Format into structured markdown list items cleanly
+                            # Standardize old formats using commas to clean newlines first
+                            formatted_text = raw_items_clean.replace(",\n", "\n").replace(",", "\n")
+                            
+                            # Build structural markdown bullet strings row by row
+                            lines = [f"- {line.strip().lstrip('- ')}" for line in formatted_text.split('\n') if line.strip()]
+                            items_text = "\n".join(lines)
+                            
+                        # 4. Render clean on your layout card
+                        st.markdown(f"**Items:**\n{items_text}")
+                        st.markdown("---");
+
+                        raw_notes = row.get('Special Notes/Instructions', '')
+                        # 2. Check if it's a Pandas NaN object, an empty string, or the text "nan"
+                        if pd.isna(raw_notes) or str(raw_notes).strip().lower() in ["nan", ""]:
+                            special_notes = "None"
+                        else:
+                            special_notes = str(raw_notes).strip()
+
+                        st.markdown(f"**Special Notes:**")
+                        st.markdown(f"{special_notes}")
+                        st.markdown(f"### ₹{row.get('Cost', 0.0):,.0f}")
+
+with tab_deleted:
+    if df_deleted.empty:
+        st.info("No deleted orders")
+
+    elif "Status" in df.columns:
+        deleted_orders = df[df["Status"] == "deleted"]
+        
+        if deleted_orders.empty:
+            st.info("No deleted orders")
+
+        else:
+            cols = st.columns(3)
+            for idx, (_, row) in enumerate(deleted_orders.iterrows()):
+                col_idx = idx % 3
+                with cols[col_idx]:
+                    with st.container(border=True):
+                        c1, c2 = st.columns([3, 1])
+                        c1.markdown(f"**#{row.get('Order ID')}**")
+
+                        with c2:
+                            # ✏️ BACK BUTTON - Triggers State of Deleted Order to Pending
                             if st.button(icon=":material/arrow_back:", label="" , key=f"back_{row['Order ID']}", help="Return to Work Queue", width='stretch'):
                                 show_return_to_work_queue_dialog(row['Order ID']);
 
