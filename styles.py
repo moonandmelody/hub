@@ -297,6 +297,10 @@ def apply_custom_css():
                 background-color: {BACKGROUND_COLOR} !important;
             }}
 
+            .st-emotion-cache-qksclw[data-hovered] {{
+                color: white !important;
+            }}
+
             /* Button hover or focus */
             .st-emotion-cache-5qfegl:focus-visible{{
                 box-shadow: none;
