@@ -309,6 +309,10 @@ def apply_custom_css():
                     background-color: {BACKGROUND_COLOR};
             }}
 
+            .st-emotion-cache-cqof3x::after {{
+                bottom: 7px;
+            }}
+
             .st-emotion-cache-cqof3x > div {{
                 width: 25% !important;
                 justify-content: center;
