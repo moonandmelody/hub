@@ -178,7 +178,11 @@ if st.session_state.current_view == "entry_form":
                 st.rerun()
 
     st.iframe(config.INVENTORY_LINK, height=700)
-        
+
+
+def sync_order_type():
+    if "form_order_widget" in st.session_state:
+        st.session_state.form_order = st.session_state.form_order_widget
 
 # --- 2. LOGIC: EDIT & DELETE ---
 def trigger_edit_mode(row):
@@ -725,7 +729,7 @@ with st.sidebar:
     st.selectbox(
         label="Type of Order",
         options= ['Pre-Order','Walk-in'],
-        key="form_type"
+        key="form_order"
     )
     st.divider()
     st.title("Customer Details")
