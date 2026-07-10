@@ -279,15 +279,6 @@ def apply_custom_css():
                     background-color: {BACKGROUND_COLOR};
             }}
 
-            /* Dialog box */
-            [data-testid="stAlertContainer"]{{
-                background-color: transparent;
-            }}
-
-            .st-emotion-cache-yhc2tm {{
-                font-family: 'Montserrat',serif;
-            }}
-
             .st-emotion-cache-cqof3x > div {{
                 width: 25% !important;
                 justify-content: center;
@@ -298,8 +289,17 @@ def apply_custom_css():
             }}
 
             .st-emotion-cache-qksclw[data-hovered] {{
-                color: white !important;
+                color: black !important;
             }}
+
+            /* Dialog box */
+            [data-testid="stAlertContainer"]{{
+                background-color: transparent;
+            }}
+
+            .st-emotion-cache-yhc2tm {{
+                font-family: 'Montserrat',serif;
+            }}            
 
             /* Button hover or focus */
             .st-emotion-cache-5qfegl:focus-visible{{
