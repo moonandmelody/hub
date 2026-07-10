@@ -315,7 +315,7 @@ def apply_custom_css():
             }}
 
             /* Confirmation Dialog Box */
-            [data-testid="stDialog"] > div > div {{
+            [data-testid="stDialog"] > div {{
                 width: 1100px;
             }}
 
