@@ -91,6 +91,10 @@ def apply_custom_css():
                 justify-content: end;
             }}
 
+            .st-emotion-cache-1nd20cx[data-focus-within] {{
+                border-color: none !important;
+            }}
+
             /* 3. BUTTON STYLING */
             
             .stButton > button {{
