@@ -358,7 +358,7 @@ def celebrate():
         ">
             <div style="
                 position: absolute;
-                bottom: -10px;
+                bottom: -60px;
                 left: 24px;
                 width: 2px;
                 height: 90px;
