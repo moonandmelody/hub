@@ -148,7 +148,7 @@ def apply_custom_css():
             }}
 
             .st-key-my_update_inventory_button > div > div > button:hover{{
-                background-color: {BACKGROUND_COLOR};
+                background-color: {BACKGROUND_COLOR} !important;
                 color: white;
             }}
 
