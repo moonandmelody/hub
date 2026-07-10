@@ -328,7 +328,7 @@ def apply_custom_css():
                 0% {{ transform: translateY(100vh) rotate(0deg); opacity: 1; }}
                 50% {{ transform: translateY(100vh) rotate(20deg); opacity: 1; }}
                 40% {{ transform: translateY(80vh) rotate(-40deg); opacity: 1; }}
-                100% {{ transform: translateY(-120vh) rotate(0deg); opacity: 0.7; }}
+                105% {{ transform: translateY(-120vh) rotate(0deg); opacity: 0.7; }}
             }}
 
         </style>
