@@ -92,7 +92,7 @@ def apply_custom_css():
             }}
 
             .st-emotion-cache-1nd20cx[data-focus-within] {{
-                border-color: none !important;
+                border-color: transparent;
             }}
 
             /* 3. BUTTON STYLING */
