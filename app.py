@@ -695,6 +695,47 @@ def validate_selected_date():
         # Repair the session state variable value smoothly
         st.session_state["form_date"] = fallback
 
+def get_available_order_dates(days_to_show=21):
+        """Generates a clean list of upcoming selectable operational dates, filtering closures."""
+        available_dates = []
+        today = datetime.date.today()
+        
+        for i in range(days_to_show):
+            future_date = today + datetime.timedelta(days=i)
+            
+            # Filter out Mondays (0) and Tuesdays (1)
+            if future_date.weekday() in [0,1]:
+                continue
+                
+            # Filter out custom holidays listed in your config file
+            if future_date.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
+                continue
+                
+            available_dates.append(future_date)
+        return available_dates
+
+def handle_date_change():
+    """Validates the input date and moves it forward if it hits a blocked day."""
+    # Read what the user actually picked from the temporary widget state
+    chosen_date = st.session_state.get("temp_date_picker")
+    if not chosen_date:
+        return
+
+    # Keep advancing the date forward until it lands on an open operating day
+    validated_date = chosen_date
+    has_violation = False
+    
+    while validated_date.weekday() in [0, 1] or validated_date.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
+        has_violation = True
+        validated_date += datetime.timedelta(days=1)
+
+    if has_violation:
+        # Show a friendly alert popup informing them of the adjustment
+        #st.error(f"ℹ️ We are closed on that day! Advanced order date to: {validated_date.strftime('%A, %d %b')}")
+        st.toast(f"ℹ️ We are closed on that day! Advanced order date to: {validated_date.strftime('%A, %d %b')}")
+    
+    # Save the clean, verified date into your permanent form state
+    st.session_state["form_date"] = validated_date
 
 # --- 5. SIDEBAR LAYOUT ---
 # Initialize Session State Variables
@@ -742,32 +783,34 @@ with st.sidebar:
 
     current_cart = {}
     running_total = 0.0
-    
-    for category, items_dict in products.CATALOG.items():
-        st.markdown(f"##### {category}")
-        if isinstance(items_dict, dict):
-            item_list = list(items_dict.items())
-            for i in range(0, len(item_list), 2):
-                cols = st.columns(2)
-                batch = item_list[i:i+2]
-                for j, (item_name, price) in enumerate(batch):
-                    with cols[j]:
-                        widget_key = f"qty_{item_name}"
-                        current_qty = st.session_state.get(widget_key, 0)
-                        
-                        st.number_input(
-                            f"{item_name}\n(₹{price:.0f})", 
-                            min_value=0, max_value=50, step=1, key=widget_key, value=int(current_qty)
-                        )
-                        
-                        qty = st.session_state[widget_key]
-                        if qty > 0:
-                            current_cart[item_name] = qty
-                            running_total += (qty * price)
-    
-        st.divider()
+
+    with st.form("sidebar_catalog_form"):
+        for category, items_dict in products.CATALOG.items():
+            st.markdown(f"##### {category}")
+            if isinstance(items_dict, dict):
+                item_list = list(items_dict.items())
+                for i in range(0, len(item_list), 2):
+                    cols = st.columns(2)
+                    batch = item_list[i:i+2]
+                    for j, (item_name, price) in enumerate(batch):
+                        with cols[j]:
+                            widget_key = f"qty_{item_name}"
+                            current_qty = st.session_state.get(widget_key, 0)
+                            
+                            st.number_input(
+                                f"{item_name}\n(₹{price:.0f})", 
+                                min_value=0, max_value=50, step=1, key=widget_key, value=int(current_qty)
+                            )
+                            
+                            qty = st.session_state[widget_key]
+                            if qty > 0:
+                                current_cart[item_name] = qty
+                                running_total += (qty * price)
         
-    # 1. Inspect the value and force-heal it if it got mutated into a non-string
+            st.divider()
+            
+        lock_basket = st.form_submit_button("🛒 Update Basket Total", use_container_width=True)
+        
     if "form_notes" in st.session_state:
         # If it became None, NaN, or a float, convert it cleanly to a string
         if st.session_state["form_notes"] is None or not isinstance(st.session_state["form_notes"], str):
@@ -779,32 +822,9 @@ with st.sidebar:
     
     st.divider()
 
-    def get_available_order_dates(days_to_show=21):
-        """Generates a clean list of upcoming selectable operational dates, filtering closures."""
-        available_dates = []
-        today = datetime.date.today()
-        
-        for i in range(days_to_show):
-            future_date = today + datetime.timedelta(days=i)
-            
-            # Filter out Mondays (0) and Tuesdays (1)
-            if future_date.weekday() in [0,1]:
-                continue
-                
-            # Filter out custom holidays listed in your config file
-            if future_date.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
-                continue
-                
-            available_dates.append(future_date)
-        return available_dates
-    
-    
-    # --- GENERATE DATA INPUT POOLS (CRITICAL FIX FOR NAME-ERROR) ---
     open_days = get_available_order_dates(days_to_show=21)
     date_labels = {d: d.strftime("%A, %d %b") for d in open_days}
 
-
-    # 1. INITIALIZE: Find the nearest open business day
     if "form_date" not in st.session_state:
         starting_day = datetime.date.today()
         # 0 = Monday, 1 = Tuesday
@@ -815,33 +835,6 @@ with st.sidebar:
     if "form_time_slot" not in st.session_state:
         st.session_state["form_time_slot"] = dt_cfg.TIME_SLOTS[0]
     
-    
-    # 2. THE CORRECTED GUARDIAN VALIDATION FUNCTION
-    def handle_date_change():
-        """Validates the input date and moves it forward if it hits a blocked day."""
-        # Read what the user actually picked from the temporary widget state
-        chosen_date = st.session_state.get("temp_date_picker")
-        if not chosen_date:
-            return
-    
-        # Keep advancing the date forward until it lands on an open operating day
-        validated_date = chosen_date
-        has_violation = False
-        
-        while validated_date.weekday() in [0, 1] or validated_date.strftime("%Y-%m-%d") in dt_cfg.CUSTOM_BLOCKED_DATES:
-            has_violation = True
-            validated_date += datetime.timedelta(days=1)
-    
-        if has_violation:
-            # Show a friendly alert popup informing them of the adjustment
-            #st.error(f"ℹ️ We are closed on that day! Advanced order date to: {validated_date.strftime('%A, %d %b')}")
-            st.toast(f"ℹ️ We are closed on that day! Advanced order date to: {validated_date.strftime('%A, %d %b')}")
-        
-        # Save the clean, verified date into your permanent form state
-        st.session_state["form_date"] = validated_date
-    
-    
-    #3. RENDER THE WIDGET SAFELY
     date_col, time_col = st.columns(2)
 
     with date_col:
