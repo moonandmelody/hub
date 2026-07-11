@@ -659,7 +659,7 @@ def show_edit_dialog(order_id, order_number):
 
 @st.dialog("Return to Work Queue?")
 def show_return_to_work_queue_dialog(order_id):
-    st.warning(f"Change status of #{order_id} from Completed to Pending?")
+    st.warning(f"Change status of #{order_id} to Pending?")
     col1, col2 = st.columns(2)
     with col1:
         if st.button("Cancel", width='stretch'): st.rerun()
@@ -1218,7 +1218,7 @@ with tab_completed:
 
                         with c2:
                             # ✏️ BACK BUTTON - Triggers State of Completed Order to Pending
-                            if st.button(icon=":material/arrow_back:", label="" , key=f"back_{row['Order ID']}", help="Return to Work Queue", width='stretch'):
+                            if st.button(icon=":material/arrow_back:", label="" , key=f"back_{row['Order ID']}", help="Return to Pending", width='stretch'):
                                 show_return_to_work_queue_dialog(row['Order ID']);
 
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
@@ -1286,7 +1286,7 @@ with tab_deleted:
 
                         with c2:
                             # ✏️ BACK BUTTON - Triggers State of Deleted Order to Pending
-                            if st.button(icon=":material/arrow_back:", label="" , key=f"back_{row['Order ID']}", help="Return to Work Queue", width='stretch'):
+                            if st.button(icon=":material/arrow_back:", label="" , key=f"back_{row['Order ID']}", help="Return to Pending", width='stretch'):
                                 show_return_to_work_queue_dialog(row['Order ID']);
 
                         st.markdown(f"### {row.get('Customer Name', 'Unknown')}")
