@@ -296,7 +296,7 @@ def apply_custom_css():
                 width: 50%;
             }}
             .stTabs [aria-selected="true"] {{
-                background-color: {SECONDARY_COLOR} !important;
+                background-color: {PRIMARY_COLOR} !important;
                 color: {BACKGROUND_COLOR} !important;
                 width: 50%;
             }}
