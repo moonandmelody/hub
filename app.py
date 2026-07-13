@@ -1156,7 +1156,7 @@ with tab_queue:
                                     "date": selected_date,
                                     "time": row.get('Delivery Time', 'N/A'),
                                     "name": row.get('Customer Name', 'Guest'),
-                                    "number": row.get('Customer Number', 'Guest'),
+                                    "number": row.get('Customer Contact', 'Guest'),
                                     "items": current_order_items
                                 }
                                 st.rerun()
