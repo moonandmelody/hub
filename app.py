@@ -1109,7 +1109,7 @@ with tab_queue:
             for idx, (_, row) in enumerate(df_filtered_preorders.iterrows()):
                 current_order_items = {}
                 for col_item in df_filtered_preorders.columns:
-                    if col_item not in ["Order ID", "Date", "Time", "Packaging Items", "Cost", "Packaging Cost", "Status", "Delivery Date", "Delivery Time", "Type of Order", "Customer Name", "Customer Contact", "Special Notes/Instructions", "Previous Date", "Previous Time", "Previous Items", "Previous Notes/Instructions"] and pd.notna(order_row[col_item]):
+                    if col_item not in ["Order ID", "Date", "Time", "Packaging Items", "Cost", "Packaging Cost", "Status", "Delivery Date", "Delivery Time", "Type of Order", "Customer Name", "Customer Contact", "Special Notes/Instructions", "Previous Date", "Previous Time", "Previous Items", "Previous Notes/Instructions"] and pd.notna(row[col_item]):
                         qty = order_row[col_item]
                         if qty != 0 and str(qty).strip() != "":
                             current_order_items[col_item] = int(float(qty))
