@@ -13,46 +13,61 @@ import inventory
 import datetime
 
 # Inject custom global CSS to optimize layout variations for thermal printers
+# Inject custom global CSS to handle thermal print formatting perfectly
 st.markdown(
     """
     <style>
     /* ==========================================
-       BROWSER PRINT MODE (Thermal Printer Settings)
+       VISIBLE DESKTOP MONITOR DISPLAY STYLES
+       ========================================== */
+    .thermal-receipt-container {
+        font-family: 'Courier New', monospace; 
+        max-width: 280px; 
+        color: #000000; 
+        padding: 15px; 
+        background: #ffffff;
+        border: 2px dashed #000000;
+        margin: 10px auto;
+    }
+
+    /* ==========================================
+       HARDCOPY PRINTER HARDWARE ENGINE STYLES
        ========================================== */
     @media print {
-        /* 1. Hide the entire Streamlit dashboard workspace and sidebars */
+        /* HIDE EVERY SINGLE PIECE OF THE STREAMLIT DASHBOARD WORKSPACE */
         #root, 
         section[data-testid="stSidebar"], 
         header, 
         footer, 
         .stButton, 
-        div[data-testid="stTabs"] [role="tablist"] {
+        div[data-testid="stTabs"] [role="tablist"],
+        .stAlert {
             display: none !important;
+            height: 0px !important;
+            padding: 0px !important;
+            margin: 0px !important;
         }
 
-        /* 2. Unhide ONLY our dedicated, active ticket layer */
-        .thermal-receipt-print-area {
+        /* FORCE THE THERMAL RECEIPT CONTAINER TO BE THE ONLY VISIBLE ELEMENT ON PAPER */
+        .thermal-receipt-container {
             display: block !important;
             width: 100% !important;
+            max-width: 100% !important;
+            border: none !important;
             margin: 0 !important;
-            padding: 0 !important;
+            padding: 5mm !important;
         }
 
-        /* 3. Configure the hardware paper canvas properties for continuous rolls */
+        /* CONFIGURE CONTINUOUS ROLL PRINTER PAPER PROPERTIES */
         @page {
             size: auto;
-            margin: 0mm !important; /* Removes default browser headers/footers */
+            margin: 0mm !important; 
         }
         
         body {
             background-color: #ffffff !important;
             color: #000000 !important;
         }
-    }
-
-    /* Keep the print template completely invisible on the live computer screen */
-    .thermal-receipt-print-area {
-        display: none;
     }
     </style>
     """,
@@ -1443,9 +1458,8 @@ with tab_charts:
 
 
 # ==========================================
-# PHASE 4: FIXED THERMAL RECEIPT GENERATOR DOCK
+# PHASE 4: CORRECTED THERMAL RECEIPT GENERATOR
 # ==========================================
-# The receipt will only render on screen if an active print payload is registered in memory
 if st.session_state.active_print_payload:
     p = st.session_state.active_print_payload
     
@@ -1455,20 +1469,17 @@ if st.session_state.active_print_payload:
         for name, qty in p["items"].items()
     ])
     
+    # Construct the receipt layout template string
     thermal_receipt_html = f"""
-    <!-- 
-       CRITICAL FIX: This container stays hidden on your desktop monitor screen, 
-       but will be forced visible to your thermal printer hardware via the @media print CSS wrapper rules.
-    -->
-    <div class="thermal-receipt-print-area" style="font-family: 'Courier New', monospace; max-width: 260px; color: #000000 !important; padding: 10px; background: #ffffff !important;">
-        <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 8px;">
+    <div class="thermal-receipt-container">
+        <div style="text-align: center; border-bottom: 2px dashed #000000; padding-bottom: 8px;">
             <h2 style="margin: 0; font-size: 22px; font-weight: bold; color: #000000;">🔥 KITCHEN ORDER 🔥</h2>
             <p style="margin: 4px 0; font-size: 14px; color: #000000;">{p['date']} | {p['time']}</p>
             <div style="display: inline-block; padding: 4px 10px; background-color: #000000; color: #ffffff; font-weight: bold; font-size: 14px; border-radius:3px;">
             </div>
         </div>
         
-        <div style="padding: 10px 0; border-bottom: 2px dashed #000;">
+        <div style="padding: 10px 0; border-bottom: 2px dashed #000000;">
             <p style="margin: 0; font-size: 16px; color: #000000;"><b>CUSTOMER:</b> {p['name']}</p>
         </div>
         
@@ -1476,30 +1487,49 @@ if st.session_state.active_print_payload:
             {items_html_rows}
         </table>
         
-        <div style="text-align: center; margin-top: 25px; border-top: 2px dashed #000; padding-top: 8px; font-size: 12px; font-weight: bold; color: #000000;">
+        <div style="text-align: center; margin-top: 25px; border-top: 2px dashed #000000; padding-top: 8px; font-size: 12px; font-weight: bold; color: #000000;">
             * END OF ORDER TICKET *
         </div>
     </div>
     """
     
-    # 1. Print the HTML object wrapper directly to the main canvas
+    # Render the confirmation block warning panel
+    st.markdown("---")
+    st.warning("🖨️ **Receipt Print Queue Active**")
+    
+    # Display a live visual preview of the receipt right inside Streamlit
     st.markdown(thermal_receipt_html, unsafe_allow_html=True)
     
-    # 2. Add an explicit 'Done Printing' warning interface tool so the user can close the print layout state manually
-    # This prevents Streamlit from instantly resetting before the browser can read the page data!
-    st.info("🖨️ Thermal Print Dialog opening... Once printing is finished, click the clear button below to return to your dashboard layout views.")
-    st.session_state.active_print_payload = None
-    st.rerun()
+    # ------------------------------------------
+    # THE PRINT AND CLOSE CONTROL BUTTONS
+    # ------------------------------------------
+    col_action1, col_action2 = st.columns(2)
+    
+    with col_action1:
+        # FIX: Using a standard HTML button link directly on the parent window canvas 
+        # completely bypasses the empty page sandbox iframe bug!
+        st.markdown(
+            """
+            <button onclick="window.print()" style="
+                width: 100%; 
+                background-color: #ff4b4b; 
+                color: white; 
+                padding: 10px; 
+                border: none; 
+                border-radius: 4px; 
+                font-weight: bold; 
+                cursor: pointer;
+                font-size: 16px;
+                height: 45px;
+            ">
+                🖨️ Click to Trigger Printer
+            </button>
+            """,
+            unsafe_allow_html=True
+        )
         
-    # 3. Trigger the browser print mechanism silently inside an isolated iframe canvas layer
-    st.components.v1.html(
-        """
-        <script>
-            // Allow a small browser layout delay window for elements to build before running print commands
-            setTimeout(function() {
-                window.print();
-            }, 500);
-        </script>
-        """,
-        height=0
-    )
+    with col_action2:
+        # Cleans out the queue state variable so your app dashboard springs back onto the monitor screen
+        if st.button("✅ Done & Return to Orders", type="primary", use_container_width=True):
+            st.session_state.active_print_payload = None
+            st.rerun()
