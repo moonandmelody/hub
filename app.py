@@ -1152,7 +1152,7 @@ with tab_queue:
                         with c4:
                             if st.button(icon=":material/print:", label="", key=f"print_{row['Order ID']}", help="Print Order", width='stretch'):                                
                                 st.session_state.active_print_payload = {
-                                    "id": row.get('Order ID', 'N/A'),
+                                    "orderid": row.get('Order ID', 'N/A'),
                                     "date": selected_date,
                                     "time": row.get('Delivery Time', 'N/A'),
                                     "name": row.get('Customer Name', 'Guest'),
@@ -1475,7 +1475,7 @@ if st.session_state.active_print_payload:
     thermal_receipt_html = f"""
     <div class="thermal-receipt-container">
         <div style="text-align: center; border-bottom: 2px dashed #000000; padding-bottom: 8px;">
-            <h2 style="margin: 0; font-size: 22px; font-weight: bold; color: #000000;">ORDER #{p['id']}</h2>
+            <h2 style="margin: 0; font-size: 22px; font-weight: bold; color: #000000;">ORDER #{p['orderid']}</h2>
             <p style="margin: 4px 0; font-size: 14px; color: #000000;">Date: {p['date']} <br/>Time:{p['time']}</p>
             <div style="display: inline-block; padding: 4px 10px; background-color: #000000; color: #ffffff; font-weight: bold; font-size: 14px; border-radius:3px;">
             </div>
