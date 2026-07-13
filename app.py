@@ -1488,10 +1488,8 @@ if st.session_state.active_print_payload:
     # 2. Add an explicit 'Done Printing' warning interface tool so the user can close the print layout state manually
     # This prevents Streamlit from instantly resetting before the browser can read the page data!
     st.info("🖨️ Thermal Print Dialog opening... Once printing is finished, click the clear button below to return to your dashboard layout views.")
-    
-    if st.button("✅ Clear Print Queue & Return Home", type="primary", use_container_width=True):
-        st.session_state.active_print_payload = None
-        st.rerun()
+    st.session_state.active_print_payload = None
+    st.rerun()
         
     # 3. Trigger the browser print mechanism silently inside an isolated iframe canvas layer
     st.components.v1.html(
