@@ -547,7 +547,7 @@ def process_sidebar_submission(packaging_breakdown, packaging_total, mode="creat
         return
     
 
-    items_str_list = [f"{qty}x {name}" for name, qty in cart_items.items()]
+    items_str_list = [f"{qty}* {name}" for name, qty in cart_items.items()]
     compiled_items = ",\n".join(items_str_list)
 
     compiled_packaging_str_list = ",\n".join(packaging_breakdown)
@@ -1112,8 +1112,8 @@ with tab_queue:
                     if col_item not in ["Order ID", "Date", "Time", "Packaging Items", "Cost", "Packaging Cost", "Status", "Delivery Date", "Delivery Time", "Type of Order", "Customer Name", "Customer Contact", "Special Notes/Instructions", "Previous Date", "Previous Time", "Previous Items", "Previous Notes/Instructions"] and pd.notna(row[col_item]):
                         item_desc = row[col_item]
                         for line in item_desc.split(",\n"):
-                            qty = line.split("x")[0]
-                            item = line.split("x")[1]
+                            qty = line.split("*")[0]
+                            item = line.split("*")[1]
                             if qty != 0 and str(qty).strip() != "":
                                 current_order_items[item] = int(float(qty))
                                 st.markdown(f"• <b>{item}:</b> {int(float(qty))}", unsafe_allow_html=True)
