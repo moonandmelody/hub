@@ -1216,7 +1216,6 @@ with tab_queue:
                 <h2 style="margin: 0; font-size: 22px; font-weight: bold;">🔥 KITCHEN ORDER 🔥</h2>
                 <p style="margin: 4px 0; font-size: 14px;">{p['date']} | {p['time']}</p>
                 <span style="display: inline-block; padding: 3px 8px; background-color: #000; color: #fff; font-weight: bold; font-size: 14px; border-radius:3px;">
-                    {p['type'].upper()}
                 </span>
             </div>
             
