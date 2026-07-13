@@ -1196,62 +1196,7 @@ with tab_queue:
                         btn_key = f"done_{row.get('Order ID')}_{idx}"
                         if st.button("Done", key=btn_key, width='stretch'):
                             update_order_status(row['Order ID'], "Completed")
-
-    # ==========================================
-    # PHASE 4: THERMAL RECEIPT GENERATOR DOCK
-    # ==========================================
-    # If an order print payload is active in state memory, render the isolated printer HTML template
-    if st.session_state.active_print_payload:
-        p = st.session_state.active_print_payload
-        
-        # Construct a bold, high-contrast ticket layout optimized for food prep/kitchen environments
-        items_html_rows = "".join([
-            f"<tr><td style='padding: 6px 0; font-size: 18px; font-weight: bold;'>{qty} x {name}</td></tr>" 
-            for name, qty in p["items"].items()
-        ])
-        
-        thermal_receipt_html = f"""
-        <div class="thermal-receipt-print-area" style="font-family: 'Courier New', monospace; max-width: 280px; color: #000; padding: 10px;">
-            <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 8px;">
-                <h2 style="margin: 0; font-size: 22px; font-weight: bold;">🔥 KITCHEN ORDER 🔥</h2>
-                <p style="margin: 4px 0; font-size: 14px;">{p['date']} | {p['time']}</p>
-                <span style="display: inline-block; padding: 3px 8px; background-color: #000; color: #fff; font-weight: bold; font-size: 14px; border-radius:3px;">
-                </span>
-            </div>
-            
-            <div style="padding: 10px 0; border-bottom: 2px dashed #000;">
-                <p style="margin: 0; font-size: 16px;"><b>CUSTOMER:</b> {p['name']}</p>
-            </div>
-            
-            <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
-                {items_html_rows}
-            </table>
-            
-            <div style="text-align: center; margin-top: 25px; border-top: 2px dashed #000; padding-top: 8px; font-size: 12px; font-weight: bold;">
-                * END OF ORDER TICKET *
-            </div>
-        </div>
-        """
-        
-        # Render the hidden template container onto the webpage canvas
-        st.markdown(thermal_receipt_html, unsafe_allow_html=True)
-        
-        # Execute the hardware print screen call and clear the payload immediately
-        st.components.v1.html(
-            """
-            <script>
-                // Wait slightly for DOM to settle, print, then notify parent wrapper
-                setTimeout(function() {
-                    window.print();
-                }, 300);
-            </script>
-            """,
-            height=0
-        )
-        
-        # Reset the active registry tracking state so the page returns to standard layout views seamlessly
-        st.session_state.active_print_payload = None
-
+                            
 with tab_walk_ins:
     #nothing here yet
     #walkin_orders = df[(df["Status"] == "pending") & (df["Type of Order"] == "walkin")]
@@ -1495,3 +1440,68 @@ with tab_charts:
             )
         else:
             st.info("Complete some orders to see your analytics!")
+
+
+# ==========================================
+# PHASE 4: FIXED THERMAL RECEIPT GENERATOR DOCK
+# ==========================================
+# The receipt will only render on screen if an active print payload is registered in memory
+if st.session_state.active_print_payload:
+    p = st.session_state.active_print_payload
+    
+    # Compile the high-contrast kitchen item list lines
+    items_html_rows = "".join([
+        f"<tr><td style='padding: 6px 0; font-size: 18px; font-weight: bold; color: #000000;'>{qty} x {name}</td></tr>" 
+        for name, qty in p["items"].items()
+    ])
+    
+    thermal_receipt_html = f"""
+    <!-- 
+       CRITICAL FIX: This container stays hidden on your desktop monitor screen, 
+       but will be forced visible to your thermal printer hardware via the @media print CSS wrapper rules.
+    -->
+    <div class="thermal-receipt-print-area" style="font-family: 'Courier New', monospace; max-width: 260px; color: #000000 !important; padding: 10px; background: #ffffff !important;">
+        <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 8px;">
+            <h2 style="margin: 0; font-size: 22px; font-weight: bold; color: #000000;">🔥 KITCHEN ORDER 🔥</h2>
+            <p style="margin: 4px 0; font-size: 14px; color: #000000;">{p['date']} | {p['time']}</p>
+            <div style="display: inline-block; padding: 4px 10px; background-color: #000000; color: #ffffff; font-weight: bold; font-size: 14px; border-radius:3px;">
+            </div>
+        </div>
+        
+        <div style="padding: 10px 0; border-bottom: 2px dashed #000;">
+            <p style="margin: 0; font-size: 16px; color: #000000;"><b>CUSTOMER:</b> {p['name']}</p>
+        </div>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
+            {items_html_rows}
+        </table>
+        
+        <div style="text-align: center; margin-top: 25px; border-top: 2px dashed #000; padding-top: 8px; font-size: 12px; font-weight: bold; color: #000000;">
+            * END OF ORDER TICKET *
+        </div>
+    </div>
+    """
+    
+    # 1. Print the HTML object wrapper directly to the main canvas
+    st.markdown(thermal_receipt_html, unsafe_allow_html=True)
+    
+    # 2. Add an explicit 'Done Printing' warning interface tool so the user can close the print layout state manually
+    # This prevents Streamlit from instantly resetting before the browser can read the page data!
+    st.info("🖨️ Thermal Print Dialog opening... Once printing is finished, click the clear button below to return to your dashboard layout views.")
+    
+    if st.button("✅ Clear Print Queue & Return Home", type="primary", use_container_width=True):
+        st.session_state.active_print_payload = None
+        st.rerun()
+        
+    # 3. Trigger the browser print mechanism silently inside an isolated iframe canvas layer
+    st.components.v1.html(
+        """
+        <script>
+            // Allow a small browser layout delay window for elements to build before running print commands
+            setTimeout(function() {
+                window.print();
+            }, 500);
+        </script>
+        """,
+        height=0
+    )
