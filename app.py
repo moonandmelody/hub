@@ -1512,7 +1512,7 @@ if st.session_state.active_print_payload:
         # FIX: Using a standard HTML button link directly on the parent window canvas 
         # completely bypasses the empty page sandbox iframe bug!
         st.markdown(
-            """
+            f"""
             <button onclick="window.print()" style="
                 width: 100%; 
                 background-color: #ff4b4b; 
