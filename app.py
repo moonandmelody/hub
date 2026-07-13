@@ -12,6 +12,56 @@ import requests
 import inventory
 import datetime
 
+# Inject custom global CSS to optimize layout variations for thermal printers
+st.markdown(
+    """
+    <style>
+    /* ==========================================
+       BROWSER PRINT MODE (Thermal Printer Settings)
+       ========================================== */
+    @media print {
+        /* 1. Hide the entire Streamlit dashboard workspace and sidebars */
+        #root, 
+        section[data-testid="stSidebar"], 
+        header, 
+        footer, 
+        .stButton, 
+        div[data-testid="stTabs"] [role="tablist"] {
+            display: none !important;
+        }
+
+        /* 2. Unhide ONLY our dedicated, active ticket layer */
+        .thermal-receipt-print-area {
+            display: block !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* 3. Configure the hardware paper canvas properties for continuous rolls */
+        @page {
+            size: auto;
+            margin: 0mm !important; /* Removes default browser headers/footers */
+        }
+        
+        body {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+        }
+    }
+
+    /* Keep the print template completely invisible on the live computer screen */
+    .thermal-receipt-print-area {
+        display: none;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+if "active_print_payload" not in st.session_state:
+    st.session_state.active_print_payload = None
+
 print("after All imports", flush=True)
 
 # 🎨 PAGE CONFIGURATION
@@ -1057,10 +1107,18 @@ with tab_queue:
         else:
             cols = st.columns(3)
             for idx, (_, row) in enumerate(df_filtered_preorders.iterrows()):
+                current_order_items = {}
+                for col_item in df_filtered_preorders.columns:
+                    if col_item not in ["Order ID", "Date", "Time", "Packaging Items", "Cost", "Packaging Cost", "Status", "Delivery Date", "Delivery Time", "Type of Order", "Customer Name", "Customer Contact", "Special Notes/Instructions", "Previous Date", "Previous Time", "Previous Items", "Previous Notes/Instructions"] and pd.notna(order_row[col_item]):
+                        qty = order_row[col_item]
+                        if qty != 0 and str(qty).strip() != "":
+                            current_order_items[col_item] = int(float(qty))
+                            st.markdown(f"• <b>{col_item}:</b> {int(float(qty))}", unsafe_allow_html=True)
+                
                 col_idx = idx % 3
                 with cols[col_idx]:
                     with st.container(border=True):
-                        c1, c2, c3 = st.columns([3, 1, 1])
+                        c1, c2, c3, c4 = st.columns([3, 1, 1, 1])
                         c1.markdown(f"**#{row.get('Order ID')}**")
                         
                         with c2:
@@ -1072,6 +1130,16 @@ with tab_queue:
                         with c3:
                             if st.button(icon=":material/delete:", label="", key=f"del_{row['Order ID']}", help="Delete Order", width='stretch'):
                                 show_delete_dialog(row['Order ID'])
+
+                        with c4:
+                            if st.button(icon=":material/print:", label="", key=f"print_{row['Order ID']}", help="Print Order", width='stretch'):                                
+                                st.session_state.active_print_payload = {
+                                    "date": selected_date,
+                                    "time": row.get('Time', 'N/A'),
+                                    "name": row.get('Name', 'Guest'),
+                                    "items": current_order_items
+                                }
+                                st.rerun()
 
                         raw_date = str(row.get('Delivery Date'))
                         raw_date = raw_date[8:10] + "/" + raw_date[5:7] + "/" + raw_date[0:4]
@@ -1125,6 +1193,62 @@ with tab_queue:
                         btn_key = f"done_{row.get('Order ID')}_{idx}"
                         if st.button("Done", key=btn_key, width='stretch'):
                             update_order_status(row['Order ID'], "Completed")
+
+    # ==========================================
+    # PHASE 4: THERMAL RECEIPT GENERATOR DOCK
+    # ==========================================
+    # If an order print payload is active in state memory, render the isolated printer HTML template
+    if st.session_state.active_print_payload:
+        p = st.session_state.active_print_payload
+        
+        # Construct a bold, high-contrast ticket layout optimized for food prep/kitchen environments
+        items_html_rows = "".join([
+            f"<tr><td style='padding: 6px 0; font-size: 18px; font-weight: bold;'>{qty} x {name}</td></tr>" 
+            for name, qty in p["items"].items()
+        ])
+        
+        thermal_receipt_html = f"""
+        <div class="thermal-receipt-print-area" style="font-family: 'Courier New', monospace; max-width: 280px; color: #000; padding: 10px;">
+            <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 8px;">
+                <h2 style="margin: 0; font-size: 22px; font-weight: bold;">🔥 KITCHEN ORDER 🔥</h2>
+                <p style="margin: 4px 0; font-size: 14px;">{p['date']} | {p['time']}</p>
+                <span style="display: inline-block; padding: 3px 8px; background-color: #000; color: #fff; font-weight: bold; font-size: 14px; border-radius:3px;">
+                    {p['type'].upper()}
+                </span>
+            </div>
+            
+            <div style="padding: 10px 0; border-bottom: 2px dashed #000;">
+                <p style="margin: 0; font-size: 16px;"><b>CUSTOMER:</b> {p['name']}</p>
+            </div>
+            
+            <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
+                {items_html_rows}
+            </table>
+            
+            <div style="text-align: center; margin-top: 25px; border-top: 2px dashed #000; padding-top: 8px; font-size: 12px; font-weight: bold;">
+                * END OF ORDER TICKET *
+            </div>
+        </div>
+        """
+        
+        # Render the hidden template container onto the webpage canvas
+        st.markdown(thermal_receipt_html, unsafe_allow_html=True)
+        
+        # Execute the hardware print screen call and clear the payload immediately
+        st.components.v1.html(
+            """
+            <script>
+                // Wait slightly for DOM to settle, print, then notify parent wrapper
+                setTimeout(function() {
+                    window.print();
+                }, 300);
+            </script>
+            """,
+            height=0
+        )
+        
+        # Reset the active registry tracking state so the page returns to standard layout views seamlessly
+        st.session_state.active_print_payload = None
 
 with tab_walk_ins:
     #nothing here yet
