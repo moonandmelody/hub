@@ -30,6 +30,7 @@ try:
 except AttributeError:
     pass
 
+print("Before core functions", flush=True)
 
 # --- 1. CORE FUNCTIONS ---
 def load_data():
@@ -164,6 +165,8 @@ else:
     next_num = 1
 next_order_id = str(next_num).zfill(4)
 
+print("After Calc next id", flush=True)
+
 if "current_view" not in st.session_state:
     st.session_state.current_view = "dashboard"
 
@@ -185,6 +188,8 @@ if st.session_state.current_view == "entry_form":
 def sync_order_type():
     if "form_order_widget" in st.session_state:
         st.session_state.form_order = st.session_state.form_order_widget
+
+print("Before Edit & Delete", flush=True)
 
 # --- 2. LOGIC: EDIT & DELETE ---
 def trigger_edit_mode(row):
@@ -450,6 +455,7 @@ def calculate_order_packaging(current_cart):
             
     return packaging_total, packaging_breakdown
 
+print("After Edit & Delete", flush=True)
 
 # --- 3. THE SUBMISSION HANDLER (CALLBACK) ---
 def process_sidebar_submission(packaging_breakdown, packaging_total, mode="create"):
