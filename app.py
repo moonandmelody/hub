@@ -1152,7 +1152,7 @@ with tab_queue:
                         with c4:
                             if st.button(icon=":material/print:", label="", key=f"print_{row['Order ID']}", help="Print Order", width='stretch'):                                
                                 st.session_state.active_print_payload = {
-                                    "id": row.get('Order ID', 'N/A');
+                                    "id": row.get('Order ID', 'N/A'),
                                     "date": selected_date,
                                     "time": row.get('Delivery Time', 'N/A'),
                                     "name": row.get('Customer Name', 'Guest'),
