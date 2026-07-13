@@ -976,8 +976,8 @@ for d_str in unique_dates:
     try:
         # Parse the string into a date object for accurate comparison
         parsed_date = datetime.datetime.strptime(d_str, "%Y-%m-%d").date()
-        if parsed_date >= today_dt:
-            future_and_today_dates.append(d_str)
+        #if parsed_date >= today_dt:
+        future_and_today_dates.append(d_str)
     except ValueError:
         # Skip rows with malformed dates or headers
         continue
