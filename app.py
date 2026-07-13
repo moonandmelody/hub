@@ -1111,7 +1111,7 @@ with tab_queue:
                 for col_item in df_filtered_preorders.columns:
                     if col_item not in ["Order ID", "Date", "Time", "Packaging Items", "Cost", "Packaging Cost", "Status", "Delivery Date", "Delivery Time", "Type of Order", "Customer Name", "Customer Contact", "Special Notes/Instructions", "Previous Date", "Previous Time", "Previous Items", "Previous Notes/Instructions"] and pd.notna(row[col_item]):
                         item_desc = row[col_item]
-                        for line in item_desc.split(",\n")
+                        for line in item_desc.split(",\n"):
                             qty = line.split("x")[0]
                             item = line.split("x")[1]
                             if qty != 0 and str(qty).strip() != "":
