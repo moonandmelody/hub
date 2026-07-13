@@ -1152,9 +1152,11 @@ with tab_queue:
                         with c4:
                             if st.button(icon=":material/print:", label="", key=f"print_{row['Order ID']}", help="Print Order", width='stretch'):                                
                                 st.session_state.active_print_payload = {
+                                    "id": row.get('Order ID', 'N/A');
                                     "date": selected_date,
-                                    "time": row.get('Time', 'N/A'),
-                                    "name": row.get('Name', 'Guest'),
+                                    "time": row.get('Delivery Time', 'N/A'),
+                                    "name": row.get('Customer Name', 'Guest'),
+                                    "number": row.get('Customer Number', 'Guest'),
                                     "items": current_order_items
                                 }
                                 st.rerun()
@@ -1473,14 +1475,15 @@ if st.session_state.active_print_payload:
     thermal_receipt_html = f"""
     <div class="thermal-receipt-container">
         <div style="text-align: center; border-bottom: 2px dashed #000000; padding-bottom: 8px;">
-            <h2 style="margin: 0; font-size: 22px; font-weight: bold; color: #000000;">🔥 KITCHEN ORDER 🔥</h2>
-            <p style="margin: 4px 0; font-size: 14px; color: #000000;">{p['date']} | {p['time']}</p>
+            <h2 style="margin: 0; font-size: 22px; font-weight: bold; color: #000000;">ORDER #{p['id']}</h2>
+            <p style="margin: 4px 0; font-size: 14px; color: #000000;">Date: {p['date']} <br/>Time:{p['time']}</p>
             <div style="display: inline-block; padding: 4px 10px; background-color: #000000; color: #ffffff; font-weight: bold; font-size: 14px; border-radius:3px;">
             </div>
         </div>
         
         <div style="padding: 10px 0; border-bottom: 2px dashed #000000;">
-            <p style="margin: 0; font-size: 16px; color: #000000;"><b>CUSTOMER:</b> {p['name']}</p>
+            <p style="margin: 0; font-size: 16px; color: #000000;"><b>Customer Name:</b> {p['name']}</p>
+            <p style="margin: 0; font-size: 16px; color: #000000;"><b>Mobile:</b> {p['number']}</p>
         </div>
         
         <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
